@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "lasttime": "2023-10-31 10:00:00",
+  "author": "yangyk",
+  "className": "idmCustomizedComponents",
+  "module": [
+    {
+      "classId": "idm.component.idmCustomizedComponents.text",
+      "comName": "文本",
+      "className": "IText",
+      "comType": "common",
+      "comLangue": "vue"
+    }
+  ]
+}
