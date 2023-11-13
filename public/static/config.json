@@ -10,6 +10,20 @@
       "className": "IText",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.icountbar",
+      "comName": "统计局柱状图大屏",
+      "className": "ICountBar",
+      "comType": "common",
+      "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.icountprogress",
+      "comName": "统计局进度图大屏",
+      "className": "ICountProgress",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }

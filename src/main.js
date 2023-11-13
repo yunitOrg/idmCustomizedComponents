@@ -6,7 +6,6 @@ import config from '../public/static/config.json';
 import '@/icons' // icon
 import "@/plugins/antd"
 
-
 new VueRegister(config)
 const requireComponent = require.context(
   // 其组件目录的相对路径
@@ -41,6 +40,7 @@ requireComponent.keys().forEach(fileName => {
   )
 })
 Vue.prototype.IDM = window.IDM;
+
 Vue.config.productionTip = false
 //这里每次打包都会生成一个随机的变量，唯一，保证能加载到对应的对象
 window[`${process.env.CodeVar}`] = Main;
