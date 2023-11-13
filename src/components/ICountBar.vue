@@ -608,9 +608,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .ICountBar_app{
-  height: 100vh;
-  background-image: url(../assets/body-bg.png);
-  background-size: 100% 100%;
+  // height: 100vh;
+  // background-image: url(../assets/body-bg.png);
+  // background-size: 100% 100%;
   .header{
     height: 10vh;
     margin-bottom: 3vh;
@@ -644,7 +644,7 @@ export default {
     margin: 0 auto 5vh auto;
     .echarts_body{
       height: 100%;
-      margin: 50px;
+      // margin: 50px;
       position: relative;
       padding: 11px 40px 40px 40px;
       background: rgba(14,95,255,0.15);

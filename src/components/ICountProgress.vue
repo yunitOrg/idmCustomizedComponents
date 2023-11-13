@@ -504,8 +504,8 @@ export default {
 <style lang="scss" scoped>
 .ICountBar_app{
   height: 100vh;
-  background-image: url(../assets/body-bg.png);
-  background-size: 100% 100%;
+  // background-image: url(../assets/body-bg.png);
+  // background-size: 100% 100%;
   @keyframes myfirst1 {
     0%   {
       transform: rotate(0deg);
