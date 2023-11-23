@@ -21,23 +21,28 @@
         "desc": "提供设置组件能达到展示效果的基本属性设置信息",
         "children": [
           {
-            "type": "radio",
-            "styleType": "radio",
+            "type": "input",
             "layoutType": "inline",
-            "text": "显示头部",
-            "desc":"是否页面头部",
-            "bindKey": "showHeader",
-            "default": true,
-            "dictionary": [
-                {
-                    "label": "开",
-                    "value": true
-                },
-                {
-                    "label": "关",
-                    "value": false
-                }
-            ]
+            "text": "柱条宽度",
+            "desc": "柱状图单条数据的宽度",
+            "bindKey": "barWidth",
+            "default": "15%"
+          },
+          {
+            "type": "input",
+            "layoutType": "block",
+            "text": "柱条最大宽度",
+            "desc": "柱状图单条数据的最大宽度",
+            "bindKey": "barMaxWidth",
+            "default": "25%"
+          },
+          {
+            "type": "colorPicker",
+            "layoutType": "inline",
+            "text": "分割颜色",
+            "bindKey": "gapColor",
+            "placeholder": "请选择颜色",
+            "default": {}
           }
         ]
       },
@@ -443,34 +448,6 @@
             "desc":"数据源，返回格式如：{ xlabel:['文书类','专业类'],data: [100,150],total:789 }",
             "bindKey": "dataSource"
           }
-        ]
-      },
-      {
-        "type": "group",
-        "text": "功能接口",
-        "children": [
-            {
-                "type": "input",
-                "layoutType": "block",
-                "text": "切换主题地址",
-                "bindKey": "changeThemeIframeUrl",
-                "default": "/p1000/skin/skin.html"
-            },
-            {
-                "type": "input",
-                "layoutType": "block",
-                "text": "修改密码地址",
-                "bindKey": "changePasswordIframeUrl",
-                "default": "/ctrl/userinfo/password"
-            },
-            {
-                "type": "input",
-                "layoutType": "block",
-                "text": "注销接口地址",
-                "bindKey": "logoutUrl",
-                "default": "/ctrl/logout"
-            }
-            
         ]
       },
       {

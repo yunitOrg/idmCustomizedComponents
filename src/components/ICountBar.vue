@@ -1,28 +1,5 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="ICountBar_app">
-    <div v-if="propData.showHeader" class="header">
-      <img :src="getImageSrc(propData.logoImgUrl,'head')" alt="">
-      <div class="header_right flex_center">
-
-        <a-popover v-model="action_visible" @visibleChange="userLogoPopVisibleChange" overlayClassName="user_block_popover" :trigger="propData.showPersonActionEvent" >
-          <div slot="content">
-            <div @click="takePersonAction(item,index)" v-for="(item,index) in propData.personActionList" :key="index" class="user_dropdown_list flex_start">
-              <svg class="idm_button_svg_icon" :style="getTopBarStyleInlineIcon(item)" v-if="item.iconSvg && item.iconSvg.length > 0" aria-hidden="true" > 
-                  <use :xlink:href="`#${item.iconSvg[0]}`"></use>
-              </svg>
-              <span :style="getTopBarStyleInlineText(item)">{{ item.buttonText }}</span>
-            </div>
-          </div>
-          <div class="flex_center">
-            <span>{{ this.propData.welcomText }}{{ user_info.username ? user_info.username : '申龙'}}</span>
-            <SvgIcon v-if="!is_user_logo_pop_show" icon-class="xialajiantou"></SvgIcon>
-            <SvgIcon v-else icon-class="shangjiantou"></SvgIcon>
-          </div>
-          
-        </a-popover>
-        
-      </div>
-    </div>
     <div class="echarts">
       <div class="echarts_body">
         <div class="title">
@@ -41,8 +18,8 @@
       
     </div>
     <div class="number_counter">
-      <div class="title">
-        {{ numberTitle }}
+      <div v-if="propData.numberTitle" class="title">
+        {{ propData.numberTitle }}
       </div>
       <div class="main flex_center">
         <div ref="dataStatistics" class="dataStatistics">
@@ -64,7 +41,6 @@
 </template>
 
 <script>
-import SvgIcon from '../icons/SvgIcon.vue';
 import counterBar from '../mixins/counterBar'
 import * as echarts from 'echarts'
 import { getEchartsData } from '../mock/index'
@@ -74,14 +50,12 @@ import commonMixins from '../mixins/index'
 
 export default {
   name: 'ICountBar',
-  components: {
-    SvgIcon
-  },
   mixins: [ counterBar,commonMixins ],
   data(){
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
+        showHeader: true,
         personActionList: [
           {
             buttonText: '切换主题'
@@ -92,7 +66,9 @@ export default {
           }
         ],
         numberCount: 8,
-        during: 100
+        during: 100,
+        echartsType: 'pictorialBar',
+        barWidth: '30'
       },
       action_visible: false,
       is_user_logo_pop_show: false,
@@ -238,6 +214,9 @@ export default {
             });
         })
     },
+    getBarOption() {
+
+    },
     setEchartsOption() {
       this.echarts_option = {
         grid: {
@@ -288,46 +267,105 @@ export default {
             }
           }
         },
+        // series: [
+        //   {
+        //     data: [],
+        //     // type: this.propData.echartsType || 'bar',
+        //     type: 'bar',
+        //     animationDuration: this.propData.animationDuration,  // 这里设置动画持续时间为 3000 毫秒（3 秒）
+        //     animationEasing: "cubicOut",  // 这里设置缓动函数为 cubicOut
+        //     label: { 
+        //         show: true,
+        //         color: "#77C8FF",
+        //         fontSize: "10",
+        //         position: "top",
+        //     },
+        //     barBorderRadius:  [3, 3, 0, 0],
+        //     barWidth: this.propData.barWidth,
+        //     barMaxWidth: this.propData.barMaxWidth,
+        //     // showBackground: true,
+        //     itemStyle: {
+        //       color: new echarts.graphic.LinearGradient(
+        //         0, 0, 0, 1,       //4个参数用于配置渐变色的起止位置, 这4个参数依次对应右/下/左/上四个方位. 而0 0 0 1则代表渐变色从正上方开始
+        //           [
+        //               {offset: 1, color: '#07EDFF'},
+        //               {offset: 0, color: '#0479FD'}
+        //           ]                
+        //       ),
+        //       barBorderRadius: 2,
+        //     }
+        //   },
+        //   {
+        //     data: [],
+        //     // 分隔
+        //     type: "pictorialBar",
+        //     tooltip: {
+        //       show: false,
+        //     },
+        //     symbolRotate: "0",
+        //     itemStyle: {
+        //       color: '#3D7AFF'
+        //     },
+        //     symbolRepeat: "fixed",
+        //     symbolMargin: 3,
+        //     symbol: "rect",
+        //     symbolClip: true,
+        //     symbolSize: [this.propData.barWidth,3],
+        //     symbolPosition: "start",
+        //     symbolOffset: [0, 0],
+        //     z: 66,
+        //     animationEasing: "elasticOut",
+        //     }
+        // ],
         series: [
           {
-            data: [],
             type: 'pictorialBar',
-            // type: 'bar',
             symbol: 'rect',
-            symbolSize: [24, 6], // 图形大小 [width，height]
-            // color: "#65C6E7", // 柱形图颜色
-            symbolRepeat: true, // 图形是否重复
-            symbolBoundingData: 2000, // 指定图形界限的值
-            label: { // 是否显示label
+            barWidth: this.propData.barWidth,
+            label: { 
                 show: true,
                 color: "#77C8FF",
                 fontSize: "10",
-                position: "top", // label 显示在文字的上方
+                position: "top",
             },
-            barBorderRadius:  [0, 0, 0, 0],
-
-            // showBackground: true,
             itemStyle: {
-              color: new echarts.graphic.LinearGradient(
-                0, 0, 1, 0,       //4个参数用于配置渐变色的起止位置, 这4个参数依次对应右/下/左/上四个方位. 而0 0 0 1则代表渐变色从正上方开始
-                  [
-                      {offset: 1, color: '#07EDFF'},
-                      {offset: 0, color: '#0479FD'}
-                  ]                
-              )
+                normal: {
+                    color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
+                        {
+                            offset: 0,
+                            color: '#0479FD',
+
+                        },
+                        {
+                            offset: 1,
+                            color: '#07EDFF',
+
+                        },
+                    ]),
+                }
             },
-            symbolMargin: 3
-            // emphasis: {
-            //   itemStyle: {
-            //     color: new this.echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            //       { offset: 0, color: '#2378f7' },
-            //       { offset: 1, color: '#83bff6' }
-            //     ])
-            //   }
-            // },
-          }
-          
-        ]
+            data: []
+          },
+          {
+                //辅助方格图形
+                name: "辅助值",
+                type: 'pictorialBar',
+                barWidth: this.propData.barWidth,
+                symbol: 'rect',
+                symbolRepeat: 'true',
+                symbolMargin: '70%',
+                symbolSize: ['100%', '30%'],
+                symbolOffset: ['0%', '0%'],
+                itemStyle: {
+                    normal: {
+                        color: this.propData.gapColor ? this.propData.gapColor.hex8 : '#ffffff'
+                    },
+                },
+                data : [],
+                z: 2
+            },
+        ],
+        animation: true,
       }
     },
     initEcharts() {
@@ -357,6 +395,14 @@ export default {
       let { xlabel,data,total } = result;
       this.echarts_option.xAxis.data = xlabel;
       this.echarts_option.series[0].data = data;
+      this.echarts_option.series[1].data = [];
+      data.forEach((item) => {
+        if (item - 20 > 0) {
+          this.echarts_option.series[1].data.push(item - 20)
+        } else {
+          this.echarts_option.series[1].data.push(0)
+        }
+      })
       this.myChart.setOption(this.echarts_option);
       this.total = total;
       this.makeNumberCounter()
@@ -405,6 +451,7 @@ export default {
       this.propData = propData.compositeAttr||{};
       this.number = this.propData.numberCount ? this.propData.numberCount : 6;
       this.convertAttrToStyleObject();
+      this.initEcharts()
     },
     /**
      * 把属性转换成样式对象

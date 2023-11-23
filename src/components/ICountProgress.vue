@@ -1,39 +1,14 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="ICountBar_app">
-    <div v-if="propData.showHeader" class="header">
-      <img src="../assets/head.png" alt="">
-      <div class="header_right flex_center">
-
-        <a-popover v-model="action_visible" @visibleChange="userLogoPopVisibleChange" :placement="propData.userLogoPopPlacement" overlayClassName="user_block_popover" :trigger="propData.showPersonActionEvent" >
-          <div slot="content">
-            <div @click="takePersonAction(item,index)" v-for="(item,index) in propData.personActionList" :key="index" class="user_dropdown_list flex_start">
-              <svg class="idm_button_svg_icon" :style="getTopBarStyleInlineIcon(item)" v-if="item.iconSvg && item.iconSvg.length > 0" aria-hidden="true" > 
-                  <use :xlink:href="`#${item.iconSvg[0]}`"></use>
-              </svg>
-              <span :style="getTopBarStyleInlineText(item)">{{ item.buttonText }}</span>
-            </div>
-          </div>
-          <div class="flex_center">
-            <span>{{ this.propData.welcomText }}{{ user_info.username ? user_info.username : '申龙'}}</span>
-            <SvgIcon v-if="!is_user_logo_pop_show" icon-class="xialajiantou"></SvgIcon>
-            <SvgIcon v-else icon-class="shangjiantou"></SvgIcon>
-          </div>
-          
-        </a-popover>
-
-
-        
-      </div>
-    </div>
     <div class="progress">
       <div class="title flex_center">
         <div class="title_left">
-          年度归档情况
+          {{ getTitleData() }}
         </div>
         <div class="title_right ">
           <a-popover v-model="year_visible" @visibleChange="selectYearPopVisibleChange" overlayClassName="user_block_popover" :trigger="propData.showPersonActionEvent" >
-            <div slot="content">
-              <div v-for="(item,index) in years_arr" @click="selectYear(item)" :key="index" class="user_dropdown_list flex_start">
+            <div slot="content" ref="user_dropdown_block" class="user_dropdown_block">
+              <div :id="item" v-for="(item,index) in years_arr" @click="selectYear(item)" :key="index" :class="item == year ? 'user_dropdown_list_active' : ''" class="user_dropdown_list flex_start">
                 <span>{{ item }}</span>
               </div>
             </div>
@@ -129,7 +104,8 @@ export default {
             buttonText: '退出登录'
           }
         ],
-        showPersonActionEvent: 'click'
+        showPersonActionEvent: 'click',
+        defaultYear: 2023
       },
       action_visible: false,
       is_user_logo_pop_show: false,
@@ -151,6 +127,8 @@ export default {
   created() {
     this.moduleObject = this.$root.moduleObject
     this.convertAttrToStyleObject();
+    this.getUserInfo()
+    this.getDefaultYear()
     this.getYearList()
     this.getInitData()
   },
@@ -162,6 +140,27 @@ export default {
   },
   destroyed() {},
   methods:{
+    getTitleData() {
+      return IDM.express.replace(this.propData.title,this.user_info) || '年度归档情况';
+    },
+    getDefaultYear() {
+      if ( this.propData.defaultYearType == 'static' ) {
+        this.year = this.propData.defaultYear;
+      } else {
+        this.year = this.handleInvokeFunctions(this.propData.getDefaultYearFunction, {
+        
+        })[0]
+      }
+    },
+    selectYearPopVisibleChange(e) {
+      this.is_select_year_pop_show = e;
+      if ( e ) {
+        this.$nextTick(() => {
+          let numberTop = $('#'+this.year).offset().top;
+          $('.ant-popover-inner-content').scrollTop(numberTop)
+        })
+      }
+    },
     getUserInfo() {
         let user_info = IDM.user.getCurrentUserInfo()
         console.log('ITopBar获取用户信息',user_info)
@@ -275,13 +274,28 @@ export default {
             }
         },function(res){
             console.log('grid组件获取数据++++++++',res)
-            that.initData = res
+            that.initData.noInFile = res.noInFile;
+            that.initData.inFile = res.inFile;
+            that.makePercentData(res.percent);
         },function(error){
           console.log('error',error)
         })
       } else {
-        this.initData = getProgressData()
+        this.initData.noInFile = getProgressData().noInFile;
+        this.initData.inFile = getProgressData().inFile;
+        let percent = getProgressData().percent;
+        this.makePercentData(percent)
       }
+    },
+    makePercentData(percent) {
+      let timer = setInterval(() => {
+        if ( this.initData.percent < percent ) {
+          this.initData.percent = this.initData.percent + 1;
+        } else {
+          this.initData.percent = percent;
+          clearInterval(timer)
+        }
+      },this.propData.animationDuration || 10)
     },
      makeParamsData(data) {
         let result = {};
@@ -301,9 +315,14 @@ export default {
       this.year = item;
       this.year_visible = false;
       this.is_select_year_pop_show = false;
+      if ( this.propData.changeYearFunction && this.propData.changeYearFunction.length ) {
+        this.handleInvokeFunctions(this.propData.changeYearFunction, {
+          _this: this
+        })
+      }
     },
     getYearList() {
-      for(let i = 2000;i < 2500;i++) {
+      for(let i = 2000;i < 2100;i++) {
         this.years_arr.push(i)
       }
     },
@@ -331,9 +350,7 @@ export default {
       }
       return styleObject;
     },
-    selectYearPopVisibleChange(e) {
-      this.is_select_year_pop_show = e;
-    },
+    
     userLogoPopVisibleChange(e) {
       this.is_user_logo_pop_show = e;
     },
@@ -342,6 +359,7 @@ export default {
      */
     propDataWatchHandle(propData){
       this.propData = propData.compositeAttr||{};
+      this.getDefaultYear()
       this.convertAttrToStyleObject();
     },
     /**
@@ -567,6 +585,7 @@ export default {
       margin-bottom: 3vh;
       .title_left{
         margin-right: 40px;
+        font-family: MicrosoftYaHei-Bold;
         font-size: 24px;
         color: #FFFFFF;
         letter-spacing: 0;
@@ -577,9 +596,10 @@ export default {
         color: #09E2F8;
         text-align: right;
         line-height: 24px;
+        font-family: MicrosoftYaHei-Bold;
         cursor: pointer;
         .svg-icon{
-          margin-left: 5px;
+          margin-left: 10px;
           font-size: 14px;
         }
       }
@@ -643,14 +663,15 @@ export default {
           transform: translate(-50%, -50%);
           text-align: center;
           .number{
+            margin-bottom: 8px;
             font-family: DIN-Bold;
-            font-size: 4.4vh;
+            font-size: 5.3vh;
             color: #FFFFFF;
             letter-spacing: 0;
           }
           .text{
             font-family: MicrosoftYaHei-Bold;
-            font-size: 1.8vh;
+            font-size: 2.2vh;
             color: #FFFFFF;
             letter-spacing: 0;
           }
@@ -664,15 +685,18 @@ export default {
           height: 18.5vh;
           background-size: 100% 100%;
           .label{
+            white-space: nowrap;
             .number{
               width: 100%;
-              font-size: 3.7vh;
+              margin-bottom: 8px;
+              font-size: 4.4vh;
               color: #00FFF4;
+              font-family: DIN-Bold;
             }
             .text{
               width: 100%;
               font-family: MicrosoftYaHei;
-              font-size: 1.85vh;
+              font-size: 2.2vh;
               color: #FFFFFF;
               letter-spacing: 0;
               text-align: right;
@@ -683,6 +707,7 @@ export default {
             width: 11.2vh;
             height: 11.2vh;
             position: relative;
+            flex-shrink: 0;
             .circle{
               position: absolute;
               left: 3px;
@@ -721,12 +746,13 @@ export default {
         transform: translate(-24.8vh, -50%);
         z-index: 6;
         &>.main{
+          padding-right: 40px;
           background-image: url(../assets/left-box.png);
           .label{
             text-align: right;
           }
           .circle_block{
-            left: 26px;
+            left: 1.5vw;
           }
         }
         
@@ -737,6 +763,7 @@ export default {
         transform: translate(24.6vh, -50%);
         z-index: 6;
         &>.main{
+          padding-left: 40px;
           background-image: url(../assets/right-box.png);
           .label{
             text-align: left;
@@ -755,6 +782,7 @@ export default {
       width: 281px;
       height: 101px;
       line-height: 101px;
+      font-family: MicrosoftYaHei-Bold;
       font-size: 22px;
       color: #FFFFFF;
       letter-spacing: 4.4px;
@@ -803,6 +831,9 @@ export default {
           outline: none;
           flex-shrink: 0;
       }
+  }
+  .user_dropdown_list_active{
+    color: #3D7FFF;
   }
   .ant-popover-inner-content{
     max-height: 400px;
