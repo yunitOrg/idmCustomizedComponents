@@ -21,20 +21,31 @@
         "desc": "提供设置组件能达到展示效果的基本属性设置信息",
         "children": [
           {
+            "type": "radio",
+            "styleType": "radio",
+            "layoutType": "inline",
+            "text": "分割线",
+            "desc":"是否显示图标分割线",
+            "bindKey": "showCutLine",
+            "default": true,
+            "dictionary": [
+                {
+                    "label": "是",
+                    "value": true
+                },
+                {
+                    "label": "否",
+                    "value": false
+                }
+            ]
+          },
+          {
             "type": "input",
             "layoutType": "inline",
             "text": "柱条宽度",
             "desc": "柱状图单条数据的宽度",
             "bindKey": "barWidth",
             "default": "15%"
-          },
-          {
-            "type": "input",
-            "layoutType": "block",
-            "text": "柱条最大宽度",
-            "desc": "柱状图单条数据的最大宽度",
-            "bindKey": "barMaxWidth",
-            "default": "25%"
           },
           {
             "type": "colorPicker",

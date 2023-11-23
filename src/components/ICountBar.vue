@@ -55,20 +55,10 @@ export default {
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
-        showHeader: true,
-        personActionList: [
-          {
-            buttonText: '切换主题'
-          },
-          {
-            buttonText: '退出登录',
-            buttonHandleType: 'logout'
-          }
-        ],
+        showCutLine: true,
         numberCount: 8,
         during: 100,
-        echartsType: 'pictorialBar',
-        barWidth: '30'
+        barWidth: '60'
       },
       action_visible: false,
       is_user_logo_pop_show: false,
@@ -146,76 +136,56 @@ export default {
             }
         }
     },
-    takePersonAction(item,index) {
-        this.action_visible = false;
-        if(this.moduleObject.env=="develop"){
-            return;
-        }
-        if ( item.buttonHandleType == 'none' ) {
-
-        } else if ( item.buttonHandleType == 'changeTheme' ) {
-            this.changeTheme(item)
-        } else if ( item.buttonHandleType == 'changePassword' ) {
-            this.changePassword(item)
-        } else if ( item.buttonHandleType == 'logout' ) {
-            this.logout(item)
-        } else if ( item.buttonHandleType == 'custom' ) {
-            this.takePersonActionCustom(item)
-        }
-    },
-    changeTheme(item) {
-        this.iframe_url_theme = IDM.url.getWebPath(this.propData.changeThemeIframeUrl) + (this.propData.changeThemeIframeUrl.indexOf('?')>-1?'&':'?') + 'skin=' + this.user_info.skin
-        this.is_theme_dialog_show = true;
-    },
-    changePassword(item) {
-        this.iframe_url_password = IDM.url.getWebPath(this.propData.changePasswordIframeUrl);
-        this.is_password_dialog_show = true;
-    },
-    logout() {
-      let that = this;
-      this.$confirm({
-        title: '提示?',
-        content: h => <div style="color:red;">是否注销</div>,
-        cancelText: '取消',
-        okText: '确认',
-        onOk() {
-          console.log('OK');
-          window.localStorage.setItem("showTip", "");
-          window.localStorage.themeSkin = "";
-          that.logoutSubmit()
-        },
-        onCancel() {
-          console.log('Cancel');
-        },
-        class: 'test',
-      });
-    },
-    logoutSubmit() {
-        var logoutUrl = this.propData.logoutUrl;
-        logoutUrl = logoutUrl + (logoutUrl.indexOf("?")>-1?"&":"?");
-        logoutUrl = logoutUrl + "loginFrom=" + this.user_info.applicationUrl;
-        window.location.href = IDM.url.getWebPath(logoutUrl);
-    },
-    takePersonActionCustom(item) {
-        let that = this;
-        if (this.moduleObject.env == "develop") {
-            return;
-        }
-        let urlObject = window.IDM.url.queryObject();
-        let pageId = window.IDM.broadcast && window.IDM.broadcast.pageModule ? window.IDM.broadcast.pageModule.id : "";
-        
-        var clickFunction = item.buttonCustomFunction;
-        clickFunction && clickFunction.forEach(item1 => {
-            window[item1.name] && window[item1.name].call(this, {
-                urlData: urlObject,
-                pageId,
-                customParam: item1.param,
-                _this: this
-            });
-        })
-    },
     getBarOption() {
-
+      return {
+        data: [],
+        // type: this.propData.echartsType || 'bar',
+        type: 'bar',
+        animationDuration: this.propData.animationDuration,  // 这里设置动画持续时间为 3000 毫秒（3 秒）
+        animationEasing: "cubicOut",  // 这里设置缓动函数为 cubicOut
+        label: { 
+            show: true,
+            color: "#77C8FF",
+            fontSize: "10",
+            position: "top",
+        },
+        barBorderRadius:  [3, 3, 0, 0],
+        barWidth: this.propData.barWidth,
+        // showBackground: true,
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(
+            0, 0, 0, 1,       //4个参数用于配置渐变色的起止位置, 这4个参数依次对应右/下/左/上四个方位. 而0 0 0 1则代表渐变色从正上方开始
+              [
+                  {offset: 1, color: '#0479FD'},
+                  {offset: 0, color: '#07EDFF'}
+              ]                
+          ),
+          barBorderRadius: 2,
+        }
+      }
+    },
+    getlineOption() {
+      return {
+        data: [],
+        // 分隔
+        type: "pictorialBar",
+        tooltip: {
+          show: false,
+        },
+        symbolRotate: "0",
+        itemStyle: {
+          color: this.propData.gapColor ? this.propData.gapColor.hex8 : '#ffffff'
+        },
+        symbolRepeat: "fixed",
+        symbolMargin: 3,
+        symbol: "rect",
+        symbolClip: true,
+        symbolSize: [this.propData.barWidth,3],
+        symbolPosition: "start",
+        symbolOffset: [0, 0],
+        z: 66,
+        animationEasing: "elasticOut",
+      }
     },
     setEchartsOption() {
       this.echarts_option = {
@@ -267,108 +237,65 @@ export default {
             }
           }
         },
+        animation: true,
+        series: [ ] 
         // series: [
         //   {
-        //     data: [],
-        //     // type: this.propData.echartsType || 'bar',
-        //     type: 'bar',
-        //     animationDuration: this.propData.animationDuration,  // 这里设置动画持续时间为 3000 毫秒（3 秒）
-        //     animationEasing: "cubicOut",  // 这里设置缓动函数为 cubicOut
+        //     type: 'pictorialBar',
+        //     symbol: 'rect',
+        //     barWidth: this.propData.barWidth,
         //     label: { 
         //         show: true,
         //         color: "#77C8FF",
         //         fontSize: "10",
         //         position: "top",
         //     },
-        //     barBorderRadius:  [3, 3, 0, 0],
-        //     barWidth: this.propData.barWidth,
-        //     barMaxWidth: this.propData.barMaxWidth,
-        //     // showBackground: true,
         //     itemStyle: {
-        //       color: new echarts.graphic.LinearGradient(
-        //         0, 0, 0, 1,       //4个参数用于配置渐变色的起止位置, 这4个参数依次对应右/下/左/上四个方位. 而0 0 0 1则代表渐变色从正上方开始
-        //           [
-        //               {offset: 1, color: '#07EDFF'},
-        //               {offset: 0, color: '#0479FD'}
-        //           ]                
-        //       ),
-        //       barBorderRadius: 2,
-        //     }
+        //         normal: {
+        //             color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
+        //                 {
+        //                     offset: 0,
+        //                     color: '#0479FD',
+
+        //                 },
+        //                 {
+        //                     offset: 1,
+        //                     color: '#07EDFF',
+
+        //                 },
+        //             ]),
+        //         }
+        //     },
+        //     z: 99,
+        //     data: []
         //   },
         //   {
-        //     data: [],
-        //     // 分隔
-        //     type: "pictorialBar",
-        //     tooltip: {
-        //       show: false,
+        //         //辅助方格图形
+        //         name: "辅助值",
+        //         type: 'bar',
+        //         barWidth: this.propData.barWidth,
+        //         symbol: 'rect',
+        //         symbolRepeat: 'true',
+        //         symbolMargin: '70%',
+        //         symbolSize: ['100%', '30%'],
+        //         symbolOffset: ['0%', '0%'],
+        //         itemStyle: {
+        //             normal: {
+        //                 color: this.propData.gapColor ? this.propData.gapColor.hex8 : '#ffffff'
+        //             },
+        //         },
+        //         data : [],
+        //         // z: 99
         //     },
-        //     symbolRotate: "0",
-        //     itemStyle: {
-        //       color: '#3D7AFF'
-        //     },
-        //     symbolRepeat: "fixed",
-        //     symbolMargin: 3,
-        //     symbol: "rect",
-        //     symbolClip: true,
-        //     symbolSize: [this.propData.barWidth,3],
-        //     symbolPosition: "start",
-        //     symbolOffset: [0, 0],
-        //     z: 66,
-        //     animationEasing: "elasticOut",
-        //     }
         // ],
-        series: [
-          {
-            type: 'pictorialBar',
-            symbol: 'rect',
-            barWidth: this.propData.barWidth,
-            label: { 
-                show: true,
-                color: "#77C8FF",
-                fontSize: "10",
-                position: "top",
-            },
-            itemStyle: {
-                normal: {
-                    color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
-                        {
-                            offset: 0,
-                            color: '#0479FD',
-
-                        },
-                        {
-                            offset: 1,
-                            color: '#07EDFF',
-
-                        },
-                    ]),
-                }
-            },
-            data: []
-          },
-          {
-                //辅助方格图形
-                name: "辅助值",
-                type: 'pictorialBar',
-                barWidth: this.propData.barWidth,
-                symbol: 'rect',
-                symbolRepeat: 'true',
-                symbolMargin: '70%',
-                symbolSize: ['100%', '30%'],
-                symbolOffset: ['0%', '0%'],
-                itemStyle: {
-                    normal: {
-                        color: this.propData.gapColor ? this.propData.gapColor.hex8 : '#ffffff'
-                    },
-                },
-                data : [],
-                z: 2
-            },
-        ],
-        animation: true,
+      }
+      this.echarts_option.series.push(this.getBarOption());
+      if(this.propData.showCutLine) {
+        this.echarts_option.series.push(this.getlineOption());
       }
     },
     initEcharts() {
+      document.getElementById('myBarChart').removeAttribute('_echarts_instance_');
       let chartDom = document.getElementById("myBarChart");
 			this.myChart = echarts.init(chartDom);
       if ( this.propData.dataSource && this.propData.dataSource.length ) {
@@ -395,14 +322,17 @@ export default {
       let { xlabel,data,total } = result;
       this.echarts_option.xAxis.data = xlabel;
       this.echarts_option.series[0].data = data;
-      this.echarts_option.series[1].data = [];
-      data.forEach((item) => {
-        if (item - 20 > 0) {
-          this.echarts_option.series[1].data.push(item - 20)
-        } else {
-          this.echarts_option.series[1].data.push(0)
-        }
-      })
+      if (this.propData.showCutLine) {
+        this.echarts_option.series[1].data = [];
+        data.forEach((item) => {
+          if (item - 10 > 0) {
+            this.echarts_option.series[1].data.push(item - 10)
+          } else {
+            this.echarts_option.series[1].data.push(0)
+          }
+        })
+      }
+      
       this.myChart.setOption(this.echarts_option);
       this.total = total;
       this.makeNumberCounter()
@@ -451,6 +381,7 @@ export default {
       this.propData = propData.compositeAttr||{};
       this.number = this.propData.numberCount ? this.propData.numberCount : 6;
       this.convertAttrToStyleObject();
+      this.setEchartsOption()
       this.initEcharts()
     },
     /**
