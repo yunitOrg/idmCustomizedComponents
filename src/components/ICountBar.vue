@@ -325,11 +325,13 @@ export default {
       if (this.propData.showCutLine) {
         this.echarts_option.series[1].data = [];
         data.forEach((item) => {
-          if (item - 10 > 0) {
-            this.echarts_option.series[1].data.push(item - 10)
-          } else {
-            this.echarts_option.series[1].data.push(0)
-          }
+          this.echarts_option.series[1].data.push(item)
+
+          // if (item - 10 > 0) {
+          //   this.echarts_option.series[1].data.push(item - 10)
+          // } else {
+          //   this.echarts_option.series[1].data.push(0)
+          // }
         })
       }
       
