@@ -21,202 +21,13 @@
         "desc": "提供设置组件能达到展示效果的基本属性设置信息",
         "children": [
           {
-            "type": "radio",
-            "styleType": "radio",
+            "type": "treeSelect",
             "layoutType": "inline",
-            "text": "分割线",
-            "desc":"是否显示图标分割线",
-            "bindKey": "showCutLine",
-            "default": true,
-            "dictionary": [
-                {
-                    "label": "是",
-                    "value": true
-                },
-                {
-                    "label": "否",
-                    "value": false
-                }
-            ]
-          },
-          {
-            "type": "input",
-            "layoutType": "inline",
-            "text": "柱条宽度",
-            "desc": "柱状图单条数据的宽度",
-            "bindKey": "barWidth",
-            "default": "15%"
-          },
-          {
-            "type": "colorPicker",
-            "layoutType": "inline",
-            "text": "分割颜色",
-            "bindKey": "gapColor",
-            "placeholder": "请选择颜色",
-            "default": {}
-          }
-        ]
-      },
-      {
-        "type": "group",
-        "text": "头部内容属性",
-        "display":"@[showHeader]",
-        "children":[
-          {
-            "type": "uploadImage",
-            "layoutType": "inline",
-            "text": "logo图片",
-            "bindKey": "logoImgUrl",
-            "placeholder": "可输入图片地址或直接上传"
-          },
-          {
-            "type": "input",
-            "layoutType": "inline",
-            "text": "欢迎语",
-            "desc": "用户姓名前面的欢迎语",
-            "bindKey": "welcomText",
-            "default": "欢迎您，"
-          },
-          {
-            "type": "select",
-            "layoutType": "inline",
-            "text": "触发方式",
-            "desc": "点击用户时，触发下拉框的方式",
-            "bindKey": "showPersonActionEvent",
-            "default": "click",
-            "dictionary": [
-                {
-                    "label": "点击触发",
-                    "value": "click"
-                },
-                {
-                    "label": "鼠标悬浮触发",
-                    "value": "hover"
-                }
-            ],
-            "display":"@[showPersonAction]"
-          },
-          {
-            "type": "table",
-            "text": "下拉操作按钮选项设置",
-            "desc": "点击用户头像下拉框按钮属性配置",
-            "bindKey": "personActionList",
-            "tabText": "按钮[index]",
-            "children": [
-                {
-                    "type": "iconSelect",
-                    "layoutType": "inline",
-                    "text": "按钮图标",
-                    "bindKey": "iconSvg",
-                    "desc":"设置按钮的图标",
-                    "placeholder": "请选择"
-                },
-                {
-                    "type": "input",
-                    "layoutType": "inline",
-                    "text": "按钮文字",
-                    "desc":"设置按钮显示的文字",
-                    "bindKey": "buttonText",
-                    "placeholder":"示例：切换主题"
-                },
-                {
-                    "type": "colorPicker",
-                    "layoutType": "inline",
-                    "text": "图标颜色",
-                    "bindKey": "iconSvgFontColor",
-                    "default": ""
-                },
-                {
-                    "type": "inputNumber",
-                    "layoutType": "inline",
-                    "text": "图标大小",
-                    "bindKey": "iconSvgFontSize",
-                    "default": 14
-                },
-                {
-                    "type": "font",
-                    "layoutType": "block",
-                    "text": "按钮文字字体",
-                    "bindKey": "font"
-                },
-                {
-                    "type": "select",
-                    "layoutType": "inline",
-                    "text": "事件类型",
-                    "bindKey": "buttonHandleType",
-                    "desc":"点击按钮触发的操作类型，可以选择内置的处理函数，也可以使用自定义编写函数",
-                    "dictionary": [
-                        {
-                            "label": "无事件",
-                            "value": "none"
-                        },
-                        {
-                            "label": "注销",
-                            "value": "logout"
-                        },
-                        {
-                            "label": "自定义函数",
-                            "value": "custom"
-                        }
-                    ],
-                    "default": "none"
-                },
-                {
-                    "type": "actionSelect",
-                    "layoutType": "block",
-                    "text": "事件自定义函数",
-                    "bindKey": "buttonCustomFunction",
-                    "display":"@[buttonHandleType=='custom']",
-                    "desc": "当点击按钮的时候会调用此函数，接收参数格式为{customParam:自定义的,currentKey,configObject:当前按钮配置项,fieldConfigObject:当前字段配置项,itemObject:整条数据对象,callback:处理完成要刷新tab的回调方法，调用并传reloadTabKeys即可刷新指定的tab}",
-                    "multiple": true
-                }
-            ]
-          },
-          {
-            "type": "actionSelect",
-            "layoutType": "block",
-            "text": "用户名自定义显示函数",
-            "bindKey": "customFunctionUserName",
-            "desc": "获取用户名,如果设置了此函数并返回了内容不为空则才会显示自定义结果，否则会显示组件内置的用户信息",
-            "multiple": false
-          }
-        ]
-      },
-      {
-        "type": "group",
-        "text": "图表内容属性",
-        "children":[
-          {
-            "type": "input",
-            "layoutType": "inline",
-            "text": "图表标题",
-            "desc": "图表标题",
-            "bindKey": "echartsTitle",
-            "default": "各门类档案量统计"
-          },
-          {
-            "type": "input",
-            "layoutType": "inline",
-            "text": "数值标题",
-            "desc": "数值翻页器标题",
-            "bindKey": "numberTitle",
-            "default": "库存档案总量"
-          },
-          {
-            "type": "inputNumber",
-            "layoutType": "inline",
-            "text": "数值位数",
-            "desc": "数值翻页器位数，不足的补0",
-            "bindKey": "numberCount",
-            "default": 6
-          },
-          {
-            "type": "inputNumber",
-            "layoutType": "inline",
-            "text": "翻转时间",
-            "desc": "数值翻页器翻转时间",
-            "bindKey": "during",
-            "default": 1000
+            "text": "选择栏目",
+            "bindKey": "selectColumn",
+            "dataSourceUrl": "/ctrl/website/api/channelTree",
+            "default": "",
+            "openGroup": true
           }
         ]
       },
@@ -454,10 +265,17 @@
         "children":[
           {
             "type": "dataSourceSelect",
-            "layoutType": "inline",
-            "text": "数据源",
-            "desc":"数据源，返回格式如：{ xlabel:['文书类','专业类'],data: [100,150],total:789 }",
-            "bindKey": "dataSource"
+            "layoutType": "block",
+            "text": "左侧栏目数据源",
+            "desc":"示例：数据源接口地址/ctrl/website/api/leftNavigation，参数{navigationColumn: ''}返回格式如：[{id: '',title: '',jumpUrl: ''}]",
+            "bindKey": "dataSourceLeft"
+          },
+          {
+            "type": "dataSourceSelect",
+            "layoutType": "block",
+            "text": "右侧内容数据源",
+            "desc":"示例：数据源接口地址/ctrl/website/api/columnlist，参数{columnId: '',start: 1,limit: 6},,返回格式如：[{title: '',content: '',yearMonth: '',day: '',id: ''}]",
+            "bindKey": "dataSourceRight"
           }
         ]
       },
@@ -467,29 +285,21 @@
           "desc": "点击？查看高级设置用法指南",
           "children": [
             {
-              "type": "actionSelect",
-              "layoutType": "block",
-              "text": "参数自定义函数",
-              "bindKey": "paramsMakeFunction",
-              "desc": "用于请求数据源时，对请求参数进行处理，返回处理后的参数",
-              "multiple": false
-            },
-              {
-                  "type": "actionSelect",
-                  "layoutType": "block",
-                  "text": "档案归档点击动作",
-                  "bindKey": "clickFunction1",
-                  "desc": "点击的时候会调用设置的自定义函数，接收参数为格式为{...自定义的}",
-                  "multiple": true
-              },
-              {
                 "type": "actionSelect",
                 "layoutType": "block",
-                "text": "查询利用点击动作",
-                "bindKey": "clickFunction2",
+                "text": "点击更多动作",
+                "bindKey": "clickMoreFunction",
                 "desc": "点击的时候会调用设置的自定义函数，接收参数为格式为{...自定义的}",
                 "multiple": true
-              }
+            },
+            {
+              "type": "actionSelect",
+              "layoutType": "block",
+              "text": "内容点击动作",
+              "bindKey": "clickContentFunction",
+              "desc": "点击的时候会调用设置的自定义函数，接收参数为格式为{...自定义的}",
+              "multiple": true
+            }
           ]
       }
   ]

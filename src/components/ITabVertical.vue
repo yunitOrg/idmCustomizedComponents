@@ -1,22 +1,52 @@
 <template>
-  <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="ITabVertical_app">
-    ITabVertical
+  <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="ITabVertical_app flex_between">
+    <div class="ITabVertical_app_left">
+      <div class="ITabVertical_app_left_main">
+        <vue-scroll :ops="scrollOps">
+          <div v-for="(item,index) in leftNavList" @click="changeCurrentColumn(item)" :key="index" class="list" :class="item.id == current_column ? 'list_active' : ''">
+            {{ item.title }}
+          </div>
+        </vue-scroll>
+
+      </div>
+      <div @click="handleClickMore()" class="button_block">
+        更多
+      </div>
+    </div>
+    <div class="ITabVertical_app_right">
+      <vue-scroll :ops="scrollOps">
+        <div class="ITabVertical_app_right_main flex_start">
+          <div v-for="(item,index) in rightDataList" @click="handleClickContent(item)" :key="index" class="list flex_between">
+            <div class="list_left">
+              <div class="top">{{ item.yearMonth }}</div>
+              <div class="bottom">{{ item.day }}</div>
+            </div>
+            <div class="list_right">
+              <div class="title">{{ item.title }}</div>
+              <div class="content">{{ item.content }}</div>
+            </div>
+          </div>
+        </div>
+      </vue-scroll>
+    </div>
   </div>
 </template>
 
 <script>
-
-import commonMixins from '../mixins/index'
-
+import vuescroll from '../mixins/vueScroll'
+import { getTabVerticalLeftList,getTabVerticalRightData } from '../mock/index'
 export default {
   name: 'ITabVertical',
-  mixins: [ commonMixins ],
+  mixins: [ vuescroll ],
   data(){
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
         
       },
+      leftNavList: [],
+      rightDataList: [],
+      current_column: ''
     }
   },
   watch: {
@@ -27,12 +57,81 @@ export default {
   created() {
     this.moduleObject = this.$root.moduleObject
     this.convertAttrToStyleObject();
+    this.getLeftNavList()
   },
   mounted() {
     
   },
   destroyed() {},
   methods:{
+    handleClickMore() {
+      let itemObj = {};
+      itemObj = this.leftNavList.filter((item) => {
+        return item.columnId == this.current_column
+      })
+      IDM.invokeCustomFunctions.apply(this,[this.propData.clickMoreFunction,{
+        columnId: this.current_column,
+        item: itemObj ? itemObj : {}
+      }])
+    },
+    handleClickContent(item) {
+      IDM.invokeCustomFunctions.apply(this,[this.propData.clickContentFunction,{
+        item: item
+      }])
+    },
+    changeCurrentColumn(item) {
+      this.current_column = item.id;
+      this.getRightDataList()
+    },
+    getLeftNavList() {
+      let that = this;
+      if (this.propData.dataSourceLeft && this.propData.dataSourceLeft.length) {
+        IDM.datasource.request(
+          this.propData.dataSourceLeft[0].id,
+          {
+            moduleObject: this.moduleObject,
+            navigationColumn: this.propData.selectColumn ? this.propData.selectColumn.id : ''
+          }, function (res) {
+            if (res && res.length) {
+              that.leftNavList = res;
+              that.getRightDataList()
+            }
+          },
+          function (error) {
+            //这里是请求失败的返回结果
+            console.log("error", error);
+          }
+        );
+      } else {
+        this.leftNavList = getTabVerticalLeftList()
+        this.current_column = this.leftNavList[0].id;
+        this.getRightDataList()
+      }
+    },
+    getRightDataList() {
+      let that = this;
+      if (this.propData.dataSourceRight && this.propData.dataSourceRight.length) {
+        IDM.datasource.request(
+          this.propData.dataSourceRight[0].id,
+          {
+            moduleObject: this.moduleObject,
+            columnId: this.current_column,
+            start: 1,
+            limit: 6
+          }, function (res) {
+            if (res && res.length) {
+              that.rightDataList = res;
+            }
+          },
+          function (error) {
+            //这里是请求失败的返回结果
+            console.log("error", error);
+          }
+        );
+      } else {
+        this.rightDataList = getTabVerticalRightData()
+      }
+    },
     getImageSrc(url,name) {
       if ( url ) {
         return IDM.url.getWebPath(url)
@@ -281,118 +380,110 @@ export default {
 </script>
 <style lang="scss" scoped>
 .ITabVertical_app{
-  // height: 100vh;
-  // background-image: url(../assets/body-bg.png);
-  // background-size: 100% 100%;
-  .header{
-    height: 10vh;
-    margin-bottom: 3vh;
-    position: relative;
+  // height: 468px;
+  height: 500px;
+  // padding: 16px 0;
+  .ITabVertical_app_left{
+    height: 100%;
+    padding: 16px 0;
     text-align: center;
-    img{
-      max-height: 100%;
-    }
-    .header_right{
-      position: absolute;
-      right: 58px;
-      top: 21px;
-      width: 255px;
-      height: 50px;
-      line-height: 50px;
-      float: right;
-      font-size: 18px;
-      color: #00FFF4;
-      letter-spacing: 0;
-      background-image: url(../assets/user-bg.png);
-      background-size: 100% 100%;
-      .svg-icon{
-        margin-left: 5px;
-        font-size: 13px;
-      }
-    }
-  }
-  .echarts{
-    padding: 0 20%;
-    height: 46vh;
-    margin: 0 auto 5vh auto;
-    .echarts_body{
-      height: 100%;
-      // margin: 50px;
-      position: relative;
-      padding: 11px 40px 40px 40px;
-      background: rgba(14,95,255,0.15);
-      border: 1px solid #3D7AFF;
-      .title{
-        // width: 748px;
-        height: 50px;
-        line-height: 50px;
-        margin: 0 auto;
-        font-size: 20px;
-        color: #FFFFFF;
-        letter-spacing: 0;
+    .ITabVertical_app_left_main{
+      height: calc(100% - 77px);
+      width: 108px;
+      padding: 27px 0;
+      .list{
+        height: 64px;
+        line-height: 64px;
+        margin-bottom: 33px;
+        // padding: 16px 0;
+        font-family: PingFangSC-Regular;
+        font-size: 24px;
+        color: #333333;
         text-align: center;
-        background-image: url(../assets/echarts-title-bg.png);
-        background-size: 100% 100%;
-      }
-      .echarts_main{
-        height: calc(100% - 50px);
-        #myBarChart{
-          height: 100%;
+        // line-height: 24px;
+        font-weight: 400;
+        cursor: pointer;
+        &:last-child{
+          margin-bottom: 0;
         }
       }
-      .line{
-        width: 80px;
-        position: absolute;
-        height: 100%;
-        top: 0;
-        bottom: 0;
-        img{
-          height: 100%;
-          width: 100%;
-        }
-      }
-      .line_left{
-        left: -43px;
-      }
-      .line_right{
-        right: -38px;
+      .list_active{
+        color:  #0052A1;
+        border-bottom: 2px solid rgba(0,82,161,1);
       }
     }
   }
-  .number_counter{
-    width: auto;
-    margin: 0 auto 4vh auto;
-    .title{
-      margin-bottom: 1vh;
-      font-size: 24px;
-      color: #FFFFFF;
-      letter-spacing: 4.8px;
-      text-align: center;
-      line-height: 30px;
-    }
-  }
-  .button_block{
-    .button_list{
-      width: 281px;
-      height: 9vh;
-      line-height: 9vh;
-      font-size: 2.2vh;
-      color: #FFFFFF;
-      letter-spacing: 4.4px;
-      text-align: center;
-      cursor: pointer;
-      background-size: 100% 100%;
-      &:nth-child(1){
-        margin-right: 60px;
-        background-image: url(../assets/btn-bg1.png);
-      }
-      &:nth-child(2){
-        background-image: url(../assets/btn-bg2.png);
+  .ITabVertical_app_right{
+    width: calc(100% - 220px);
+    height: 100%;
+    .ITabVertical_app_right_main{
+      flex-wrap: wrap;
+      padding: 16px 5px;
+      .list{
+        width: calc(50% - 30px);
+        height: 139px;
+        margin-top: 24px;
+        padding: 24px 23px 24px 26px;
+        background: rgba(255,255,255,0.97);
+        box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.1);
+        border-radius: 4px;
+        cursor: pointer;
+        &:nth-child(1),&:nth-child(2){
+          margin-top: 0;
+        }
+        &:nth-child(2n){
+          margin-left: 60px;
+        }
+        .list_left{
+          flex-shrink: 0;
+          margin-right: 32px;
+          text-align: center;
+          .top{
+            font-family: Helvetica-Bold;
+            font-size: 22px;
+            color: #333333;
+            letter-spacing: 0;
+            text-align: center;
+            font-weight: 700;
+          }
+          .bottom{
+            font-size: 16px;
+            color: #999999;
+            letter-spacing: 0;
+            text-align: center;
+            font-weight: 400;
+          }
+        }
+        .list_right{
+          width: calc(100% - 116px);
+          flex-grow: 0;
+          .title{
+            width: 100%;
+            margin-bottom: 12px;
+            font-family: PingFangSC-Medium;
+            font-size: 20px;
+            color: #303031;
+            letter-spacing: 0;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .content{
+            height: 50px;
+            overflow: hidden;
+            font-family: PingFangSC-Regular;
+            font-size: 18px;
+            color: #666666;
+            font-weight: 400;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+        }
       }
     }
   }
 }
-</style>
-<style lang="scss">
-
 </style>
