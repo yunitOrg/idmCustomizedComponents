@@ -1,71 +1,22 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="ITabVertical_app">
-    <div class="echarts">
-      <div class="echarts_body">
-        <div class="title">
-          {{ this.propData.echartsTitle }}
-        </div>
-        <div class="echarts_main">
-          <div id="myBarChart" class="myBarChart"></div>
-        </div>
-        <div class="line_left line">
-          <img :src="getImageSrc('','line-left')" alt="">
-        </div>
-        <div class="line_right line">
-          <img :src="getImageSrc('','line-right')" alt="">
-        </div>
-      </div>
-      
-    </div>
-    <div class="number_counter">
-      <div v-if="propData.numberTitle" class="title">
-        {{ propData.numberTitle }}
-      </div>
-      <div class="main flex_center">
-        <div ref="dataStatistics" class="dataStatistics">
-          <div v-for="(item,index) in number" :key="index" class="digit_set"></div>
-          <div class="unit">件</div>
-        </div>
-      </div>
-    </div>
-    <div class="button_block flex_center">
-      <div @click="takeFile()" class="button_list">
-        档案归档
-      </div>
-      <div @click="takeSearch()" class="button_list">
-        查询利用
-      </div>
-    </div>
-    
+    ITabVertical
   </div>
 </template>
 
 <script>
-import counterBar from '../mixins/counterBar'
-import * as echarts from 'echarts'
-import { getEchartsData } from '../mock/index'
 
-import '../mixins/jquery.dataStatistics'
 import commonMixins from '../mixins/index'
 
 export default {
   name: 'ITabVertical',
-  mixins: [ counterBar,commonMixins ],
+  mixins: [ commonMixins ],
   data(){
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
-        showCutLine: true,
-        numberCount: 8,
-        during: 100,
-        barWidth: '60'
+        
       },
-      action_visible: false,
-      is_user_logo_pop_show: false,
-      myChart: null,
-      echarts_option: {},
-      number: 6,
-      user_info: { },
     }
   },
   watch: {
@@ -75,272 +26,19 @@ export default {
   },
   created() {
     this.moduleObject = this.$root.moduleObject
-    // console.log(this.moduleObject)
-    this.number = this.propData.numberCount ? this.propData.numberCount : 6;
     this.convertAttrToStyleObject();
-    this.setEchartsOption()
-    this.getUserInfo()
   },
   mounted() {
-    // 根据窗口大小调整图表大小
-    window.onresize = () => {
-      this.myChart && this.myChart.resize();
-    };
-    this.$nextTick(() => {
-      this.initEcharts()
-		})
+    
   },
   destroyed() {},
   methods:{
-    takeFile() {
-      this.handleInvokeFunctions(this.propData.clickFunction1, {
-        
-      })
-    },
-    takeSearch() {
-      this.handleInvokeFunctions(this.propData.clickFunction2, {
-        
-      })
-    },
     getImageSrc(url,name) {
       if ( url ) {
         return IDM.url.getWebPath(url)
       } else {
         return IDM.url.getModuleAssetsWebPath(require(`../assets/${name}.png`),this.moduleObject)
       }
-    },
-    getUserInfo() {
-        let user_info = IDM.user.getCurrentUserInfo()
-        console.log('ITopBar获取用户信息',user_info)
-        this.user_info = user_info || {};
-        this.getUserNameCustom()
-    },
-    getUserNameCustom() {
-        if( this.propData.customFunctionUserName && this.propData.customFunctionUserName.length > 0 ){
-            var resValue = "";
-            var params = this.commonParam();
-            let that = this;
-            try {
-                resValue = window[this.propData.customFunctionUserName[0].name]&&
-                    window[this.propData.customFunctionUserName[0].name].call(this,{
-                        ...params,
-                        ...this.propData.customFunctionUserName[0].param,
-                        moduleObject:this.moduleObject,
-                        _this: this
-                    });
-                if ( resValue ) {
-                    that.$set(that.user_info,'username',resValue)
-                }
-            } catch (error) {
-
-            }
-        }
-    },
-    getBarOption() {
-      return {
-        data: [],
-        // type: this.propData.echartsType || 'bar',
-        type: 'bar',
-        animationDuration: this.propData.animationDuration,  // 这里设置动画持续时间为 3000 毫秒（3 秒）
-        animationEasing: "cubicOut",  // 这里设置缓动函数为 cubicOut
-        label: { 
-            show: true,
-            color: "#77C8FF",
-            fontSize: "10",
-            position: "top",
-        },
-        barBorderRadius:  [3, 3, 0, 0],
-        barWidth: this.propData.barWidth,
-        // showBackground: true,
-        itemStyle: {
-          color: new echarts.graphic.LinearGradient(
-            0, 0, 0, 1,       //4个参数用于配置渐变色的起止位置, 这4个参数依次对应右/下/左/上四个方位. 而0 0 0 1则代表渐变色从正上方开始
-              [
-                  {offset: 1, color: '#0479FD'},
-                  {offset: 0, color: '#07EDFF'}
-              ]                
-          ),
-          barBorderRadius: 2,
-        }
-      }
-    },
-    getlineOption() {
-      return {
-        data: [],
-        // 分隔
-        type: "pictorialBar",
-        tooltip: {
-          show: false,
-        },
-        symbolRotate: "0",
-        itemStyle: {
-          color: this.propData.gapColor ? this.propData.gapColor.hex8 : '#ffffff'
-        },
-        symbolRepeat: "fixed",
-        symbolMargin: 3,
-        symbol: "rect",
-        symbolClip: true,
-        symbolSize: [this.propData.barWidth,3],
-        symbolPosition: "start",
-        symbolOffset: [0, 0],
-        z: 66,
-        animationEasing: "elasticOut",
-      }
-    },
-    setEchartsOption() {
-      this.echarts_option = {
-        grid: {
-            top: 50,
-            left: 40,
-            right: 0,
-            bottom: 30
-        },
-        xAxis: {
-          type: 'category',
-          axisLine: {
-            show: false
-          },
-          axisTick: {
-            show: false,
-          },
-          splitLine: {
-            show: false,
-          },
-          minorSplitLine: {
-            show: false
-          },
-          axisLabel: {
-            margin: 12,
-              textStyle: {
-                  color: 'rgba(255,255,255,1)',
-                  fontSize: '16px'
-              }
-          },
-          data: [],
-        },
-        yAxis: {
-          type: 'value',
-          axisLabel: {
-              textStyle: {
-                  color: 'rgba(255,255,255,0.8)',
-                  fontSize: '14px'
-              }
-          },
-          axisTick: {
-            show: false,
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              width: 1,
-              color: 'rgba(255,255,255,0.2)',
-            }
-          }
-        },
-        animation: true,
-        series: [ ] 
-        // series: [
-        //   {
-        //     type: 'pictorialBar',
-        //     symbol: 'rect',
-        //     barWidth: this.propData.barWidth,
-        //     label: { 
-        //         show: true,
-        //         color: "#77C8FF",
-        //         fontSize: "10",
-        //         position: "top",
-        //     },
-        //     itemStyle: {
-        //         normal: {
-        //             color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
-        //                 {
-        //                     offset: 0,
-        //                     color: '#0479FD',
-
-        //                 },
-        //                 {
-        //                     offset: 1,
-        //                     color: '#07EDFF',
-
-        //                 },
-        //             ]),
-        //         }
-        //     },
-        //     z: 99,
-        //     data: []
-        //   },
-        //   {
-        //         //辅助方格图形
-        //         name: "辅助值",
-        //         type: 'bar',
-        //         barWidth: this.propData.barWidth,
-        //         symbol: 'rect',
-        //         symbolRepeat: 'true',
-        //         symbolMargin: '70%',
-        //         symbolSize: ['100%', '30%'],
-        //         symbolOffset: ['0%', '0%'],
-        //         itemStyle: {
-        //             normal: {
-        //                 color: this.propData.gapColor ? this.propData.gapColor.hex8 : '#ffffff'
-        //             },
-        //         },
-        //         data : [],
-        //         // z: 99
-        //     },
-        // ],
-      }
-      this.echarts_option.series.push(this.getBarOption());
-      if(this.propData.showCutLine) {
-        this.echarts_option.series.push(this.getlineOption());
-      }
-    },
-    initEcharts() {
-      document.getElementById('myBarChart').removeAttribute('_echarts_instance_');
-      let chartDom = document.getElementById("myBarChart");
-			this.myChart = echarts.init(chartDom);
-      if ( this.propData.dataSource && this.propData.dataSource.length ) {
-        let that = this;
-        var params = this.commonParam();
-        params = this.makeParamsData(params)
-        IDM.datasource.request(this.propData.dataSource[0].id,{
-            moduleObject:this.moduleObject,
-            _this: that,
-            param:{
-                ...params
-            }
-        },function(res){
-            console.log('grid组件获取数据++++++++',res)
-            that.makeEchartsData(res)
-        },function(error){
-          console.log('error',error)
-        })
-      } else {
-        this.makeEchartsData(getEchartsData())
-      }
-    },
-    makeEchartsData(result) {
-      let { xlabel,data,total } = result;
-      this.echarts_option.xAxis.data = xlabel;
-      this.echarts_option.series[0].data = data;
-      if (this.propData.showCutLine) {
-        this.echarts_option.series[1].data = [];
-        data.forEach((item) => {
-          this.echarts_option.series[1].data.push(item)
-
-          // if (item - 10 > 0) {
-          //   this.echarts_option.series[1].data.push(item - 10)
-          // } else {
-          //   this.echarts_option.series[1].data.push(0)
-          // }
-        })
-      }
-      
-      this.myChart.setOption(this.echarts_option);
-      this.total = total;
-      this.makeNumberCounter()
-    },
-    makeNumberCounter() {
-      $('.dataStatistics').dataStatistics({min:0,max:this.total,time:this.propData.during,len:(this.propData.numberCount ? this.propData.numberCount : 6)});
     },
     makeParamsData(data) {
         let result = {};
@@ -373,9 +71,6 @@ export default {
       }
       return styleObject;
     },
-    userLogoPopVisibleChange(e) {
-      this.is_user_logo_pop_show = e;
-    },
     /**
      * 提供父级组件调用的刷新prop数据组件
      */
@@ -383,8 +78,6 @@ export default {
       this.propData = propData.compositeAttr||{};
       this.number = this.propData.numberCount ? this.propData.numberCount : 6;
       this.convertAttrToStyleObject();
-      this.setEchartsOption()
-      this.initEcharts()
     },
     /**
      * 把属性转换成样式对象
