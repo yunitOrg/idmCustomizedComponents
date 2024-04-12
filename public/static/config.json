@@ -24,6 +24,13 @@
       "className": "ICountProgress",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.itabvertical",
+      "comName": "驻京办页签",
+      "className": "ITabVertical",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
