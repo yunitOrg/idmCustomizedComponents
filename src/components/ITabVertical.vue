@@ -10,7 +10,8 @@
 
       </div>
       <div @click="handleClickMore()" class="button_block">
-        更多
+        <img v-if="propData.showMoreImage" :src="getImageSrc(propData.moreImage)" alt="">
+        <span>{{ propData.moreText }}</span>
       </div>
     </div>
     <div class="ITabVertical_app_right">
@@ -181,7 +182,38 @@ export default {
     /**
      * 把属性转换成样式对象
      */
+    convertAttrToStyleObjectMore() {
+      let styleObject = {};
+      let styleObjectImage = {};
+      let styleObjectText = {};
+      for (const key in this.propData) {
+        if (this.propData.hasOwnProperty.call(this.propData, key)) {
+          const element = this.propData[key];
+          if(!element&&element!==false&&element!=0){
+            continue;
+          }
+          switch (key) {
+            case "layoutMore":
+              IDM.style.setLayoutStyle(styleObject,element)
+              break;
+            case "fontMoreText":
+              IDM.style.setFontStyle(styleObjectText,element)
+              break
+            case "widthMoreImage":
+              styleObjectImage['width'] = element
+              break
+            case "heightMoreImage":
+              styleObjectImage['height'] = element
+              break
+          }
+        }
+      }
+      window.IDM.setStyleToPageHead(this.moduleObject.id + ' .ITabVertical_app_left .button_block',styleObject);
+      window.IDM.setStyleToPageHead(this.moduleObject.id + ' .ITabVertical_app_left .button_block img',styleObjectImage);
+      window.IDM.setStyleToPageHead(this.moduleObject.id + ' .ITabVertical_app_left .button_block span',styleObjectText);
+    },
     convertAttrToStyleObject(){
+      this.convertAttrToStyleObjectMore()
       var styleObject = {};
       if(this.propData.bgSize&&this.propData.bgSize=="custom"){
         styleObject["background-size"]=(this.propData.bgSizeWidth?this.propData.bgSizeWidth.inputVal+this.propData.bgSizeWidth.selectVal:"auto")+" "+(this.propData.bgSizeHeight?this.propData.bgSizeHeight.inputVal+this.propData.bgSizeHeight.selectVal:"auto")
@@ -410,6 +442,12 @@ export default {
       .list_active{
         color:  #0052A1;
         border-bottom: 2px solid rgba(0,82,161,1);
+      }
+    }
+    .button_block{
+      img{
+        width: 30px;
+        height: 30px;
       }
     }
   }

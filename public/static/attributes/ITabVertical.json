@@ -32,6 +32,72 @@
         ]
       },
       {
+        "type": "group",
+        "text": "更多属性配置",
+        "children":[
+          {
+            "type": "radio",
+            "styleType": "radio",
+            "layoutType": "inline",
+            "text": "图片",
+            "desc":"是否显示图片",
+            "bindKey": "showMoreImage",
+            "default": false,
+            "dictionary": [
+                {
+                    "label": "是",
+                    "value": true
+                },
+                {
+                    "label": "否",
+                    "value": false
+                }
+            ]
+          },
+          {
+            "type": "uploadImage",
+            "layoutType": "inline",
+            "text": "图片",
+            "bindKey": "moreImage",
+            "display":"@[showMoreImage]",
+            "placeholder": "可输入图片地址或直接上传"
+          },
+          {
+            "type": "input",
+            "layoutType": "inline",
+            "text": "更多文案",
+            "bindKey": "moreText",
+            "default": "更多"
+          },
+          {
+            "type": "layout",
+            "layoutType": "inline",
+            "text": "内容布局",
+            "bindKey": "layoutMore"
+          },
+          {
+            "type": "input",
+            "layoutType": "inline",
+            "text": "图片宽",
+            "bindKey": "widthMoreImage",
+            "default": "30px"
+          },
+          {
+            "type": "input",
+            "layoutType": "inline",
+            "text": "图片高",
+            "bindKey": "heightMoreImage",
+            "default": "30px"
+          },
+          {
+            "type": "font",
+            "layoutType": "block",
+            "text": "文字",
+            "bindKey": "fontMoreText"
+          }
+        ]
+      },
+      {
           "type": "group",
           "text": "样式设置",
           "desc": "点击？查看样式设置用法指南",
