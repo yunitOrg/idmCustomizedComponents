@@ -19,8 +19,8 @@
         <div class="ITabVertical_app_right_main flex_start">
           <div v-for="(item,index) in rightDataList" @click="handleClickContent(item)" :key="index" class="list flex_between">
             <div class="list_left">
-              <div class="top">{{ item.yearMonth }}</div>
-              <div class="bottom">{{ item.day }}</div>
+              <div class="top">{{ IDM.dateFormat(item.time,"m月d日") }}</div>
+              <div class="bottom">{{ IDM.dateFormat(item.time,"Y") }}</div>
             </div>
             <div class="list_right">
               <div class="title">{{ item.title }}</div>
@@ -95,6 +95,9 @@ export default {
           }, function (res) {
             if (res && res.length) {
               that.leftNavList = res;
+              if(res && res[0]) {
+                that.current_column = res[0].id;
+              }
               that.getRightDataList()
             }
           },
