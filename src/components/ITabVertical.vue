@@ -448,6 +448,14 @@ export default {
       }
     }
     .button_block{
+      width: 83px;
+      height: 83px;
+      line-height: 83px;
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+      border-radius: 50%;
+      background: #0052A1;
       img{
         width: 30px;
         height: 30px;
