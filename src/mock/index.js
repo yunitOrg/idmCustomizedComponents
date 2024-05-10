@@ -80,3 +80,22 @@ export function getTabVerticalRightData() {
     }
   ]
 }
+export function getMusicList() {
+  return [
+    {
+      title: '泰山之声',
+      name: '基层聚焦',
+      music: ''
+    },
+    {
+      title: '泰山之声',
+      name: '逍遥叹',
+      music: ''
+    },
+    {
+      title: '泰山之声',
+      name: '孤勇者',
+      music: ''
+    }
+  ]
+}

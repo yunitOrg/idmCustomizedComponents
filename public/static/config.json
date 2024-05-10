@@ -31,6 +31,13 @@
       "className": "ITabVertical",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.audioPlayer",
+      "comName": "音频播放器",
+      "className": "IAudioPlayer",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }

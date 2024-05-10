@@ -16,12 +16,14 @@ import 'ant-design-vue/lib/popover/style/css';
 import 'ant-design-vue/lib/tooltip/style/css';
 import 'ant-design-vue/lib/tabs/style/css';
 import 'ant-design-vue/lib/progress/style/css';
+import 'ant-design-vue/lib/slider/style/css';
 
 import Base from 'ant-design-vue/lib/base/index.js';
-import { Button, Popover, Progress } from 'ant-design-vue'
+import { Button, Popover, Progress,Slider } from 'ant-design-vue'
 
 /* v1.1.3+ registration methods */
 Vue.use(Base)
 Vue.use(Button)
 Vue.use(Popover)
 Vue.use(Progress)
+Vue.use(Slider)
