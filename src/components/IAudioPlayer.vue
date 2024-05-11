@@ -1,6 +1,6 @@
 <template>
-  <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="ITabVertical_app">
-    <template v-if="music_list && music_list.length">
+  <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IAudioPlayer_app">
+    <template>
       <div class="ITabVertical_app_header">
         {{ music_list[music_index] ? music_list[music_index].title : '泰山之声' }}
       </div>
@@ -49,7 +49,6 @@
 import SvgIcon from '../icons/SvgIcon.vue';
 import { getMusicList } from "../mock/index";
 
-import { getTabVerticalLeftList,getTabVerticalRightData } from '../mock/index'
 export default {
   name: 'IAudioPlayer',
   components: {
@@ -119,7 +118,7 @@ export default {
       if( url ) {
         return IDM.url.getWebPath(url);
       } else {
-        return IDM.url.getModuleAssetsWebPath( require(`../music/music.mp3`), this.moduleObject );
+        // return IDM.url.getModuleAssetsWebPath( require(`../music/music.mp3`), this.moduleObject );
       }
     },
     tipFormatter(e) {
@@ -145,6 +144,9 @@ export default {
     },
     initAudioEvent() {
       let music = document.getElementById("music");
+      if(!music){
+        return
+      }
       this.musicDom = music;
       music.addEventListener('timeupdate',() => {
         this.currentTime = music.currentTime;
@@ -410,7 +412,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.ITabVertical_app{
+.IAudioPlayer_app{
   position: relative;
   .ITabVertical_app_header{
     height: 44px;
@@ -533,7 +535,7 @@ export default {
 }
 </style>
 <style lang="scss">
-.ITabVertical_app{
+.IAudioPlayer_app{
   .ITabVertical_app_footer{
     .center{
       .ant-slider{
