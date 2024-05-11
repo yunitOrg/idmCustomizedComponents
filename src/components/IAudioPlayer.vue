@@ -7,8 +7,10 @@
       <div class="ITabVertical_app_main">
         <img :src="getImageSrc(music_list[music_index] ? music_list[music_index].image : '','taishan')" alt="">
         <div class="ITabVertical_app_main_body flex_column_center">
-          <div class="row title">
-            <SvgIcon icon-class="music"></SvgIcon>
+          <div class="row title flex_center">
+            <div class="animation_block flex_center">
+              <div v-for="(item,index) in 5" :key="index" class="line" :class="isPlaying ? 'line_animation': ''"></div>
+            </div>
             <span>{{ music_list[music_index] ? music_list[music_index].name : '名称' }}</span>
           </div>
           <div class="row">
@@ -69,7 +71,8 @@ export default {
       duration: 0,
       currentTime: 0,
       isShowVoicePop: false,
-      current_voice: 100
+      current_voice: 100,
+      isCanPlay: false
     }
   },
   watch: {
@@ -159,6 +162,7 @@ export default {
       music.oncanplay = () => {
         this.duration = music.duration;
         this.isChangeMusicPercentDisabled = false;
+        this.isCanPlay = true;
       }
     },
     makeAudioInitStatus() {
@@ -177,8 +181,11 @@ export default {
       }
     },
     play() {
+      if((!this.isCanPlay) || !this.musicDom) {
+        return
+      }
       this.isPlaying = !this.isPlaying;
-      this.musicDom && this.musicDom.play()
+      this.musicDom.play()
     },
     stop() {
       this.isPlaying = !this.isPlaying;
@@ -449,6 +456,93 @@ export default {
           left: -27px;
           top: 4px;
           color: #FF9900;
+        }
+        @keyframes myfirst1 {
+          0%   {height:0;}
+          25%  {height:50%;}
+          50%  {height:85%;}
+          100% {height: 30%;}
+        }
+        @keyframes myfirst2 {
+          0%   {height:50%;}
+          25%  {height:85%;}
+          50%  {height:30%;}
+          75%  {height:0%;}
+          100% {height: 50%;}
+        }
+        @keyframes myfirst3 {
+          0%   {height:80%;}
+          25%  {height:30%;}
+          38%  {height: 0%;}
+          50%  {height:30%;}
+          100% {height: 80%;}
+        }
+        @keyframes myfirst4 {
+          0%   {height:50%;}
+          25%  {height:85%;}
+          50%  {height:30%;}
+          75%  {height:0%;}
+          100% {height: 50%;}
+        }
+        @keyframes myfirst5 {
+          0%   {height:0;}
+          25%  {height:50%;}
+          50%  {height:85%;}
+          100% {height: 30%;}
+        }
+        .animation_block{
+          height: 20px;
+          margin-right: 9px;
+          .line{
+            width: 2px;
+            margin-right: 2px;
+            background: #FF9900;
+            &:last-child{
+              margin-right: 0;
+            }
+            &:nth-child(1){
+              height: 30%;
+            }
+            &:nth-child(2){
+              height: 50%;
+            }
+            &:nth-child(3){
+              height: 80%;
+            }
+            &:nth-child(4){
+              height: 50%;
+            }
+            &:nth-child(5){
+              height: 30%;
+            }
+          }
+          .line_animation{
+            &:nth-child(1){
+              height: 30%;
+              animation:myfirst1 1s;
+              animation-iteration-count: infinite;
+            }
+            &:nth-child(2){
+              height: 50%;
+              animation:myfirst2 1s;
+              animation-iteration-count: infinite;
+            }
+            &:nth-child(3){
+              height: 80%;
+              animation:myfirst3 1s;
+              animation-iteration-count: infinite;
+            }
+            &:nth-child(4){
+              height: 50%;
+              animation:myfirst4 1s;
+              animation-iteration-count: infinite;
+            }
+            &:nth-child(5){
+              height: 30%;
+              animation:myfirst5 1s;
+              animation-iteration-count: infinite;
+            }
+          }
         }
       }
       .row{
