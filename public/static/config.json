@@ -38,6 +38,20 @@
       "className": "IAudioPlayer",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.turnoverroomcount",
+      "comName": "山东烟草周转房统计总览",
+      "className": "ITurnoverRoomCount",
+      "comType": "common",
+      "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.operatebutton",
+      "comName": "山东烟草周转房操作栏",
+      "className": "IOperateButton",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }

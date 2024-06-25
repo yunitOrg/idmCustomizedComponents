@@ -99,3 +99,15 @@ export function getMusicList() {
     }
   ]
 }
+export function getTurnoverRoomData() {
+  return {
+    "inboxCount": 0,
+    "ybCount": 9,
+    "yfCount": 9,
+    "wfCount": 1,
+    "roomCount": 3,
+    "checkIn": 2,
+    "unCheckIn": 1,
+    "checkPersonCount": 4
+  }
+}
