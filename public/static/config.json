@@ -52,6 +52,20 @@
       "className": "IOperateButton",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.paysystem",
+      "comName": "上海市财政局工资系统",
+      "className": "IPaySystem",
+      "comType": "common",
+      "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.paysystemperson",
+      "comName": "上海市委办局工资系统",
+      "className": "IPaySystemPerson",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }

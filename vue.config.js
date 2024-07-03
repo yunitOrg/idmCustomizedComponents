@@ -154,17 +154,27 @@ module.exports = {
             // 所以这里假设你有 `src/variables.sass` 这个文件
             // 注意：在 sass-loader v8 中，这个选项名是 "prependData"
             // prependData: `@import "@/style/common/common.scss";`
+          },
+          less: {
+            // 自定义主题样式
+            // modifyVars: {
+            //   'primary-color': '#41B883',
+            //   'link-color': '#41B883',
+            //   'border-radius-base': '2px'
+            // }
+            // 解决问题主要需要打开这个
+            javascriptEnabled: true
           }
         }
     },
     devServer: {
-        proxy: {
-            '^/DreamWeb/*': {
-                target: "http://localhost:8080",
-                changeOrigin: true,
-                secure: false
-            }
-        }
+      proxy: {
+          '^/DreamWeb/*': {
+              target: "http://192.168.9.119:8080",
+              changeOrigin: true,
+              secure: false
+          }
+      }
     }
 
 }

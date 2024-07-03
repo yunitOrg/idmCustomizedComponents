@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Main from './Main.vue'
 import { VueRegister } from '@idm-modules/core/regModule/vue';
 import config from '../public/static/config.json';
+import 'moment/locale/zh-cn';
+
 //引入图标
 import '@/icons' // icon
 import "@/plugins/antd"
