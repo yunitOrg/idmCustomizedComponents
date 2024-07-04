@@ -31,6 +31,14 @@
       </div>
     </div>
     <div class="main">
+      <div v-if="isAdmin != '1'" class="note flex_start">
+        <div class="note_list">
+          应发合计：<span>{{ table_data_object ? table_data_object.allTotalPayable : 0 }}</span>
+        </div>
+        <div class="note_list">
+          实发合计：<span>{{ table_data_object? table_data_object.allTotalNetPay : 0 }}</span>
+        </div>
+      </div>
       <div class="tab_block flex_between">
         <div @click="handleClickTab" class="left flex_start">
           <div data-value="baseSalaryList" class="button_list" :class="active_tab == 'baseSalaryList' ? 'active' : ''">工资</div>
@@ -667,6 +675,14 @@ export default {
     height: calc(100% - 72px);
     padding: 16px 20px;
     background: white;
+    .note{
+      margin-bottom: 16px;
+      font-size: 16px;
+      line-height: 16px;
+      .note_list{
+        margin-right: 20px;
+      }
+    }
     .tab_block{
       margin-bottom: 10px;
       &>.left{
