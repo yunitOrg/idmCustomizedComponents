@@ -87,8 +87,7 @@ export default {
       propData:this.$root.propData.compositeAttr||{
         showTotal: true
       },
-      userName: '',
-      deptName: '',
+      isAdmin: '',
       startDate: '',
       endDate: '',
       header_object: {
@@ -335,6 +334,7 @@ export default {
   },
   created() {
     this.moduleObject = this.$root.moduleObject;
+    this.isAdmin = IDM.url.queryString('isAdmin');
     this.startDate = IDM.dateFormat(new Date().getTime(),"Y-m");
     this.endDate = IDM.dateFormat(new Date().getTime(),"Y-m");
     this.convertAttrToStyleObject();
@@ -353,7 +353,13 @@ export default {
     },
     exportData() {
       let fileName = `工资明细（${this.startDate}-${this.endDate}）.xlsx`;
-      IDM.http.get('/ctrl/skwSalary/salary/export',{
+      let url = '';
+      if(this.isAdmin == '1') {
+        url = '/ctrl/skwSalary/salary/admin/export';
+      } else {
+        url = '/ctrl/skwSalary/salary/export';
+      }
+      IDM.http.get(url,{
         startDate: this.startDate,
         endDate: this.endDate,
       },{
@@ -386,7 +392,13 @@ export default {
       this.getTableListUser()
     },
     getTableListUser() {
-      IDM.http.get('/ctrl/skwSalary/salary/query', {
+      let url = '';
+      if(this.isAdmin == '1') {
+        url = '/ctrl/skwSalary/salary/admin/query'
+      } else {
+        url = '/ctrl/skwSalary/salary/query'
+      }
+      IDM.http.get(url, {
         startDate: this.startDate,
         endDate: this.endDate,
         summaryToList: this.propData.showTotal ? true : false
