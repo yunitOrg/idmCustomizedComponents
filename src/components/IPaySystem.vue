@@ -9,8 +9,20 @@
       </div>
       <div v-if="isAdmin == '1'" class="form_list flex_start">
         <div class="label">部门：</div>
-        <div class="input_box">
-          <a-input v-model="deptName" placeholder="请输入" />
+        <div class="select_box">
+          <a-tree-select
+            v-model="deptId"
+            show-search
+            style="width: 100%"
+            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+            placeholder="请选择部门"
+            allow-clear
+            :tree-data="departList"
+            :replaceFields="replaceFields"
+            treeNodeFilterProp="title"
+          >
+          </a-tree-select>
+          <!-- <a-input v-model="deptName" placeholder="请输入" /> -->
         </div>
       </div>
       <div class="form_list flex_start">
@@ -115,7 +127,7 @@ export default {
       },
       isAdmin: '',
       userName: '',
-      deptName: '',
+      deptId: '',
       startDate: '',
       endDate: '',
       header_object: {
@@ -344,6 +356,12 @@ export default {
       },
       table_data_object: {},
       active_tab: 'baseSalaryList',
+      departList: [],
+      replaceFields: {
+        key: 'id',
+        value: 'id',
+        title: 'name'
+      }
     };
   },
   created() {
@@ -352,12 +370,29 @@ export default {
     this.startDate = IDM.dateFormat(new Date().getTime(),"Y-m");
     this.endDate = IDM.dateFormat(new Date().getTime(),"Y-m");
     this.convertAttrToStyleObject();
+    this.getDepartmentList()
     this.getTableList()
   },
   mounted() {
     this.adjustTableBodyHeight()
   },
   methods: {
+    getDepartmentList() {
+      IDM.http.get('/ctrl/user/select/data?action=self_org_suborg_exclusive&types=department&rootObject=1&async=false', {
+        
+      }).then((res) => {
+        if(res.data.type == 'success') {
+          this.departList = res.data?.data?.departmentList;
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      );
+    },
     adjustTableBodyHeight() {
       this.$nextTick(() => {
         if(this.$refs.tableBody && this.$refs.tableHeader) {
@@ -459,7 +494,7 @@ export default {
       this.startDate = IDM.dateFormat(new Date().getTime(),"Y-m");
       this.endDate = IDM.dateFormat(new Date().getTime(),"Y-m");
       this.userName = '';
-      this.deptName = '';
+      this.deptId = '';
       this.getTableList()
     },
     getTableList() {
@@ -475,7 +510,7 @@ export default {
         endDate: this.endDate,
         summaryToList: this.propData.showTotal ? true : false,
         userName: this.userName,
-        deptName: this.deptName
+        deptId: this.deptId
       }).then((res) => {
         if(res.data.type == 'success') {
           this.table_data_object = res.data.data;
@@ -649,6 +684,9 @@ export default {
         white-space: nowrap;
         font-size: 16px;
         color: #333333;
+      }
+      .select_box{
+        width: 200px;
       }
     }
     .button_block{

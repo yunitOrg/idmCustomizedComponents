@@ -10,7 +10,7 @@ import Vue from 'vue'
 // import 'ant-design-vue/lib/select/style/css';
 
 // import Base from 'ant-design-vue/lib/base/index.js';
-import { Button, Popover, Progress,Slider,Empty,Select,Input,DatePicker } from 'ant-design-vue'
+import { Button, Popover, Progress,Slider,Empty,Select,Input,DatePicker, TreeSelect } from 'ant-design-vue'
 
 /* v1.1.3+ registration methods */
 // Vue.use(Base)
@@ -22,3 +22,4 @@ Vue.use(Empty)
 Vue.use(Select)
 Vue.use(Input)
 Vue.use(DatePicker)
+Vue.use(TreeSelect)
