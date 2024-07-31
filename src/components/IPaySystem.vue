@@ -510,7 +510,7 @@ export default {
         endDate: this.endDate,
         summaryToList: this.propData.showTotal ? true : false,
         userName: this.userName,
-        deptId: this.deptId
+        deptId: this.deptId?.split('_')?.[1]
       }).then((res) => {
         if(res.data.type == 'success') {
           this.table_data_object = res.data.data;
