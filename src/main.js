@@ -7,6 +7,7 @@ import 'moment/locale/zh-cn';
 //引入图标
 import '@/icons' // icon
 import "@/plugins/antd"
+import "@/plugins/element"
 
 new VueRegister(config)
 const requireComponent = require.context(

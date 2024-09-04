@@ -7,6 +7,13 @@ module.exports = {
       libraryName:"ant-design-vue",
       libraryDirectory: 'es',
       style: true
-    }, "ant-design-vue"]
+    }, "ant-design-vue"],
+    [
+      "component",
+      {
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+      }
+    ]
   ]
 }

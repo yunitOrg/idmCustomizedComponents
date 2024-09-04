@@ -66,15 +66,15 @@
           <div @click="importFile('otherSalaryList')" v-if="isAdmin == '1'" class="button_box default">导入其他</div>
         </div>
       </div>
-      <div class="table">
-        <div ref="tableHeader" class="table_header flex_between">
+      <div class="table" ref="tableBody">
+        <!-- <div ref="tableHeader" class="table_header flex_between">
           <template v-for="(item,index) in header_object[active_tab]">
-            <div v-if="isAdmin == '1' || (isAdmin != '1' && ['userName','deptName','idNumber'].indexOf(item.key) == '-1')" :key="index" class="cell flex_center">
+            <div v-if="isAdmin == '1' || (isAdmin != '1' && ['userName','deptName','idNumber'].indexOf(item.key) == '-1')" :style="{width: getTableColumnWidth(item.label)}" :key="index" class="cell flex_center">
               <span>{{ item.label }}</span>
             </div>
           </template>
-        </div>
-        <div ref="tableBody" class="table_body">
+        </div> -->
+        <!-- <div ref="tableBody" class="table_body">
           <template v-if="table_data_object[active_tab] && table_data_object[active_tab].length">
             <vue-scroll :ops="scrollOps">
               <div v-for="(item,index) in table_data_object[active_tab]" :key="index" class="row table_body_row flex_between">
@@ -96,9 +96,26 @@
               <a-empty description="暂无数据" />
             </div>
           </template>
-          
-        </div>
-        
+        </div> -->
+        <el-table
+          :data="table_data_object[active_tab]"
+          style="width: 100%"
+          :border="true"
+          :max-height="tableBodyHeight"
+          :stripe="true"
+        >
+          <template v-for="(item) in header_object['baseSalaryList']">
+            <af-table-column
+              :key="item.key"
+              :prop="item.key"
+              :label="item.label"
+              :min-width="getTableColumnWidth(item.label)"
+            />
+          </template>
+          <div slot="empty" class="empty_blcok">
+            <a-empty description="暂无数据" />
+          </div>
+        </el-table>
 
       </div>
     </div>
@@ -361,7 +378,8 @@ export default {
         key: 'id',
         value: 'id',
         title: 'name'
-      }
+      },
+      tableBodyHeight: 300
     };
   },
   created() {
@@ -375,8 +393,17 @@ export default {
   },
   mounted() {
     this.adjustTableBodyHeight()
+    window.addEventListener('resize', this.adjustTableBodyHeight)
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.adjustTableBodyHeight)
   },
   methods: {
+    getTableColumnWidth(label) {
+      const size = label.length;
+      const width = size * 16 + 30;
+      return width + 'px'
+    },
     getDepartmentList() {
       IDM.http.get('/ctrl/user/select/data?action=self_org_suborg_exclusive&types=department&rootObject=1&async=false', {
         
@@ -395,8 +422,9 @@ export default {
     },
     adjustTableBodyHeight() {
       this.$nextTick(() => {
-        if(this.$refs.tableBody && this.$refs.tableHeader) {
-          this.$refs.tableBody.style.height = `calc(100% - ${this.$refs.tableHeader.offsetHeight}px)`;
+        console.log(777,this.$refs.tableBody?.offsetHeight)
+        if(this.$refs.tableBody?.offsetHeight) {
+          this.tableBodyHeight = this.$refs.tableBody?.offsetHeight - 50;
         }
       })
     },
@@ -664,7 +692,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .IPaySystem_app {
-  height: calc(100vh - 80px);
+  height: calc(100vh);
   &>.header{
     height: 60px;
     margin-bottom: 12px;
@@ -766,13 +794,14 @@ export default {
     }
   }
   .table {
-    height: calc(100% - 42px);
+    width: 100%;
+    height: calc(100% - 80px);
     .table_header {
+      width: 100%;
       // height: 48px;
       padding-right: 8px;
       align-items: stretch;
       text-align: center;
-      background: #f9fcfe;
       border-top: 1px solid rgba(230, 230, 230, 1);
       border-right: 1px solid rgba(230, 230, 230, 1);
       border-bottom: 1px solid rgba(230, 230, 230, 1);
@@ -789,12 +818,14 @@ export default {
         color: #333333;
         letter-spacing: 0;
         font-weight: 500;
+        white-space: nowrap;
         border-left: 1px solid rgba(230, 230, 230, 1);
         // overflow: hidden;
-
+        background: #f9fcfe;
       }
     }
     .table_body {
+      width: 100%;
       height: calc(100% - 48px);
       .table_body_row {
         padding-right: 8px;
@@ -811,15 +842,31 @@ export default {
           word-break: break-all;
           font-size: 14px;
           text-align: center;
+          white-space: nowrap;
           border-left: 1px solid rgba(230, 230, 230, 1);
         }
       }
     }
+    .el-table{
+      height: 100%;
+      .el-table__body-wrapper{
+        height: 100%;
+      }
+    }
   }
   .empty_blcok{
-    padding: 100px 0;
-    border: 1px solid #e6e6e6;
-    border-top: none;
+    // padding: 100px 0;
+    // border: 1px solid #e6e6e6;
+    // border-top: none;
+  }
+}
+</style>
+<style lang="scss">
+.IPaySystem_app{
+  .el-table{
+    .el-table__body-wrapper{
+      height: 100%;
+    }
   }
 }
 </style>
