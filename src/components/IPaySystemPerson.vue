@@ -13,6 +13,20 @@
           <a-month-picker v-model="endDate" valueFormat="YYYY-MM" placeholder="请选择月份" />
         </div>
       </div>
+      <template v-if="isAdmin">
+        <div class="form_list flex_start">
+          <div class="label">部门名称：</div>
+          <div class="date_box">
+            <a-input v-model="deptName" placeholder="请输入部门名称"></a-input>
+          </div>
+        </div>
+        <div class="form_list flex_start">
+          <div class="label">人员名称：</div>
+          <div class="date_box">
+            <a-input v-model="userName" placeholder="请输入人员名称"></a-input>
+          </div>
+        </div>
+      </template>
       <div class="button_block flex_start">
         <div @click="search()" class="button_box primary">查询</div>
         <div @click="reset()" class="button_box default">重置</div>
@@ -90,6 +104,8 @@ export default {
       isAdmin: '',
       startDate: '',
       endDate: '',
+      userName:'',
+      deptName:'',
       header_object: {
         'baseSalaryList': [
           {
@@ -362,6 +378,8 @@ export default {
       IDM.http.get(url,{
         startDate: this.startDate,
         endDate: this.endDate,
+        userName: this.userName,
+        deptName: this.deptName,
       },{
         responseType: "blob",
       }).then((res) => {
@@ -401,6 +419,8 @@ export default {
       IDM.http.get(url, {
         startDate: this.startDate,
         endDate: this.endDate,
+        userName: this.userName,
+        deptName: this.deptName,
         summaryToList: this.propData.showTotal ? true : false
       }).then((res) => {
         if(res.data.type == 'success') {
