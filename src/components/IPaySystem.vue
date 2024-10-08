@@ -104,7 +104,7 @@
           :max-height="tableBodyHeight"
           :stripe="true"
         >
-          <template v-for="(item) in header_object['baseSalaryList']">
+          <template v-for="(item) in header_object[active_tab]">
             <af-table-column
               :key="item.key"
               :prop="item.key"
