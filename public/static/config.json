@@ -66,6 +66,13 @@
       "className": "IPaySystemPerson",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.statisticscoordinationsystem",
+      "comName": "上海市统计局四责协同系统",
+      "className": "IStatisticsCoordinationSystem",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
