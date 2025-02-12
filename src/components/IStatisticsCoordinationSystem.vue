@@ -29,7 +29,7 @@
         </div>
       </div>
       <div v-if="type == 4 && leaderList?.length" class="bottom flex_center">
-        <div @click="handleClickLeader(item)" v-for="(item,index) in leaderList" :key="index" class="list flex_between">
+        <div @click="handleClickLeader(item)" v-for="(item,index) in leaderList" :key="index" class="list flex_between" :class="leaderId == item.id ? 'active' : ''">
           <div class="img_box">
             <img :src="getImageSrc(item.photo, 'leader')" alt="">
           </div>
@@ -595,6 +595,9 @@ export default {
         .list{
           margin-right: 80px;
           cursor: pointer;
+          font-size: 16px;
+          color: #333333;
+          font-weight: 400;
           &:last-child{
             margin-right: 0;
           }
@@ -602,7 +605,15 @@ export default {
             width: 48px;
             height: 48px;
             margin-right: 16px;
+            img{
+              width: 48px;
+              height: 48px;
+              border-radius: 50%;
+            }
           }
+        }
+        .active{
+          font-weight: 700;
         }
       }
     }
