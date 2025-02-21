@@ -49,9 +49,13 @@
         </vue-scroll>
       </div>
       <div class="right">
+        <div v-if="describe" class="table_descibe">
+          {{ describe }}
+        </div>
         <div class="right_top flex_end">
           <a-button @click="exportData" type="primary">导出</a-button>
         </div>
+        
         <div class="table_block" ref="table_block">
           <a-table 
             :columns="tableColumns" 
@@ -129,6 +133,7 @@ export default {
       pageNumber: 1,
       pageSize: 1,
       tableData: [ ],
+      describe: '',
       tablePagination: {
         total: 0,
         current: 1,
@@ -168,14 +173,14 @@ export default {
     window.addEventListener('resize', function() {
       if(that.$refs?.table_block?.clientHeight) {
         that.tableScroll = {
-          y: that.$refs.table_block.clientHeight - 75
+          y: that.$refs.table_block.clientHeight - 100
         }
       }
     })
     setTimeout(() => {
       if(that.$refs?.table_block?.clientHeight) {
         that.tableScroll = {
-          y: that.$refs.table_block.clientHeight - 75
+          y: that.$refs.table_block.clientHeight - 100
         }
       }
     }, 100)
@@ -275,6 +280,7 @@ export default {
       }).then((res) => {
         this.tableData = res.data.data?.data || [];
         this.tablePagination.total = res.data?.data?.total;
+        this.describe = res.data.data?.describe;
       }).catch((err) => {
         console.log(err)
       })
@@ -642,11 +648,21 @@ export default {
         height: 100%;
         padding: 17px 22px;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
         .right_top{
+          width: 100%;
           margin-bottom: 12px;
         }
+        .table_descibe{
+          margin-bottom: 5px;
+          font-size: 14px;
+        }
         .table_block{
-          height: calc(100% - 80px);
+          height: 0;
+          flex-grow: 2;
         }
       }
     }
