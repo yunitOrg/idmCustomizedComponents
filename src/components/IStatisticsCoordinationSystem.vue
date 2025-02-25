@@ -280,7 +280,7 @@ export default {
       }).then((res) => {
         this.tableData = res.data.data?.data || [];
         this.tablePagination.total = res.data?.data?.total;
-        this.describe = res.data.data?.describe;
+        this.describe = res.data.data?.desc;
       }).catch((err) => {
         console.log(err)
       })
@@ -657,8 +657,10 @@ export default {
           margin-bottom: 12px;
         }
         .table_descibe{
+          width: 100%;
           margin-bottom: 5px;
           font-size: 14px;
+          text-align: left;
         }
         .table_block{
           height: 0;
