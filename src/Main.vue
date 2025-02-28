@@ -1,6 +1,6 @@
 <template>
   <a-config-provider :locale="locale">
-    <component :is="`${componentName}`" :ref="`${componentName}`"/>
+    <component :is="`${componentName}`" @hook:mounted="handleComponentMounted" :ref="`${componentName}`"/>
   </a-config-provider>
 </template>
 
@@ -14,7 +14,7 @@ export default {
   data(){
     return {
       locale: zhCN,
-      componentName:""
+      componentName: this.$root.componentName
     }
   },
   props: {
@@ -46,6 +46,12 @@ export default {
           console.log(err)
       })
       
+    },
+    handleComponentMounted(){
+      const that = this;
+      this.$refs[this.componentName].$nextTick(()=>{
+        that.$root.moduleObject.mountComplete && that.$root.moduleObject.mountComplete(that.$root.moduleObject);
+      })
     }
   }
 }

@@ -1,15 +1,12 @@
 import Vue from 'vue'
-import Main from './Main.vue'
-import { VueRegister } from '@idm-modules/core/regModule/vue';
 import config from '../public/static/config.json';
-import 'moment/locale/zh-cn';
+import './core/regModule';
 
 //引入图标
 import '@/icons' // icon
 import "@/plugins/antd"
 import "@/plugins/element"
 
-new VueRegister(config)
 const requireComponent = require.context(
   // 其组件目录的相对路径
   './components',
@@ -43,17 +40,4 @@ requireComponent.keys().forEach(fileName => {
   )
 })
 Vue.prototype.IDM = window.IDM;
-
 Vue.config.productionTip = false
-//这里每次打包都会生成一个随机的变量，唯一，保证能加载到对应的对象
-window[`${process.env.CodeVar}`] = Main;
-// //每次打包都会生成不同的CodeVar
-//这里渲染需要更改，改成实时渲染id
-// new Vue({
-//   render: h => h(Main),
-//   data(){
-//     return {
-//       componentName:"HelloWorld"
-//     }
-//   }
-// }).$mount("#component_202003T6YG1GH0L1YFEREQLKK9")

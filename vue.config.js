@@ -1,9 +1,23 @@
 
 const path = require('path')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-
+const chalk = require('chalk')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const webpack = require('webpack');
+const isDev = process.env.NODE_ENV === 'development'
 function resolve(dir) {
     return path.join(__dirname, dir)
+}
+const fileMode = process.env.FILE_MODE || 'dynamic'
+let indexName = 'index';
+if(fileMode== 'static') {
+  indexName = 'index2'
+}
+console.log(`${chalk.blue('Current file mode')}   ------ >  ${chalk.yellow(fileMode)}`)
+console.log(`${chalk.blue('Current file index')}  ------ >  ${chalk.yellow(indexName)}`)
+console.log(`${chalk.green('Start building .....')}`)
+const entryFileMap = {
+  dynamic: 'src/main.js',
+  static: 'src/mainStatic.js'
 }
 let assetsDir = "./static";
 let getAssetsDir = function(filename) {
@@ -39,6 +53,23 @@ let getGUID = function(len, radix) {
 
   return uuid.join("");
 }
+const splitChunks = {
+  chunks: 'async',
+  minSize: 2000000,
+  minChunks: 1,
+  maxAsyncRequests: 30,
+  maxInitialRequests: 30,
+  enforceSizeThreshold: 50000,
+  cacheGroups: {
+    vendors: {
+      name: 'chunk-vendors2',
+      test: /[\\/]node_modules[\\/]/,
+      enforce: true,
+      reuseExistingChunk: true,
+      priority: 0
+    }
+  },
+}
 const externals = {
   vue: 'Vue',
   'vue-router': 'VueRouter',
@@ -49,14 +80,20 @@ const externals = {
 module.exports = {
     publicPath:"./",
     assetsDir:assetsDir,
+    productionSourceMap: false,
     transpileDependencies: [
-        /[/\\]node_modules[/\\](.+?)?sockjs-client(.*)/,
-        /[/\\]node_modules[/\\](.+?)?ant-design_colors(.*)[/\\]colors/,
+      /[/\\]node_modules[/\\](.+?)?vuedraggable(.*)/,
+      /[/\\]node_modules[/\\](.+?)?solarlunar-es(.*)/,
+      /[/\\]node_modules[/\\](.+?)?lunar-javascript(.*)/,
+      /[/\\]node_modules[/\\](.+?)?element-ui(.*)/,
+      /[/\\]node_modules[/\\](.+?)?sockjs-client(.*)/,
+      /[/\\]node_modules[/\\](.+?)?ant-design_colors(.*)[/\\]colors/, 
+      /[/\\]node_modules[/\\](.+?)?moment(.*)[/\\]moment/,
     ],
     pages:{
-      index: {
+      [indexName]: {
         // page 的入口
-        entry: 'src/main.js',
+        entry: entryFileMap[fileMode],
         // 模板来源
         template: 'public/index.html',
         // 在 dist/index.html 的输出
@@ -118,12 +155,24 @@ module.exports = {
       //   .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
     },
     configureWebpack: {
+      optimization: fileMode == 'dynamic' ?  undefined : { splitChunks },
       plugins: [
-        new MiniCssExtractPlugin({
-          // 修改打包后css文件名
-          filename: `${assetsDir}/css/[name].css`,
-          chunkFilename: `${assetsDir}/css/[name].css`
-        })
+        // new BundleAnalyzerPlugin({
+        //   analyzerMode: 'disabled',    //server、static、json、disabled
+        //   analyzerHost: '127.0.0.1',
+        //   analyzerPort: 8888,
+        //   defaultSizes: 'parsed',    // stat，parsed，gzip
+        //   openAnalyzer: false,       // 自动打开报告
+        //   generateStatsFile: false,  // 如果为true，则Webpack Stats JSON文件将在bundle输出目录中生成
+        //   statsOptions: null,        //stats.toJson()方法的选项。例如，您可以使用source：false选项排除统计文件中模块的来源。在这里查看更多选项：https://github.com/webpack/webpack/blob/webpack-1/lib/Stats.js#L21
+        //   logLevel: 'info',          // 日志级别，info, warn, error, silent
+        // }),
+        // new MiniCssExtractPlugin({
+        //   // 修改打包后css文件名
+        //   filename: `${assetsDir}/css/[name].css`,
+        //   chunkFilename: `${assetsDir}/css/[name].css`
+        // }),
+        new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn/)
       ],
       output: {
         // 输出重构  打包编译后的 文件名称
@@ -135,15 +184,18 @@ module.exports = {
         extensions: ['.js', '.vue', '.json'],
         alias: {
           //按需引入ant design的图标，防止打包文件过大，如果使用ant design vue请放开此注释
-          // '@ant-design/icons/lib/dist$': resolve('src/plugins/antdicons.js')
+          '@ant-design/icons/lib/dist$': resolve('src/plugins/antdicons.js')
         }
       }
     },
     css: {
         // 是否使用css分离插件 ExtractTextPlugin
-        extract: true,
+        extract: isDev ? false : {
+          filename: `${assetsDir}/css/[name].css`,
+          chunkFilename: `${assetsDir}/css/[name].css`
+        },
         // 开启 CSS source maps?
-        sourceMap: true,
+        sourceMap: isDev,
         // css预设器配置项
         // 启用 CSS modules for all css / pre-processor files.
         requireModuleExtension: true,
@@ -168,13 +220,13 @@ module.exports = {
         }
     },
     devServer: {
-      proxy: {
-          '^/DreamWeb/*': {
-              target: "http://192.168.9.119:8080",
-              changeOrigin: true,
-              secure: false
-          }
-      }
+        proxy: {
+            '^/DreamWeb/*': {
+                target: "http://localhost:8080",
+                changeOrigin: true,
+                secure: false
+            }
+        }
     }
 
 }

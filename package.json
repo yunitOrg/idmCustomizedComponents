@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build && npm run zip",
-    "gen": "idm-generate vue",
+    "serve": "npm run serve:dynamic",
+    "serve:static": "cross-env FILE_MODE=static  vue-cli-service serve",
+    "serve:dynamic": "cross-env FILE_MODE=dynamic  vue-cli-service serve",
+    "build": "npm run build:all",
+    "build:static": "cross-env FILE_MODE=static vue-cli-service build",
+    "build:dynamic": "cross-env FILE_MODE=dynamic vue-cli-service build",
+    "build:static:no-clean": "cross-env FILE_MODE=static vue-cli-service build --no-clean",
+    "build:dynamic:no-clean": "cross-env FILE_MODE=dynamic vue-cli-service build --no-clean",
+    "build:all": "npm run clean && npm run build:dynamic:no-clean && npm run build:static:no-clean && npm run zip",
     "lint": "vue-cli-service lint",
-    "zip": "idm zip"
+    "zip": "idm zip",
+    "clean": "node ./webpack/clean.js"
   },
   "dependencies": {
     "@idm-modules/core": "^1.0.71",
@@ -28,6 +35,7 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.3",
     "babel-plugin-component": "^1.1.1",
     "babel-plugin-import": "^1.13.8",
     "chalk": "^4.1.2",
