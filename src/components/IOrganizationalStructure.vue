@@ -1,31 +1,36 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IOrganizationalStructure_app">
-    <div v-for="(item,index) in dataList" :key="index" class="list">
-      <div @click="handleClickHeader(item)" class="header flex_between">
-        <div class="header_left flex_start">
-          <img :src="getImageSrc('','zzjg')" alt="">
-          <span class="name">{{ item.orgName }}</span>
+    <vue-scroll :ops="scrollOps">
+      <div v-for="(item,index) in dataList" :key="index" class="IOrganizationalStructure_app_list">
+        <div @click="handleClickHeader(item)" class="header flex_between">
+          <div class="header_left flex_start">
+            <img :src="getImageSrc('','zzjg')" alt="">
+            <span class="name">{{ item.orgName }}</span>
+          </div>
+          <div class="header_right">
+            <img :src="getImageSrc('',activeOrgId?.indexOf(item.id) != -1 ? 'top' : 'down')" alt="">
+          </div>
         </div>
-        <div class="header_right">
-          <img :src="getImageSrc('',activeOrgId == item.fid ? 'top' : 'down')" alt="">
-        </div>
-      </div>
-      <div v-if="activeOrgId?.indexOf(item.fid) != -1" class="main">
-        <div class="list_block flex_start">
-          <div @click="handleClickUser(item1)" v-for="(item1,index1) in item.children" :key="index1" class="list">
-            {{ item1.name  }}
+        <div v-if="activeOrgId?.indexOf(item.id) != -1" class="main">
+          <div class="list_block flex_start">
+            <div @click="handleClickUser(item1)" v-for="(item1,index1) in item.children" :key="index1" class="list">
+              {{ item1.name  }}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </vue-scroll>
+    
     
   </div>
 </template>
 
 <script>
+import vuescroll from '../mixins/vueScroll'
 import { getIOrganizationalStructureDataListMock } from "@/mock/index.js"
 export default {
   name: 'IOrganizationalStructure',
+  mixins: [ vuescroll ],
   data(){
     return {
       moduleObject:this._moduleObject||{},
@@ -61,12 +66,12 @@ export default {
     },
     handleClickHeader(item) {
       if(this.propData.accordion) {
-        this.activeOrgId = item.fid == this.activeOrgId?.[0] ? [] : [item.fid]
+        this.activeOrgId = item.id == this.activeOrgId?.[0] ? [] : [item.id]
       } else {
-        if(this.activeOrgId.indexOf(item.fid) == -1) {
-          this.activeOrgId.push(item.fid)
+        if(this.activeOrgId.indexOf(item.id) == -1) {
+          this.activeOrgId.push(item.id)
         } else {
-          this.activeOrgId.splice(this.activeOrgId.indexOf(item.fid),1)
+          this.activeOrgId.splice(this.activeOrgId.indexOf(item.id),1)
         }
       }
     },
@@ -86,7 +91,7 @@ export default {
           console.log('grid组件获取数据++++++++',res)
           that.dataList = res
           if(that.propData.openFirst) {
-            that.activeOrgId = [that.dataList[0].fid]
+            that.activeOrgId = [that.dataList[0].id]
           }
         },function(error){
           console.log('error',error)
@@ -362,7 +367,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .IOrganizationalStructure_app{
-  &>.list{
+  .IOrganizationalStructure_app_list{
     margin-bottom: 16px;
     padding: 0 20px;
     background-image: linear-gradient(180deg, #FFFFFF 34%, #F9F2F2 100%);
@@ -372,6 +377,7 @@ export default {
     }
     &>.header{
       height: 68px;
+      cursor: pointer;
       .header_left{
         img{
           width: 38px;

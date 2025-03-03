@@ -293,11 +293,11 @@
         "text": "数据源",
         "children":[
           {
-            "type": "dataSource",
-            "layoutType": "block",
-            "text": "列表数据源",
-            "desc":"返回数据格式：数组[]",
-            "bindKey": "dataSource"
+            "type": "dataSourceSelect",
+            "layoutType": "inline",
+            "text": "数据源",
+            "bindKey": "dataSource",
+            "desc":"返回数据格式：数组[]"
           }
         ]
       },
@@ -327,6 +327,14 @@
                     "value": "inbox"
                 }
             ]
+          },
+          {
+            "type": "actionSelect",
+            "layoutType": "block",
+            "text": "点击人员自定义函数",
+            "bindKey": "clickCustomFunction",
+            "desc": "点击人员时触发的自定义函数，参数有_this,item",
+            "multiple": false
           }
         ]
       }
