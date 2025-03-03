@@ -111,3 +111,55 @@ export function getTurnoverRoomData() {
     "checkPersonCount": 4
   }
 }
+export function getIOrganizationalStructureDataListMock() {
+  return [
+    {
+      fid:"240925202239pn2xF86plWuVkKxqJ0z",
+      orgName:"第一党支部",
+      children: [
+        {
+          "birthday":"1969-09-03",
+          "sex":"男",
+          "name":"姬姚亮",
+          "id":"241106134317nPmJ3n0Ckza6GA8T9DP"
+        },
+        {
+          "birthday":"1969-09-03",
+          "sex":"男",
+          "name":"张峰",
+          "id":"241106134317nPmJ3n0Ckza6GA8T9DP"
+        },
+        {
+          "birthday":"1969-09-03",
+          "sex":"男",
+          "name":"王小军",
+          "id":"241106134317nPmJ3n0Ckza6GA8T9DP"
+        }
+      ]
+    },
+    {
+      fid:"240928885202239pn2xF86plWuVkKxqJ0z",
+      orgName:"第二党支部",
+      children: [
+        {
+          "birthday":"1969-09-03",
+          "sex":"男",
+          "name":"李栋",
+          "id":"241106134317nPmJ3n0Ckza6GA8T9DP"
+        },
+        {
+          "birthday":"1969-09-03",
+          "sex":"男",
+          "name":"潘敏",
+          "id":"241106134317nPmJ3n0Ckza6GA8T9DP"
+        },
+        {
+          "birthday":"1969-09-03",
+          "sex":"男",
+          "name":"董飞",
+          "id":"241106134317nPmJ3n0Ckza6GA8T9DP"
+        }
+      ]
+    }
+  ]
+}

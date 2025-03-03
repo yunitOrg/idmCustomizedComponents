@@ -22,7 +22,7 @@ export default {
   },
   created() {
     if ( process.env.NODE_ENV == "development" ) {
-      this.login()
+      // this.login()
     }
   },
   mounted() {

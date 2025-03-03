@@ -73,6 +73,14 @@
       "className": "IStatisticsCoordinationSystem",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.organizationalstructure",
+      "comName": "政协党建组织架构",
+      "className": "IOrganizationalStructure",
+      "comType": "common",
+      "comLangue": "vue"
     }
+    
   ]
 }
