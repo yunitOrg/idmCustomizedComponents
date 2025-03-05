@@ -80,7 +80,13 @@
       "className": "IOrganizationalStructure",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.internalreferencesubmission",
+      "comName": "上海市政府研究中心内参报送",
+      "className": "InternalReferenceSubmission",
+      "comType": "common",
+      "comLangue": "vue"
     }
-    
   ]
 }
