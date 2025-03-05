@@ -8,7 +8,6 @@
           style="width: 100%;" 
           placeholder="年份"
           @change="handleChangeYear"
-          allowClear
         />
       </div>
     </div>
@@ -20,37 +19,20 @@
               {{ item.title }}
             </div>
             <div class="main">
-              <div @click="handleClickItem(item, 1)" class="row flex_between">
+              <div v-for="(item1,index1) in item.children" :key="index1" @click="handleClickItem(item, index1)" class="row flex_between">
                 <div class="left">
                   <div class="img_box">
-                    <img :src="getImageSrc('','item1')" alt="">
+                    <img :src="getImageSrc('',index1 === 0 ? 'item1' : 'item2')" alt="">
                   </div>
                 </div>
                 <div class="right flex_between">
-                  <div class="row_right_left flex_start">
+                  <div  class="row_right_left flex_start">
                     <img :src="getImageSrc('','star')" alt="">
-                    <span class="name">刊发期数</span>
+                    <span class="name">{{ item1.name }}</span>
                   </div>
                   <div class="row_right_right">
-                    <span class="number">8</span>
-                    <span class="unit">（期）</span>
-                  </div>
-                </div>
-              </div>
-              <div @click="handleClickItem(item, 2)" class="row flex_between">
-                <div class="left">
-                  <div class="img_box">
-                    <img :src="getImageSrc('','item2')" alt="">
-                  </div>
-                </div>
-                <div class="right flex_between">
-                  <div class="row_right_left flex_start">
-                    <img :src="getImageSrc('','star')" alt="">
-                    <span class="name">批示数</span>
-                  </div>
-                  <div class="row_right_right">
-                    <span class="number">5</span>
-                    <span class="unit">（件）</span>
+                    <span class="number">{{ item1.number }}</span>
+                    <span class="unit">（{{ index1 === 0 ? '期' : '件' }}）</span>
                   </div>
                 </div>
               </div>
@@ -64,7 +46,7 @@
             《{{ title }}》工作情况
           </div>
           <div class="operate_block flex_end">
-            <a-button type="primary">打印</a-button>
+            <a-button @click="exportExcel" type="primary" :loading="loading">打印</a-button>
           </div>
           <div class="table_block" ref="table_block">
             <a-table 
@@ -99,6 +81,8 @@ export default {
 
       yearList: [],
       currentYear: undefined,
+      moduleId: '',
+      type: '1',// 刊发期数1，批示数2
       dataList: [
         {
           id: 1,
@@ -106,11 +90,11 @@ export default {
           children: [
             {
               name: "刊发期数",
-              number: 8
+              number: ''
             },
             {
               name: "批示数",
-              number: 5
+              number: ''
             }
           ]
         },
@@ -120,11 +104,11 @@ export default {
           children: [
             {
               name: "刊发期数",
-              number: 8
+              number: ''
             },
             {
               name: "批示数",
-              number: 5
+              number: ''
             }
           ]
         },
@@ -134,11 +118,11 @@ export default {
           children: [
             {
               name: "刊发期数",
-              number: 8
+              number: ''
             },
             {
               name: "批示数",
-              number: 5
+              number: ''
             }
           ]
         },
@@ -148,138 +132,17 @@ export default {
           children: [
             {
               name: "刊发期数",
-              number: 8
+              number: ''
             },
             {
               name: "批示数",
-              number: 5
+              number: ''
             }
           ]
         },
       ],
       title: '调研专报',
-      tableData: [
-        {
-          id: 1,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-        {
-          id: 2,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-        {
-          id: 3,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-        {
-          id: 4,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-        {
-          id: 5,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-        {
-          id: 6,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-        {
-          id: 7,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-        {
-          id: 8,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-        {
-          id: 9,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-        {
-          id: 10,
-          year: '2021',
-          number: '1',
-          day: '2021-01-01',
-          name: '调研专报',
-          depart: '部门',
-          author: '作者',
-          status: '未批示',
-          have: '是',
-          remark: '备注'
-        },
-      ],
+      tableData: [],
       tableColumns: [
         {
           title: '年份',
@@ -290,47 +153,47 @@ export default {
         },
         {
           title: '期数',
-          dataIndex: 'number',
-          key: 'number',
+          dataIndex: 'instalments',
+          key: 'instalments',
           align: 'center',
           width: 100
         },
         {
           title: '报送日期',
-          dataIndex: 'day',
-          key: 'day',
+          dataIndex: 'dateSubmission',
+          key: 'dateSubmission',
           align: 'center',
           width: 120
         },
         {
           title: '篇名',
-          dataIndex: 'name',
+          dataIndex: 'title',
           align: 'center',
-          key: 'name',
+          key: 'title',
         },
         {
           title: '完成部门',
-          dataIndex: 'depart',
+          dataIndex: 'deptName',
           align: 'center',
-          key: 'depart',
+          key: 'deptName',
         },
         {
           title: '作者',
-          dataIndex: 'author',
+          dataIndex: 'creatUserName',
           align: 'center',
-          key: 'author',
+          key: 'creatUserName',
         },
         {
           title: '批示情况',
-          dataIndex: 'status',
+          dataIndex: 'instructions',
           align: 'center',
-          key: 'status',
+          key: 'instructions',
         },
         {
           title: '是否调研计划',
-          dataIndex: 'have',
+          dataIndex: 'researchPlan',
           align: 'center',
-          key: 'have',
+          key: 'researchPlan',
         },
         {
           title: '备注',
@@ -350,7 +213,8 @@ export default {
       },
       tableScroll: {
         y: 222
-      }
+      },
+      loading: false
     }
   },
   watch: {
@@ -364,7 +228,7 @@ export default {
     this.moduleObject = this._moduleObject||this.$root.moduleObject;
     this.convertAttrToStyleObject();
     this.getYearList()
-    this.getInitData()
+    this.getInitData(true)
   },
   mounted() {
     let that = this;
@@ -386,17 +250,63 @@ export default {
   },
   destroyed() {},
   methods:{
+    exportExcel() {
+      this.loading = true
+      const url = `/ctrl/studiesCenterSubmit/export?year=${this.currentYear}&moduleId=${this.moduleId}&instructionfilter=${this.type == 1 ? false : true}`;
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.setAttribute("target", "_blank");
+      a.href = IDM.url.getWebPath(url);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      this.loading = false
+    },
+    downloadFile(data,name) {
+      const blob = new Blob([data], {
+        type: 'application/vnd.ms-excel',
+      })
+      const blobUrl = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      // 截取文件名
+      const fileName = name
+      a.style.display = 'none'
+      a.href = blobUrl
+      a.download = fileName
+      document.body.appendChild(a)
+      a.click()
+      URL.revokeObjectURL(blobUrl) // 释放内存
+      document.body.removeChild(a)
+    },
+    getTableList() {
+      IDM.http.get('/ctrl/studiesCenterSubmit/rightList',{
+        year: this.currentYear,
+        moduleId: this.moduleId,
+        page: this.tablePagination.current,
+        limit: this.tablePagination.pageSize,
+        instructionfilter: this.type == 1 ? false : true
+      }).then((res) => {
+        if(res.data?.type == 'success') {
+          this.tableData = res.data.data.dataList ?? [];
+          this.tablePagination.total = res.data.data?.total ?? 0;
+        }
+      })
+    },
     tableChange(pagination) {
       console.log('tableChange', pagination)
       this.tablePagination.current = pagination.current;
       this.tablePagination.pageSize = pagination.pageSize;
-      this.getTableData()
+      this.getTableList()
     },
     handleClickItem(item,type) {
       this.title = item.title
+      this.type = type + 1
+      this.moduleId = item.id
+      this.getTableList()
     },
     handleChangeYear(e) {
-      console.log('yearList',e)
+      this.currentYear = e;
+      this.getInitData()
     },
     getYearList() {
       let yearList = [];
@@ -428,28 +338,36 @@ export default {
       }
     },
    
-    getInitData() {
-      if ( this.propData.dataSource && this.propData.dataSource.length ) {
-        let that = this;
-        var params = this.commonParam();
-        params = this.makeParamsData(params)
-        IDM.datasource.request(this.propData.dataSource[0].id,{
-            moduleObject:this.moduleObject,
-            _this: that,
-            param:{
-                ...params
-            }
-        },function(res){
-          console.log('grid组件获取数据++++++++',res)
-          that.dataList = res
-          if(that.propData.openFirst) {
-            that.activeOrgId = [that.dataList[0].id]
+    getInitData(isUpdateParams) {
+      IDM.http.get('ctrl/studiesCenterSubmit/pageShowAll',{
+        year: this.currentYear
+      }).then((res) => {
+        if(res.data?.type == 'success') {
+          const data = res.data.data;
+          let dataList = JSON.parse(JSON.stringify(this.dataList));
+          dataList[0].id = data.reportModuleId;
+          dataList[0].children[0].number = data.reportNumber;
+          dataList[0].children[1].number = data.reportInstructionsNumber;
+
+          dataList[1].id = data.decisionModuleId;
+          dataList[1].children[0].number = data.decisionNumber;
+          dataList[1].children[1].number = data.decisionInstructionsNumber;
+
+          dataList[2].id = data.workModuleId;
+          dataList[2].children[0].number = data.workNumber;
+          dataList[2].children[1].number = data.workInstructionsNumber;
+
+          dataList[3].id = data.whiteHeadedModuleId;
+          dataList[3].children[0].number = data.whiteHeadedNumber;
+          dataList[3].children[1].number = data.whiteHeadedInstructionsNumber;
+          this.dataList = dataList;
+          if(isUpdateParams) {
+            this.type = 1;
+            this.moduleId = data.reportModuleId;
           }
-        },function(error){
-          console.log('error',error)
-        })
-      } else {
-      } 
+          this.getTableList()
+        }
+      })
     },
     makeParamsData(data) {
         let result = {};
@@ -627,7 +545,7 @@ export default {
      */
     reload(){
       //请求数据源
-      this.getInitData()
+      this.getInitData(true)
     },
     /**
      * 通用的获取表达式匹配后的结果
@@ -745,7 +663,7 @@ export default {
       width: 578px;
       margin-right: 17px;
       .item{
-        height: 228px;
+        height: 220px;
         margin-bottom: 15px;
         padding: 10px 29px 10px 25px;
         background: rgba(250,250,250,0.30);
@@ -764,7 +682,7 @@ export default {
         }
         &>.main{
           &>.row{
-            margin-bottom: 14px;
+            margin-bottom: 10px;
             &:last-child{
               margin-bottom: 0;
             }

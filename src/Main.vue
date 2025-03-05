@@ -22,7 +22,7 @@ export default {
   },
   created() {
     if ( process.env.NODE_ENV == "development" ) {
-      // this.login()
+      this.login()
     }
   },
   mounted() {
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     login() {
-      IDM.http.get('/ctrl/jzf/login',{
+      IDM.http.get('/ctrl/studiesCenterSubmit/login',{
         
       }).then((res) => {
           if ( res.data.code == 200 ) {
