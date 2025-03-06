@@ -331,9 +331,9 @@
           {
             "type": "actionSelect",
             "layoutType": "block",
-            "text": "点击人员自定义函数",
+            "text": "点击行自定义函数",
             "bindKey": "clickCustomFunction",
-            "desc": "点击人员时触发的自定义函数，参数有_this,item",
+            "desc": "点击表格行时触发的自定义函数，参数有_this,item",
             "multiple": false
           }
         ]

@@ -57,6 +57,7 @@
               rowKey="id"
               :pagination="tablePagination"
               @change="tableChange"
+              :customRow="rowClickHandler"
             >
             </a-table>
           </div>
@@ -250,6 +251,20 @@ export default {
   },
   destroyed() {},
   methods:{
+    rowClickHandler(record) {
+      let that = this;
+      return {
+        on: {
+          click: () => {
+            console.log('点击的行的数据:', record);
+            IDM.invokeCustomFunctions?.apply(that,[this.propData.clickCustomFunction,{
+              item: record,
+              _this: that
+            }])
+          },
+        }
+      };
+    },
     exportExcel() {
       this.loading = true
       const url = `/ctrl/studiesCenterSubmit/export?year=${this.currentYear}&moduleId=${this.moduleId}&instructionfilter=${this.type == 1 ? false : true}`;
