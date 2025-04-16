@@ -19,7 +19,7 @@
               {{ item.title }}
             </div>
             <div class="main">
-              <div v-for="(item1,index1) in item.children" :key="index1" @click="handleClickItem(item, index1)" class="row flex_between">
+              <div v-for="(item1,index1) in item.children" :key="index1" @click="handleClickItem(item, index1,index)" class="row flex_between">
                 <div class="left">
                   <div class="img_box">
                     <img :src="getImageSrc('',index1 === 0 ? 'item1' : 'item2')" alt="">
@@ -313,11 +313,218 @@ export default {
       this.tablePagination.pageSize = pagination.pageSize;
       this.getTableList()
     },
-    handleClickItem(item,type) {
+    handleClickItem(item,type,index) {
       this.title = item.title
       this.type = type + 1
-      this.moduleId = item.id
+      this.moduleId = item.id;
+      this.makeTableColumnData(index)
       this.getTableList()
+    },
+    makeTableColumnData(index) {
+      let tableColumnData = []
+      if(index === 0){
+        this.tableColumns = [
+          {
+            title: '年份',
+            dataIndex: 'year',
+            key: 'year',
+            align: 'center',
+            width: 100
+          },
+          {
+            title: '期数',
+            dataIndex: 'instalments',
+            key: 'instalments',
+            align: 'center',
+            width: 100
+          },
+          {
+            title: '报送日期',
+            dataIndex: 'dateSubmission',
+            key: 'dateSubmission',
+            align: 'center',
+            width: 120
+          },
+          {
+            title: '篇名',
+            dataIndex: 'title',
+            align: 'center',
+            key: 'title',
+          },
+          {
+            title: '完成部门',
+            dataIndex: 'deptName',
+            align: 'center',
+            key: 'deptName',
+          },
+          {
+            title: '作者',
+            dataIndex: 'creatUserName',
+            align: 'center',
+            key: 'creatUserName',
+          },
+          {
+            title: '批示情况',
+            dataIndex: 'instructions',
+            align: 'center',
+            key: 'instructions',
+          },
+          {
+            title: '是否调研计划',
+            dataIndex: 'researchPlan',
+            align: 'center',
+            key: 'researchPlan',
+          },
+          {
+            title: '备注',
+            dataIndex: 'remark',
+            align: 'center',
+            key: 'remark',
+          }
+        ]
+      } else if(index == 1){
+        this.tableColumns = [
+          {
+            title: '年份',
+            dataIndex: 'year',
+            key: 'year',
+            align: 'center',
+            width: 100
+          },
+          {
+            title: '期数',
+            dataIndex: 'instalments',
+            key: 'instalments',
+            align: 'center',
+            width: 100
+          },
+          {
+            title: '报送日期',
+            dataIndex: 'dateSubmission',
+            key: 'dateSubmission',
+            align: 'center',
+            width: 120
+          },
+          {
+            title: '篇名',
+            dataIndex: 'title',
+            align: 'center',
+            key: 'title',
+          },
+          {
+            title: '完成部门',
+            dataIndex: 'deptName',
+            align: 'center',
+            key: 'deptName',
+          },
+          {
+            title: '作者',
+            dataIndex: 'creatUserName',
+            align: 'center',
+            key: 'creatUserName',
+          },
+          {
+            title: '批示情况',
+            dataIndex: 'instructions',
+            align: 'center',
+            key: 'instructions',
+          },
+
+          {
+            title: '稿源',
+            dataIndex: 'manuscriptSourceText',
+            align: 'center',
+            key: 'manuscriptSourceText',
+          },
+          {
+            title: '原稿单位',
+            dataIndex: 'sourceManuscriptUnitName',
+            align: 'center',
+            key: 'sourceManuscriptUnitName',
+          },
+          {
+            title: '原稿作者',
+            dataIndex: 'sourceManuscriptAuthorText',
+            align: 'center',
+            key: 'sourceManuscriptAuthorText',
+          },
+
+          {
+            title: '备注',
+            dataIndex: 'remark',
+            align: 'center',
+            key: 'remark',
+          }
+        ]
+      } else {
+        this.tableColumns = [
+          {
+            title: '年份',
+            dataIndex: 'year',
+            key: 'year',
+            align: 'center',
+            width: 100
+          },
+          {
+            title: '期数',
+            dataIndex: 'instalments',
+            key: 'instalments',
+            align: 'center',
+            width: 100
+          },
+          {
+            title: '报送日期',
+            dataIndex: 'dateSubmission',
+            key: 'dateSubmission',
+            align: 'center',
+            width: 120
+          },
+          {
+            title: '篇名',
+            dataIndex: 'title',
+            align: 'center',
+            key: 'title',
+          },
+          {
+            title: '完成部门',
+            dataIndex: 'deptName',
+            align: 'center',
+            key: 'deptName',
+          },
+          {
+            title: '作者',
+            dataIndex: 'creatUserName',
+            align: 'center',
+            key: 'creatUserName',
+          },
+          {
+            title: '批示情况',
+            dataIndex: 'instructions',
+            align: 'center',
+            key: 'instructions',
+          },
+
+          {
+            title: '类别',
+            dataIndex: 'category',
+            align: 'center',
+            key: 'category',
+          },
+          {
+            title: '是否成立专班',
+            dataIndex: 'specialClass',
+            align: 'center',
+            key: 'specialClass',
+          },
+
+          {
+            title: '备注',
+            dataIndex: 'remark',
+            align: 'center',
+            key: 'remark',
+          }
+        ]
+      }
     },
     handleChangeYear(e) {
       this.currentYear = e;
