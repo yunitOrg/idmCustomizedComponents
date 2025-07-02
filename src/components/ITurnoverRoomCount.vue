@@ -1,7 +1,8 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="ITurnoverRoomCount_app" ref="module_ref">
-    <div v-if="propData.title" class="title">
-      {{ propData.title }}
+    <div v-if="propData.title" class="title" :class="{dateTitle:propData.isShowDate}">
+      <span>{{ propData.title }}</span>
+      <span v-if="propData.isShowDate">{{date}}年</span>
     </div>
     <div class="ITurnoverRoomCount_app_main flex_between">
       <template v-if="propData.gridList && propData.gridList.length">
@@ -35,8 +36,10 @@ export default {
   data() {
     return {
       moduleObject: {},
+      date:new Date().getFullYear(),
       propData: this.$root.propData.compositeAttr || {
         title: '周转房管理',
+        isShowDate:false,
         gridList: [
           {
             name: '待处理',

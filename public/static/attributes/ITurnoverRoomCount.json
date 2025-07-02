@@ -47,6 +47,25 @@
           "default": "标题"
         },
         {
+          "type": "radio",
+          "styleType": "radio",
+          "layoutType": "inline",
+          "text": "显示年份",
+          "desc":"是否显示年份",
+          "bindKey": "isShowDate",
+          "default": false,
+          "dictionary": [
+              {
+                  "label": "是",
+                  "value": true
+              },
+              {
+                  "label": "否",
+                  "value": false
+              }
+          ]
+        },
+        {
           "type": "table",
           "text": "数据项配置",
           "desc": "数据展示项字段配置",
