@@ -145,13 +145,13 @@ export default {
       title: '调研专报',
       tableData: [],
       tableColumns: [
-        {
-          title: '年份',
-          dataIndex: 'year',
-          key: 'year',
-          align: 'center',
-          width: 100
-        },
+        // {
+        //   title: '年份',
+        //   dataIndex: 'year',
+        //   key: 'year',
+        //   align: 'center',
+        //   width: 100
+        // },
         {
           title: '期数',
           dataIndex: 'instalments',
@@ -177,12 +177,14 @@ export default {
           dataIndex: 'deptName',
           align: 'center',
           key: 'deptName',
+          width: 100
         },
         {
           title: '作者',
           dataIndex: 'creatUserName',
           align: 'center',
           key: 'creatUserName',
+          width: 100
         },
         {
           title: '批示情况',
@@ -195,6 +197,7 @@ export default {
           dataIndex: 'researchPlan',
           align: 'center',
           key: 'researchPlan',
+          width: 130
         },
         {
           title: '备注',
@@ -882,7 +885,7 @@ export default {
     padding: 10px 30px 0 37px;
     .InternalReferenceSubmission_app_left{
       height: 100%;
-      width: 578px;
+      width: 420px;
       margin-right: 17px;
       .item{
         height: 220px;
@@ -995,13 +998,13 @@ export default {
 .InternalReferenceSubmission_app{
   .select_box{
     .ant-select-selection{
-      color: white;
-      background-color: rgba(250,250,250,0);
+      color: #333;
+      background-color: #fff;
       .anticon{
-        color: white;
+        color: #333;
       }
       .ant-select-selection__clear{
-        background-color: rgba(250,250,250,0);
+        background-color: #fff;
       }
     }
   }
