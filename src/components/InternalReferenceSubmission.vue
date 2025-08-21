@@ -19,21 +19,36 @@
               {{ item.title }}
             </div>
             <div class="main">
-              <div v-for="(item1,index1) in item.children" :key="index1" @click="handleClickItem(item, index1,index)" class="row flex_between">
+              <div v-for="(item1,index1) in item.children" :key="index1"  class="row flex_between">
                 <div class="left">
                   <div class="img_box">
                     <img :src="getImageSrc('',index1 === 0 ? 'item1' : 'item2')" alt="">
                   </div>
                 </div>
-                <div class="right flex_between">
-                  <div  class="row_right_left flex_start">
-                    <img :src="getImageSrc('','star')" alt="">
-                    <span class="name">{{ item1.name }}</span>
+                <div class="right">
+                  <div @click="handleClickItem(item, index1,index)" class="row_right_item flex_between">
+                    <div  class="row_right_left flex_start">
+                      <img :src="getImageSrc('','star')" alt="">
+                      <span class="name">{{ item1.name }}</span>
+                    </div>
+                    <div class="row_right_right">
+                      <span class="number">{{ item1.number }}</span>
+                      <span class="unit">（{{ index1 === 0 ? '期' : '件' }}）</span>
+                    </div>
                   </div>
-                  <div class="row_right_right">
-                    <span class="number">{{ item1.number }}</span>
-                    <span class="unit">（{{ index1 === 0 ? '期' : '件' }}）</span>
-                  </div>
+                  <template v-if="item1.children?.length">
+                    <div @click.stop="handleClickPiShiItem(item2, index2, item, index)" v-for="(item2,index2) in item1.children" :key="index2" class="row_right_item flex_between">
+                      <div  class="row_right_left flex_start">
+                        <img :src="getImageSrc('','star')" alt="">
+                        <span class="name">{{ item2.name }}</span>
+                      </div>
+                      <div class="row_right_right">
+                        <span class="number">{{ item2.number }}</span>
+                        <span class="unit">（{{ '件' }}）</span>
+                      </div>
+                    </div>
+                  </template>
+                  
                 </div>
               </div>
             </div>
@@ -95,7 +110,17 @@ export default {
             },
             {
               name: "批示数",
-              number: ''
+              number: '',
+              children: [
+                {
+                  name: "书记批示",
+                  number: ''
+                },
+                {
+                  name: "市长批示",
+                  number: ''
+                }
+              ]
             }
           ]
         },
@@ -109,7 +134,17 @@ export default {
             },
             {
               name: "批示数",
-              number: ''
+              number: '',
+              children: [
+                {
+                  name: "书记批示",
+                  number: ''
+                },
+                {
+                  name: "市长批示",
+                  number: ''
+                }
+              ]
             }
           ]
         },
@@ -123,7 +158,17 @@ export default {
             },
             {
               name: "批示数",
-              number: ''
+              number: '',
+              children: [
+                {
+                  name: "书记批示",
+                  number: ''
+                },
+                {
+                  name: "市长批示",
+                  number: ''
+                }
+              ]
             }
           ]
         },
@@ -137,7 +182,17 @@ export default {
             },
             {
               name: "批示数",
-              number: ''
+              number: '',
+              children: [
+                {
+                  name: "书记批示",
+                  number: ''
+                },
+                {
+                  name: "市长批示",
+                  number: ''
+                }
+              ]
             }
           ]
         },
@@ -218,7 +273,8 @@ export default {
       tableScroll: {
         y: 222
       },
-      loading: false
+      loading: false,
+      ZQ: undefined
     }
   },
   watch: {
@@ -302,7 +358,8 @@ export default {
         moduleId: this.moduleId,
         page: this.tablePagination.current,
         limit: this.tablePagination.pageSize,
-        instructionfilter: this.type == 1 ? false : true
+        instructionfilter: this.type == 1 ? false : true,
+        zq: this.type == 2 ? this.ZQ : undefined
       }).then((res) => {
         if(res.data?.type == 'success') {
           this.tableData = res.data.data.dataList ?? [];
@@ -317,9 +374,20 @@ export default {
       this.getTableList()
     },
     handleClickItem(item,type,index) {
-      this.title = item.title
+      console.log('handleClickItem', item)
+      this.title = item.title;
       this.type = type + 1
       this.moduleId = item.id;
+      this.ZQ = undefined;
+      this.makeTableColumnData(index)
+      this.getTableList()
+    },
+    handleClickPiShiItem(item2, index2, item, index){
+      console.log('handleClickPiShiItem', item2)
+      this.title = item.title;
+      this.type = 2;
+      this.moduleId = item.id;
+      this.ZQ = index2 == 0 ? '2' : '1'
       this.makeTableColumnData(index)
       this.getTableList()
     },
@@ -573,18 +641,26 @@ export default {
           dataList[0].id = data.reportModuleId;
           dataList[0].children[0].number = data.reportNumber;
           dataList[0].children[1].number = data.reportInstructionsNumber;
+          dataList[0].children[1].children[0].number = data.reportSjpsNumber;
+          dataList[0].children[1].children[1].number = data.reportSzpsNumber;
 
           dataList[1].id = data.decisionModuleId;
           dataList[1].children[0].number = data.decisionNumber;
           dataList[1].children[1].number = data.decisionInstructionsNumber;
+          dataList[1].children[1].children[0].number = data.decisionSjpsNumber;
+          dataList[1].children[1].children[1].number = data.decisionSzpsNumber;
 
           dataList[2].id = data.workModuleId;
           dataList[2].children[0].number = data.workNumber;
           dataList[2].children[1].number = data.workInstructionsNumber;
+          dataList[2].children[1].children[0].number = data.workSjpsNumber;
+          dataList[2].children[1].children[1].number = data.workSzpsNumber;
 
           dataList[3].id = data.whiteHeadedModuleId;
           dataList[3].children[0].number = data.whiteHeadedNumber;
           dataList[3].children[1].number = data.whiteHeadedInstructionsNumber;
+          dataList[3].children[1].children[0].number = data.whiteHeadedSjpsNumber;
+          dataList[3].children[1].children[1].number = data.whiteHeadedSzpsNumber;
           this.dataList = dataList;
           if(isUpdateParams) {
             this.type = 1;
@@ -888,7 +964,7 @@ export default {
       width: 420px;
       margin-right: 17px;
       .item{
-        height: 220px;
+        // height: 220px;
         margin-bottom: 15px;
         padding: 10px 29px 10px 25px;
         background: rgba(250,250,250,0.30);
@@ -924,38 +1000,41 @@ export default {
               }
             }
             &>.right{
-              height: 38px;
               flex-grow: 2;
-              padding: 0 30px 0 18px;
-              background-image: linear-gradient(264deg, rgba(240,248,255,0.00) 15%, #DCEEFF 85%);
               cursor: pointer;
-              .row_right_left{
-                img{
-                  margin-right: 28px;
+              .row_right_item{
+                height: 38px;
+                margin-bottom: 5px;
+                padding: 0 10px 0 18px;
+                background-image: linear-gradient(264deg, rgba(240,248,255,0.00) 15%, #DCEEFF 85%);
+                .row_right_left{
+                  img{
+                    margin-right: 28px;
+                  }
+                  .name{
+                    font-family: SourceHanSansSC-Medium;
+                    font-size: 16px;
+                    color: #333333;
+                    letter-spacing: 2.22px;
+                    font-weight: 500;
+                  }
                 }
-                .name{
-                  font-family: SourceHanSansSC-Medium;
-                  font-size: 16px;
-                  color: #333333;
-                  letter-spacing: 2.22px;
-                  font-weight: 500;
-                }
-              }
-              .row_right_right{
-                .number{
-                  font-family: SourceHanSansSC-Heavy;
-                  font-size: 24px;
-                  color: #0077AF;
-                  letter-spacing: 3.33px;
-                  text-align: center;
-                  font-weight: 900;
-                }
-                .unit{
-                  font-family: SourceHanSansSC-Regular;
-                  font-size: 14px;
-                  color: #577A97;
-                  letter-spacing: 1.94px;
-                  font-weight: 400;
+                .row_right_right{
+                  .number{
+                    font-family: SourceHanSansSC-Heavy;
+                    font-size: 24px;
+                    color: #0077AF;
+                    letter-spacing: 3.33px;
+                    text-align: center;
+                    font-weight: 900;
+                  }
+                  .unit{
+                    font-family: SourceHanSansSC-Regular;
+                    font-size: 14px;
+                    color: #577A97;
+                    letter-spacing: 1.94px;
+                    font-weight: 400;
+                  }
                 }
               }
             }
