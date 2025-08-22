@@ -15,7 +15,9 @@ import { Button, Popover, Progress,Slider,Empty,Select,Input,DatePicker, TreeSel
   Space,
   Modal,
   ConfigProvider,
-  message
+  message,
+  Icon,
+  InputNumber
 } from 'ant-design-vue'
 
 /* v1.1.3+ registration methods */
@@ -27,6 +29,7 @@ Vue.use(Slider)
 Vue.use(Empty)
 Vue.use(Select)
 Vue.use(Input)
+Vue.use(InputNumber)
 Vue.use(DatePicker)
 Vue.use(TreeSelect)
 Vue.use(Table)
@@ -34,4 +37,5 @@ Vue.use(Space)
 Vue.use(Modal)
 Vue.use(ConfigProvider)
 Vue.use(message)
+Vue.use(Icon)
 Vue.prototype.$confirm = Modal.confirm

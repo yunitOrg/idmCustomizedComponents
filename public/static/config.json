@@ -87,6 +87,13 @@
       "className": "InternalReferenceSubmission",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.performanceevaluation",
+      "comName": "DT部门月度绩效考评",
+      "className": "IPerformanceEvaluation",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
