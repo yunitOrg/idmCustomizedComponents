@@ -1,7 +1,7 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IPerformanceEvaluation_app">
-    <div class="IPerformanceEvaluation_app_header">
-      <div class="title">DT部门月度绩效考评</div>
+    <div v-if="propData?.showHeader" class="IPerformanceEvaluation_app_header">
+      <div class="title">{{ propData?.title }}</div>
       <div class="bottom flex_between">
         <div v-for="(item,index) in statisticsList" :key="index" class="list">
           <div class="value" :class="item.status == '1' ? 'completed' : ''">{{ getDepartInfoValue(item.value) }}{{ index == statisticsList.length - 1 ? '%' : '' }}</div>
@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="IPerformanceEvaluation_app_main flex_between">
-      <div class="left">
+      <div v-if="propData?.showLeft" class="left">
         <div class="input_box">
           <a-input v-model="userName" 
             @change="handleSearchUser" 
@@ -47,9 +47,8 @@
       </div>
       <div class="right">
         <IPerformanceEvaluationUser 
-          :userId="userId" 
-          :userItem="userItem"
-          :deptAssessmentId="deptAssessmentId"
+          :userId="userId"
+          :moduleObject="moduleObject"
         />
       </div>
     </div>
@@ -72,7 +71,8 @@ export default {
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
-        loadDataCreated: true
+        showHeader: true,
+        showLeft: true
       },
       statisticsList: [
         {
@@ -121,43 +121,12 @@ export default {
         }
       ],
       filter_active: '',
-      user_list: [
-        {
-          id: 1,
-          name: '陈蓉',
-          score: '7.00',
-          grade: 'A'
-        },
-        {
-          id: 2,
-          name: '陈蓉',
-          score: '7.00',
-          grade: 'B'
-        },
-        {
-          id: 3,
-          name: '陈蓉',
-          score: '7.00',
-          grade: 'C'
-        },
-        {
-          id: 4,
-          name: '陈蓉',
-          score: '7.00',
-          grade: 'D'
-        },
-        {
-          id: 5,
-          name: '陈蓉',
-          score: '7.00',
-          grade: 'A'
-        }
-      ],
+      user_list: [ ],
       deptName: '部门',
       departData: {},
       userId: '',
       userItem: {},
-      deptAssessmentId: '250822151339eGrG7DJoYlCSehCorjX'
+      deptAssessmentId: ''
     }
   },
   watch: {
@@ -166,9 +135,12 @@ export default {
   props: {
   },
   created() {
-    this.moduleObject = this.$root.moduleObject
+    this.moduleObject = this.$root.moduleObject;
     this.convertAttrToStyleObject();
-    if(this.propData.loadDataCreated) {
+    if(IDM.url.queryString('deptAssessmentId')){
+      this.deptAssessmentId = IDM.url.queryString('deptAssessmentId');
+    }
+    if(this.propData.showHeader && this.propData.showLeft){
       this.getDepartData()
     }
   },
@@ -201,6 +173,11 @@ export default {
       }).then((res) => {
         if ( res.data.code == 200 ) {
           this.departData = res.data.data;
+          if(Number(this.departData?.assessmentProcess) == 100){
+            this.statisticsList[this.statisticsList.length - 1].status = 1;
+          } else {
+            this.statisticsList[this.statisticsList.length - 1].status = 0;
+          }
           this.getUserList()
           this.getFilterListData(res.data?.data?.userList ?? [])
         } else {
@@ -460,6 +437,9 @@ export default {
         border-right: 1px solid #e5e5e5;
         &:last-child{
           border-right: none;
+          .value{
+            color: #e12617;
+          }
         }
         .value{
           height: 27px;
@@ -472,10 +452,6 @@ export default {
         .completed{ 
           color: #26b340;
         }
-        .processing{ 
-          color: #e12617;
-        }
-
         .label{
           font-size: 14px;
           color: #666;
@@ -493,6 +469,7 @@ export default {
       height: 100%;
       display: flex;
       flex-direction: column;
+      margin-right: 10px;
       padding: 20px;
       background: white;
       .input_box{
@@ -601,7 +578,6 @@ export default {
       width: 0;
       height: 100%;
       flex-grow: 2;
-      margin-left: 10px;
       padding: 20px;
       background: white;
     }

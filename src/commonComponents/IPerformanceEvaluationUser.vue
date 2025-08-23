@@ -1,12 +1,12 @@
 <template>
   <div class="IPerformanceEvaluationUser_app">
-    <template v-if="userId">
+    <template v-if="currentUserId">
       <div class="header">
         <div class="user_info flex_between">
           <div class="left flex_start">
             <img :src="getImageSrc('', 'defaultHeader')" alt="" />
-            <span class="name">{{ userItem.userName }}</span>
-            <span class="label">{{ userItem.jobSerialText }}</span>
+            <span class="name">{{ resultData?.userName }}</span>
+            <span class="label">{{ resultData?.jobSerialText }}</span>
           </div>
           <!-- <div class="right">
             历史考核结果
@@ -27,7 +27,7 @@
           :loading="loading"
         >
           <template slot="weight" slot-scope="text">
-            <span>{{ text }}%</span>
+            <span>{{ text ? text : '-' }}{{ text ? '%' : '' }}</span>
           </template>
           <template slot="score" slot-scope="text, record, index">
             <div v-if="status == '1'" class="input_box">
@@ -40,6 +40,8 @@
                 @input="e => handleInput(record, index, e)"
                 @change="e => handleChange(record, index, e)" 
                 placeholder="输入分数"
+                class="input_number"
+                @wheel.prevent
               />
             </div>
             <span v-else>{{ text }}</span>
@@ -55,8 +57,8 @@
             考核等级：<span>{{ levelText ? levelText : '未考核' }}</span>
           </div>
         </div>
-        <div class="right">
-          <a-button type="primary">保存</a-button>
+        <div v-if="status == '1'" class="right">
+          <a-button @click="handleSave" type="primary">保存</a-button>
         </div>
       </div>
     </template>
@@ -73,17 +75,11 @@ export default {
   props: {
     userId: {
       type: String,
-      default: IDM.url.queryString("userId")
+      default: ''
     },
-    userItem: {
+    moduleObject: {
       type: Object,
-      default: function () {
-        return {}
-      }
-    },
-    deptAssessmentId: {
-      type: String,
-      default: IDM.url.queryString("deptAssessmentId")
+      default: () => {}
     }
   },
 
@@ -142,52 +138,119 @@ export default {
       },
       totalScore: 0,
       levelText: '',
+      level: '',
       loading: false,
       status: '', // 1可评分 2只允许查看
+      assessmentLevelList: [],
+      deptAssessmentId: '',
+      currentUserId: '',
+      // 返回数据
+      resultData: {},
     }
   },
   watch: { 
     userId: {
       handler (val) {
+        this.currentUserId = val;
         this.getUserData()
+      }
+    },
+    totalScore: {
+      handler (val) {
+        this.getGradeText(val ? Number(val) : 0)
       }
     }
   },
   created () {
     this.status = IDM.url.queryString('status');
+    this.deptAssessmentId = IDM.url.queryString('deptAssessmentId')
+    if(IDM.url.queryString('userId')){
+      this.currentUserId = IDM.url.queryString('userId');
+      this.getUserData()
+    }
   },
   mounted () {
+    
   },
   methods: {
+    handleSave(){
+      let params = {
+        totalScore: this.totalScore,
+        userId: this.currentUserId,
+        level: this.level,
+        levelText: this.levelText,
+        deptAssessmentId: this.deptAssessmentId,
+        indicatorList: this.tableList
+      }
+      console.log(params)
+      IDM.http.post('/ctrl/deptAssessment/save', {
+        ...params
+      },{
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }).then((res) => {
+        IDM.message.success('保存成功')
+        this.getUserData()
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
     getTotalScore(){
-      
+      let tableList = JSON.parse(JSON.stringify(this.tableList));
+      let totalScore = 0;
+      tableList.forEach(item => {
+        if(item.weight){
+          totalScore = totalScore + Math.round(item.score * parseInt(item.weight));
+        } else {
+          if(item.score){
+            totalScore = totalScore + item.score * 100;
+          }
+        }
+      });
+      this.totalScore = (totalScore/100).toFixed(2);
+    },
+    getGradeText(score){
+      if(!score){
+        this.levelText = '';
+        return
+      }
+      this.assessmentLevelList.forEach((item,index) => {
+        if((index === 0 && score > item.minScore) || (index == 1 && score >= item.minScore && score <= item.maxScore) || (index == 2 && score >= item.minScore && score < item.maxScore) || (index == 3 && score < item.maxScore)){
+          this.levelText = item.scoreLevelText;
+          this.level = item.scoreLevel;
+        }
+      })
     },
     handleInput(item, index, e){
       console.log(item, index)
       console.log(e.target.value)
-      if(e.target.value > item.maxScore){
+      if(e.target.value > parseInt(item.maxScore)){
         item.score = item.maxScore
       }
       if(e.target.value < 0){
         item.score = 0
       }
+      this.getTotalScore()
     },
     handleChange(item, index, e){
       console.log(item, index)
       console.log(e)
     },
     getUserData(){
-      if(this.userId && this.deptAssessmentId){
+      if(this.currentUserId && this.deptAssessmentId){
         this.loading = true
         IDM.http.get('/ctrl/indicator/loadByUserId',{
           deptAssessmentId: this.deptAssessmentId,
-          userId: this.userId
+          userId: this.currentUserId
         }).then((res) => {
           this.loading = false;
           if ( res.data.code == 200 ) {
             this.tableList = res.data.data.indicatorList ?? [];
             this.totalScore = res.data.data.totalScore || 0;
             this.levelText = res.data.data.levelText ?? '';
+            this.assessmentLevelList = res.data.data.assessmentLevelList ?? [];
+            this.resultData = res.data.data;
           } else {
             IDM.message.error(res.data.message)
           }
@@ -315,6 +378,7 @@ export default {
   }
   .input_box{
     input{
+      width: 100px;
       padding: 8px 10px;
       border: 1px solid #d9d9d9;
       border-radius: 4px;

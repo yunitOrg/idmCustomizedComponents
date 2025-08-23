@@ -24,9 +24,9 @@
             "type": "radio",
             "styleType": "radio",
             "layoutType": "inline",
-            "text": "初始加载",
-            "desc":"是否在组件初始化时就加载数据",
-            "bindKey": "loadDataCreated",
+            "text": "显示头部",
+            "desc":"是否显示头部部门信息",
+            "bindKey": "showHeader",
             "default": true,
             "dictionary": [
                 {
@@ -38,6 +38,32 @@
                     "value": false
                 }
             ]
+          },
+          {
+            "type": "radio",
+            "styleType": "radio",
+            "layoutType": "inline",
+            "text": "显示左侧",
+            "desc":"是否显示左侧部门人员",
+            "bindKey": "showLeft",
+            "default": true,
+            "dictionary": [
+                {
+                    "label": "是",
+                    "value": true
+                },
+                {
+                    "label": "否",
+                    "value": false
+                }
+            ]
+          },
+          {
+            "type": "input",
+            "layoutType": "inline",
+            "text": "标题",
+            "bindKey": "title",
+            "default": "DT部门月度绩效考评"
           }
         ]
       },
