@@ -26,6 +26,9 @@
           rowKey="itemId"
           :loading="loading"
         >
+          <template slot="assessmentStandard" slot-scope="text">
+            <div style="text-align: left;" v-html="text"></div>
+          </template>
           <template slot="weight" slot-scope="text">
             <span>{{ text ? text : '-' }}{{ text ? '%' : '' }}</span>
           </template>
@@ -92,6 +95,7 @@ export default {
           dataIndex: 'indicatorName',
           key: 'indicatorName',
           width: 140,
+          align: "center",
           customRender: (value, row, index) => {
             const obj = {
               children: value,
@@ -105,24 +109,29 @@ export default {
           title: 'KPI',
           dataIndex: 'itemName',
           key: 'itemName',
-          width: 150
+          align: "center",
+          width: 150,
         },
         {
           title: '指标说明',
           dataIndex: 'assessmentStandard',
           key: 'assessmentStandard',
+          align: "center",
+          scopedSlots: { customRender: 'assessmentStandard' }
         },
         {
           title: '权重',
           dataIndex: 'weight',
           key: 'weight',
           width: 100,
+          align: "center",
           scopedSlots: { customRender: 'weight' }
         },
         {
           title: '分值',
           dataIndex: 'maxScore',
           key: 'maxScore',
+          align: "center",
           width: 100
         },
         {
@@ -130,6 +139,7 @@ export default {
           dataIndex: 'score',
           key: 'score',
           width: 140,
+          align: "center",
           scopedSlots: { customRender: 'score' }
         }
       ],
@@ -153,11 +163,6 @@ export default {
       handler (val) {
         this.currentUserId = val;
         this.getUserData()
-      }
-    },
-    totalScore: {
-      handler (val) {
-        this.getGradeText(val ? Number(val) : 0)
       }
     }
   },
@@ -190,8 +195,13 @@ export default {
           'Content-Type': 'application/json',
         }
       }).then((res) => {
-        IDM.message.success('保存成功')
-        this.getUserData()
+        if(res.data.type == 'success'){
+          IDM.message.success('保存成功')
+          this.getUserData()
+          this.$emit("update")
+        } else {
+          IDM.message.error(res.data.message)
+        }
       }).catch((error) => {
         console.log(error)
       })
@@ -201,18 +211,19 @@ export default {
       let totalScore = 0;
       tableList.forEach(item => {
         if(item.weight){
-          totalScore = totalScore + Math.round(item.score * parseInt(item.weight));
+          totalScore = totalScore + item.score * parseInt(item.weight);
         } else {
           if(item.score){
             totalScore = totalScore + item.score * 100;
           }
         }
       });
-      this.totalScore = (totalScore/100).toFixed(2);
+      this.totalScore = (Math.round(totalScore*10)/1000).toFixed(2);
+      this.getGradeText(Number(this.totalScore))
     },
     getGradeText(score){
       if(!score){
-        this.levelText = '';
+        this.levelText = 'D';
         return
       }
       this.assessmentLevelList.forEach((item,index) => {

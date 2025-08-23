@@ -49,6 +49,7 @@
         <IPerformanceEvaluationUser 
           :userId="userId"
           :moduleObject="moduleObject"
+          @update="update"
         />
       </div>
     </div>
@@ -81,7 +82,7 @@ export default {
         },
         {
           value: 'deptName',
-          label: "部门名称",
+          label: "DT负责人",
         },
         {
           value: 'assessmentNum',
@@ -125,7 +126,6 @@ export default {
       deptName: '部门',
       departData: {},
       userId: '',
-      userItem: {},
       deptAssessmentId: ''
     }
   },
@@ -157,7 +157,6 @@ export default {
     },
     handleClickUser(item){
       this.userId = item.userId;
-      this.userItem = item;
     },
     handleClickFilter(item){
       if(this.filter_active == item.label){
@@ -167,7 +166,10 @@ export default {
       }
       this.getUserList()
     },
-    getDepartData(){
+    update(){
+      this.getDepartData(true)
+    },
+    getDepartData(isUpdate){
       IDM.http.get('/ctrl/deptAssessment/detail',{
         deptAssessmentId: this.deptAssessmentId
       }).then((res) => {
@@ -178,7 +180,7 @@ export default {
           } else {
             this.statisticsList[this.statisticsList.length - 1].status = 0;
           }
-          this.getUserList()
+          this.getUserList(isUpdate)
           this.getFilterListData(res.data?.data?.userList ?? [])
         } else {
           IDM.message.error(res.data.message)
@@ -200,7 +202,7 @@ export default {
         item.value = number ?? 0;
       })
     },
-    getUserList(){
+    getUserList(isUpdate){
       const userList = this.departData.userList;
       let result = JSON.parse(JSON.stringify(userList));
       if(this.filter_active){
@@ -216,8 +218,9 @@ export default {
         result = result.filter(item => item.userName.includes(name))
       }
       this.user_list = result ?? []
-      this.userId = this.user_list?.[0]?.userId;
-      this.userItem = this.user_list?.[0] ?? {};
+      if(!isUpdate){
+        this.userId = this.user_list?.[0]?.userId;
+      }
     },
     getImageSrc(url,name) {
       if ( url ) {
