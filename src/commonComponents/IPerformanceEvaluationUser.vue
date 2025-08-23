@@ -179,6 +179,10 @@ export default {
   },
   methods: {
     handleSave(){
+      if(!this.totalScore || Number(this.totalScore) == 0){
+        IDM.message.error('请填写评分！')
+        return
+      }
       let params = {
         totalScore: this.totalScore,
         userId: this.currentUserId,
