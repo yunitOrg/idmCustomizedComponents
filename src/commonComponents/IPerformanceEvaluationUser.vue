@@ -224,6 +224,7 @@ export default {
     getGradeText(score){
       if(!score){
         this.levelText = 'D';
+        this.level = 4;
         return
       }
       this.assessmentLevelList.forEach((item,index) => {
@@ -260,6 +261,7 @@ export default {
             this.tableList = res.data.data.indicatorList ?? [];
             this.totalScore = res.data.data.totalScore || 0;
             this.levelText = res.data.data.levelText ?? '';
+            this.level = res.data.data.level;
             this.assessmentLevelList = res.data.data.assessmentLevelList ?? [];
             this.resultData = res.data.data;
           } else {
