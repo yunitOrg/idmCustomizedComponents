@@ -8,9 +8,13 @@
             <span class="name">{{ resultData?.userName }}</span>
             <span class="label">{{ resultData?.jobSerialText }}</span>
           </div>
-          <!-- <div class="right">
-            历史考核结果
-          </div> -->
+          <div class="right">
+            <div v-if="!userId" class="confirm_status">
+              <a-tag :color="resultData.confirmStatus == '2' ? 'green' : 'orange'">
+                {{  resultData?.confirmStatusText }}
+              </a-tag>
+            </div>
+          </div>
         </div>
         <div class="notice_block">
           <a-icon type="exclamation-circle" theme="filled" />
@@ -62,6 +66,11 @@
         </div>
         <div v-if="status == '1'" class="right">
           <a-button @click="handleSave" type="primary">保存</a-button>
+        </div>
+        <div v-else-if="isShowStatusConfirm == 'true' && resultData?.confirmStatus == '1'" class="right">
+          <a-button @click="handleConfirm" :loading="confirmLoading" type="primary">
+            确认
+          </a-button>
         </div>
       </div>
     </template>
@@ -156,6 +165,9 @@ export default {
       currentUserId: '',
       // 返回数据
       resultData: {},
+      // 查看本人考核绩效-确认功能
+      isShowStatusConfirm: '',
+      confirmLoading: false
     }
   },
   watch: { 
@@ -169,6 +181,8 @@ export default {
   created () {
     this.status = IDM.url.queryString('status');
     this.deptAssessmentId = IDM.url.queryString('deptAssessmentId')
+    this.isShowStatusConfirm = IDM.url.queryString('isShowStatusConfirm')
+    console.log('this.isShowStatusConfirm',this.isShowStatusConfirm === true)
     if(IDM.url.queryString('userId')){
       this.currentUserId = IDM.url.queryString('userId');
       this.getUserData()
@@ -178,6 +192,41 @@ export default {
     
   },
   methods: {
+    handleConfirm(){
+      const that = this
+      this.$confirm({
+        title: '提示',
+        content: h => <div style="color:red;">
+          确认当前评分，是否确定？
+        </div>,
+        onOk() {
+          that.handleConfirmSubmit()
+        },
+        onCancel() {
+          console.log('Cancel');
+        },
+      });
+    },
+    handleConfirmSubmit(){ 
+      this.confirmLoading = true;
+      IDM.http.get('/ctrl/indicator/confirmStatus',{
+        deptAssessmentId: this.deptAssessmentId,
+        userId: this.currentUserId
+      }).then((res) => {
+        this.confirmLoading = false;
+        if ( res.data.code == 200 ) {
+          IDM.message.success(res.data.message)
+          this.getUserData()
+          this.$emit("update")
+        } else {
+          IDM.message.error(res.data.message)
+        }
+      }).catch((err) => {
+        this.loading = false;
+        this.confirmLoading = false;
+        console.log(err)
+      })
+    },
     handleSave(){
       if(!this.totalScore || Number(this.totalScore) == 0){
         IDM.message.error('请填写评分！')

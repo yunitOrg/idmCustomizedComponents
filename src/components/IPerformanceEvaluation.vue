@@ -72,8 +72,8 @@ export default {
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
-        showHeader: true,
-        showLeft: true
+        showHeader: false,
+        showLeft: false
       },
       statisticsList: [
         {
@@ -415,9 +415,10 @@ export default {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 10px 15px;
+  padding: 10px 12px;
   background: #f4f4f4;
   .IPerformanceEvaluation_app_header{
+    margin-bottom: 10px;
     padding: 18px 20px;
     background: white;
     border-radius: 8px;
@@ -465,7 +466,6 @@ export default {
     }
   }
   .IPerformanceEvaluation_app_main{
-    margin-top: 10px;
     flex-grow: 2;
     &>.left{
       width: 280px;
@@ -581,7 +581,7 @@ export default {
       width: 0;
       height: 100%;
       flex-grow: 2;
-      padding: 20px;
+      padding: 15px 18px;
       background: white;
     }
   }

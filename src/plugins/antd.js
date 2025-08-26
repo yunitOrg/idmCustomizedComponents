@@ -17,7 +17,8 @@ import { Button, Popover, Progress,Slider,Empty,Select,Input,DatePicker, TreeSel
   ConfigProvider,
   message,
   Icon,
-  InputNumber
+  InputNumber,
+  Tag
 } from 'ant-design-vue'
 
 /* v1.1.3+ registration methods */
@@ -38,4 +39,5 @@ Vue.use(Modal)
 Vue.use(ConfigProvider)
 Vue.use(message)
 Vue.use(Icon)
+Vue.use(Tag)
 Vue.prototype.$confirm = Modal.confirm
