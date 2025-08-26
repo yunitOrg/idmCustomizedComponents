@@ -65,7 +65,7 @@
           </div>
         </div>
         <div v-if="status == '1'" class="right">
-          <a-button @click="handleSave" type="primary">保存</a-button>
+          <a-button @click="handleSave" type="primary" :loading="saveLoading">保存</a-button>
         </div>
         <div v-else-if="isShowStatusConfirm == 'true' && resultData?.confirmStatus == '1'" class="right">
           <a-button @click="handleConfirm" :loading="confirmLoading" type="primary">
@@ -163,6 +163,7 @@ export default {
       assessmentLevelList: [],
       deptAssessmentId: '',
       currentUserId: '',
+      saveLoading: false,
       // 返回数据
       resultData: {},
       // 查看本人考核绩效-确认功能
@@ -241,6 +242,7 @@ export default {
         indicatorList: this.tableList
       }
       console.log(params)
+      this.saveLoading = true;
       IDM.http.post('/ctrl/deptAssessment/save', {
         ...params
       },{
@@ -248,6 +250,7 @@ export default {
           'Content-Type': 'application/json',
         }
       }).then((res) => {
+        this.saveLoading = false;
         if(res.data.type == 'success'){
           IDM.message.success('保存成功')
           this.getUserData()
@@ -256,6 +259,7 @@ export default {
           IDM.message.error(res.data.message)
         }
       }).catch((error) => {
+        this.saveLoading = false;
         console.log(error)
       })
     },
@@ -264,14 +268,15 @@ export default {
       let totalScore = 0;
       tableList.forEach(item => {
         if(item.weight){
-          totalScore = totalScore + item.score * parseInt(item.weight);
+          totalScore = totalScore + (item.score / Number(item.maxScore)) * item.scoreType * parseInt(item.weight) / 100;
         } else {
           if(item.score){
-            totalScore = totalScore + item.score * 100;
+            totalScore = totalScore + Number(item.score);
           }
         }
       });
-      this.totalScore = (Math.round(totalScore*10)/1000).toFixed(2);
+      console.log('totalScore',totalScore)
+      this.totalScore = (Math.round(totalScore*100)/100).toFixed(2);
       this.getGradeText(Number(this.totalScore))
     },
     getGradeText(score){
