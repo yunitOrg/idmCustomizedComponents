@@ -1,6 +1,10 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="InternalReferenceSubmission_app">
     <div class="InternalReferenceSubmission_app_header flex_end">
+      <!-- 刷新按钮 -->
+      <div class="button_box">
+        <a-button @click="handleRefresh" type="primary">刷新</a-button>
+      </div>
       <div class="select_box">
         <a-select 
           v-model="currentYear" 
@@ -310,6 +314,9 @@ export default {
   },
   destroyed() {},
   methods:{
+    handleRefresh(){
+      this.getInitData(true)
+    },
     rowClickHandler(record) {
       let that = this;
       return {
@@ -665,6 +672,7 @@ export default {
           if(isUpdateParams) {
             this.type = 1;
             this.moduleId = data.reportModuleId;
+            this.title = "调研专报"
           }
           this.getTableList()
         }
@@ -944,6 +952,11 @@ export default {
     height: 86px;
     padding: 0 25px;
     background: url('../assets/InternalReferenceSubmission/headerBg.png');
+    .button_box{
+      margin-right: 12px;
+      position: relative;
+      top: -10px;
+    }
     .select_box{
       width: 112px;
       position: relative;
@@ -983,7 +996,7 @@ export default {
         }
         &>.main{
           &>.row{
-            margin-bottom: 10px;
+            margin-bottom: 0px;
             &:last-child{
               margin-bottom: 0;
             }
@@ -1007,9 +1020,18 @@ export default {
                 margin-bottom: 5px;
                 padding: 0 10px 0 18px;
                 background-image: linear-gradient(264deg, rgba(240,248,255,0.00) 15%, #DCEEFF 85%);
+                &:first-child{
+                  .row_right_left{
+                    img{
+                      visibility: visible;
+                    }
+                  }
+                  
+                }
                 .row_right_left{
                   img{
                     margin-right: 28px;
+                    visibility: hidden;
                   }
                   .name{
                     font-family: SourceHanSansSC-Medium;
