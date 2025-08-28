@@ -8,7 +8,7 @@
             <span class="name">{{ resultData?.userName }}</span>
             <span class="label">{{ resultData?.jobSerialText }}</span>
           </div>
-          <div class="right">
+          <div v-if="!(userId && resultData.submitStatus == '1')" class="right">
             <div class="confirm_status">
               <a-tag :color="resultData.confirmStatus == '2' ? 'green' : 'orange'">
                 {{  resultData?.confirmStatusText }}
