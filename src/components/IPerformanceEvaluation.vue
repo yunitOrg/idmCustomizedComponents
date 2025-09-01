@@ -72,8 +72,8 @@ export default {
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
-        showHeader: true,
-        showLeft: true
+        showHeader: false,
+        showLeft: false
       },
       statisticsList: [
         {

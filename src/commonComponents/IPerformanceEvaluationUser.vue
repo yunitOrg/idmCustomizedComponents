@@ -7,6 +7,7 @@
             <img :src="getImageSrc('', 'defaultHeader')" alt="" />
             <span class="name">{{ resultData?.userName }}</span>
             <span class="label">{{ resultData?.jobSerialText }}</span>
+            <span v-if="!userId" class="date">{{ resultData?.assessmentCycle }}</span>
           </div>
           <div v-if="!(userId && resultData.submitStatus == '1')" class="right">
             <div class="confirm_status">
@@ -374,6 +375,11 @@ export default {
           color: #3c8ddb;
           line-height: 14px;
           margin-left: 10px;
+        }
+        .date{
+          margin-left: 10px;
+          font-family: PingFangSC, PingFang SC;
+          font-size: 14px;
         }
       }
       &>.right{
