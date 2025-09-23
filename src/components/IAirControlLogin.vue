@@ -1,6 +1,6 @@
 <template>
-  <div v-if="!loginStatus" idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IAirControlLogin_app">
-    <div class="title">用户登录</div>
+  <div v-if="moduleObject?.env != 'production' || !loginStatus" idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IAirControlLogin_app">
+    <div class="title">{{ propData.title || '用户登录' }}</div>
     <div class="form_block flex_center">
       <div class="form_item flex_start">
         <label>用户名</label>
@@ -352,6 +352,7 @@ export default {
     }
     .button_box{
       width: 260px;
+      margin: 0 10px;
       cursor: pointer;
       .el-button{
         width: 100%;

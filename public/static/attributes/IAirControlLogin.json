@@ -21,49 +21,11 @@
         "desc": "提供设置组件能达到展示效果的基本属性设置信息",
         "children": [
           {
-            "type": "radio",
-            "styleType": "radio",
-            "layoutType": "inline",
-            "text": "显示头部",
-            "desc":"是否显示头部部门信息",
-            "bindKey": "showHeader",
-            "default": true,
-            "dictionary": [
-                {
-                    "label": "是",
-                    "value": true
-                },
-                {
-                    "label": "否",
-                    "value": false
-                }
-            ]
-          },
-          {
-            "type": "radio",
-            "styleType": "radio",
-            "layoutType": "inline",
-            "text": "显示左侧",
-            "desc":"是否显示左侧部门人员",
-            "bindKey": "showLeft",
-            "default": true,
-            "dictionary": [
-                {
-                    "label": "是",
-                    "value": true
-                },
-                {
-                    "label": "否",
-                    "value": false
-                }
-            ]
-          },
-          {
             "type": "input",
             "layoutType": "inline",
             "text": "标题",
             "bindKey": "title",
-            "default": "DT部门月度绩效考评"
+            "default": "用户登录"
           }
         ]
       },
@@ -294,33 +256,6 @@
                   "bindKey": "font"
               }
           ]
-      },
-      {
-        "type": "group",
-        "text": "数据源",
-        "children":[
-          {
-            "type": "dataSourceSelect",
-            "layoutType": "block",
-            "text": "音乐列表数据源",
-            "desc":"返回数据格式：[{music,title,name,image}]",
-            "bindKey": "dataSource"
-          },
-          {
-            "type": "group",
-            "text": "字段设置",
-            "children":[
-              {
-                "type": "input",
-                "layoutType": "inline",
-                "text": "列表字段",
-                "bindKey": "listData",
-                "desc": "列表数据的字段，当其他组件向当前组件传结果值时，根据此字段值获取列表数据",
-                "default":"list"
-              }
-            ]
-          }
-        ]
       },
       {
         "type": "group",
