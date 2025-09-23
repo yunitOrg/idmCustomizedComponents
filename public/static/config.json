@@ -94,6 +94,13 @@
       "className": "IPerformanceEvaluation",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.aircontrollogin",
+      "comName": "浙江空管登录",
+      "className": "IAirControlLogin",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
