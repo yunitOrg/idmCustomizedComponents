@@ -257,16 +257,8 @@ export default {
      */
     receiveBroadcastMessage(object){
       console.log("组件收到消息",object)
-      if (object.type && object.type == "linkageResult") {
-        let data_list = [];
-        if (Array.isArray(object.message)) {
-          data_list = object.message;
-        } else if (object.message) {
-          data_list = object.message[ this.propData.listData ? this.propData.listData : "list" ];
-        }
-        this.music_list = data_list;
-        this.music_index = 0;
-        this.music_url = this.music_list[this.music_index] ? this.music_list[this.music_index].music : '';
+      if (object.type && object.type == "linkageReload") {
+        this.getLoginStatus()
       }
     },
     /**
