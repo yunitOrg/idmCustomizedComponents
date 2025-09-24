@@ -4,15 +4,15 @@
     <div class="form_block flex_center">
       <div class="form_item flex_start">
         <label>用户名</label>
-        <input type="text" v-model="moduleObject.username" placeholder="">
+        <input type="text" v-model="formData.username" placeholder="">
       </div>
       <div class="form_item flex_start">
         <label>密码</label>
-        <input type="password" v-model="moduleObject.password"  placeholder="">
+        <input type="password" v-model="formData.password"  placeholder="">
       </div>
       <div class="form_item form_code flex_start">
         <label>验证码</label>
-        <input type="text" v-model="moduleObject.code"  placeholder="">
+        <input type="text" v-model="formData.code"  placeholder="">
         <img v-if="codeUrl" :src="getImageSrc(`${codeUrl}`)" @click="handleClickCode()" class="code" alt="">
       </div>
       <div class="button_box">
