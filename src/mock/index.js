@@ -163,3 +163,223 @@ export function getIOrganizationalStructureDataListMock() {
     }
   ]
 }
+export function getMultiLevelTableHeaderList() {
+  return [
+    {
+      title: '考核类型',
+      dataIndex: 'evaluationType',
+      key: 'evaluationType',
+      customRender: (text, record, rowIndex) => {
+        const obj = {
+          children: text,
+          attrs: {},
+        };
+        let rowSpan = 1;
+        for (let i = rowIndex + 1; i < this.tableList.length; i++) {
+          if (this.tableList[i].evaluationType == record.evaluationType) {
+            rowSpan++;
+          } else {
+            break;
+          }
+        }
+        for (let i = rowIndex - 1; i >= 0; i--) {
+          if (this.tableList[i].evaluationType == record.evaluationType) {
+            obj.attrs.rowSpan = 0;
+            return obj;
+          }
+        }
+        obj.attrs.rowSpan = rowSpan;
+        return obj;
+      }
+    },
+    {
+      title: '部门/单位名称',
+      dataIndex: 'departName',
+      key: 'departName',
+    },
+    {
+      title: '总分',
+      dataIndex: 'totalScore',
+      key: 'totalScore',
+    },
+    {
+      title: 'A票',
+      children: [
+        {
+          title: '优秀',
+          dataIndex: 'A-1',
+          key: 'A-1',
+        },
+        {
+          title: '良好',
+          dataIndex: 'A-2',
+          key: 'A-2',
+        },
+        {
+          title: '一般',
+          dataIndex: 'A-3',
+          key: 'A-3',
+        },
+        {
+          title: '差',
+          dataIndex: 'A-4',
+          key: 'A-4',
+        },
+      ]
+    },
+    {
+      title: 'B票',
+      children: [
+        {
+          title: '优秀',
+          dataIndex: 'B-1',
+          key: 'B-1',
+        },
+        {
+          title: '良好',
+          dataIndex: 'B-2',
+          key: 'B-2',
+        },
+        {
+          title: '一般',
+          dataIndex: 'B-3',
+          key: 'B-3',
+        },
+        {
+          title: '差',
+          dataIndex: 'B-4',
+          key: 'B-4',
+        },
+      ]
+    },
+    {
+      title: '区/本单位考核',
+      dataIndex: 'score',
+      key: 'score',
+    }
+  ]
+}
+export function getMultiLevelTableDataList() {
+  return [
+    {
+      key: '1',
+      evaluationType: '机关党委',
+      departName: '干部人事处',
+      totalScore: '95.50',
+      'A-1': 3,
+      'A-2': 2,
+      'A-3': 1,
+      'A-4': 0,
+      'B-1': 3,
+      'B-2': 2,
+      'B-3': 1,
+      'B-4': 0,
+      score: 3.5,
+    },
+    {
+      key: '2',
+      evaluationType: '机关党委',
+      departName: '办公室',
+      totalScore: '95.50',
+      'A-1': 3,
+      'A-2': 2,
+      'A-3': 1,
+      'A-4': 0,
+      'B-1': 3,
+      'B-2': 2,
+      'B-3': 1,
+      'B-4': 0,
+      score: 3.5,
+    },
+    {
+      key: '3',
+      evaluationType: '机关党委',
+      departName: '秘书处',
+      totalScore: '95.50',
+      'A-1': 3,
+      'A-2': 2,
+      'A-3': 1,
+      'A-4': 0,
+      'B-1': 3,
+      'B-2': 2,
+      'B-3': 1,
+      'B-4': 0,
+      score: 3.5,
+    },
+    {
+      key: '4',
+      evaluationType: '机关党委',
+      departName: '种业处',
+      totalScore: '95.50',
+      'A-1': 3,
+      'A-2': 2,
+      'A-3': 1,
+      'A-4': 0,
+      'B-1': 3,
+      'B-2': 2,
+      'B-3': 1,
+      'B-4': 0,
+      score: 3.5,
+    },
+    {
+      key: '5',
+      evaluationType: '事业单位',
+      departName: '执法总队',
+      totalScore: '95.50',
+      'A-1': 3,
+      'A-2': 2,
+      'A-3': 1,
+      'A-4': 0,
+      'B-1': 3,
+      'B-2': 2,
+      'B-3': 1,
+      'B-4': 0,
+      score: 3.5,
+    },
+    {
+      key: '6',
+      evaluationType: '事业单位',
+      departName: '农发中心',
+      totalScore: '95.50',
+      'A-1': 3,
+      'A-2': 2,
+      'A-3': 1,
+      'A-4': 0,
+      'B-1': 3,
+      'B-2': 2,
+      'B-3': 1,
+      'B-4': 0,
+      score: 3.5,
+    },
+    {
+      key: '7',
+      evaluationType: '事业单位',
+      departName: '乡研中心',
+      totalScore: '95.50',
+      'A-1': 3,
+      'A-2': 2,
+      'A-3': 1,
+      'A-4': 0,
+      'B-1': 3,
+      'B-2': 2,
+      'B-3': 1,
+      'B-4': 0,
+      score: 3.5,
+    },
+    {
+      key: '8',
+      evaluationType: '事业单位',
+      departName: '水野中心',
+      totalScore: '95.50',
+      'A-1': 3,
+      'A-2': 2,
+      'A-3': 1,
+      'A-4': 0,
+      'B-1': 3,
+      'B-2': 2,
+      'B-3': 1,
+      'B-4': 0,
+      score: 3.5,
+    }
+  ]
+}

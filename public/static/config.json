@@ -101,6 +101,13 @@
       "className": "IAirControlLogin",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.imultileveltable",
+      "comName": "多级表头表格",
+      "className": "IMultiLevelTable",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
