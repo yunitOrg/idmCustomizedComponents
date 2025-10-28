@@ -175,7 +175,6 @@ export default {
 
       }
       if(!this.propData.mergeKey) {
-        console.log('arr', arr)
         this.tableColumns = arr;
         return 
       }
@@ -212,8 +211,10 @@ export default {
       data.forEach(item => {
         if(item.children?.length) {
           this.traverseTreeData(item.children)
+        } else {
+          item.children = undefined;
         }
-        if(!item.dataIndex) {
+        if(item.key && (!item.children?.length) && !item.dataIndex) {
           item.dataIndex = item.key
         }
       })
