@@ -43,6 +43,25 @@
           "type": "radio",
           "styleType": "radio",
           "layoutType": "inline",
+          "text": "显示分页",
+          "desc": "是否显示分页功能",
+          "bindKey": "showPagination",
+          "default": true,
+          "dictionary": [
+            {
+              "label": "是",
+              "value": true
+            },
+            {
+              "label": "否",
+              "value": false
+            }
+          ]
+        },
+        {
+          "type": "radio",
+          "styleType": "radio",
+          "layoutType": "inline",
           "text": "显示序号",
           "desc": "是否显示列表序号",
           "bindKey": "showIndex",
@@ -61,6 +80,15 @@
         {
           "type": "input",
           "layoutType": "inline",
+          "text": "序号key",
+          "bindKey": "indexKey",
+          "desc": "序号对应的key",
+          "display": "@[showIndex]",
+          "default": "id"
+        },
+        {
+          "type": "input",
+          "layoutType": "inline",
           "text": "合并列",
           "bindKey": "mergeKey",
           "desc": "表格行合并列字段，以逗号分隔。例如: id,name,sex,age,birthday,address,phone,email,remark",
@@ -75,6 +103,23 @@
           "display": "@[showSubtitle]",
           "children": [
             {
+              "type": "select",
+              "layoutType": "inline",
+              "text": "显示类型",
+              "bindKey": "showType",
+              "default": "default",
+              "dictionary": [
+                {
+                    "label": "普通按钮",
+                    "value": "default"
+                },
+                {
+                    "label": "上传按钮",
+                    "value": "upload"
+                }
+              ]
+            },
+            {
               "type": "input",
               "layoutType": "inline",
               "text": "按钮名称",
@@ -86,13 +131,31 @@
               "layoutType": "inline",
               "text": "按钮类型",
               "bindKey": "type",
+              "desc": "按钮类型，可选值：primary、success、warning、danger、info、text",
               "default": "primary"
+            },
+            {
+              "type": "input",
+              "layoutType": "inline",
+              "text": "文件类型",
+              "bindKey": "acceptType",
+              "desc": "上传文件类型，多个文件类型用英文逗号分隔，例如: .jpg,.png,.gif",
+              "default": ""
             },
             {
               "type": "actionSelect",
               "layoutType": "block",
               "text": "点击事件函数",
               "bindKey": "handleClickCustomerFunction",
+              "display": "@[showType=='default']",
+              "multiple": false
+            },
+            {
+              "type": "actionSelect",
+              "layoutType": "block",
+              "text": "上传事件函数",
+              "bindKey": "handleChangeFileCustomerFunction",
+              "display": "@[showType=='upload']",
               "multiple": false
             }
           ]
@@ -396,6 +459,14 @@
           "text": "获取标题函数",
           "bindKey": "getSubtitleCustomFunction",
           "desc": "用于获取页面副标题内容，直接返回文本即可",
+          "multiple": false
+        },
+        {
+          "type": "actionSelect",
+          "layoutType": "block",
+          "text": "行点击事件",
+          "bindKey": "rowClickCustomFunction",
+          "desc": "点击行触发的自定义事件，参数为：{record,index,_this}",
           "multiple": false
         }
       ]

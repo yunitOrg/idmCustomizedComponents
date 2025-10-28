@@ -4,7 +4,18 @@
     <div v-if="propData.showSubtitle" class="describe">
       <span class="text">{{ getSubtitleHtml() }}</span>
       <div v-if="propData.operateList?.length" class="operate_block flex_end">
-        <a-button v-for="(item, index) in propData.operateList" :key="index" :type="item.type">{{ item.name }}</a-button>
+        <template v-for="(item, index) in propData.operateList"> 
+          <a-upload v-if="item.showType == 'upload'" :key="index"  name="file" :multiple="false" 
+            :showUploadList="false" 
+            :accept="item.acceptType" 
+            :beforeUpload="() => false"
+            @change="e => handleChangeFile(e, item)"
+          >
+            <a-button :type="item.type">{{ item.name }}</a-button>
+          </a-upload>
+          <a-button @click="handleClickButton(item)" v-else :key="index" :type="item.type">{{ item.name }}</a-button>
+        </template>
+        
       </div>
     </div>
     <div class="table">
@@ -12,9 +23,10 @@
         :id="tableId"
         :columns="tableColumns"
         :data-source="tableList"
-        :pagination="paginationOptions"
+        :pagination="propData?.showPagination ? paginationOptions : false"
         bordered
         :scroll="scrollOptions"
+        :customRow="customRow"
       />
     </div>
   </div>
@@ -33,6 +45,7 @@ export default {
         operateList: [
           {
             name: "导入",
+            showType: 'upload',
             type: 'primary',
           }
         ],
@@ -58,6 +71,7 @@ export default {
         y: 0
       },
       tableId: IDM.UUID(),
+      resultData: {}
     }
   },
   watch: {
@@ -79,6 +93,43 @@ export default {
     window.removeEventListener('resize', this.makeTableScrollHeight)
   },
   methods:{
+    handleChangeFile(e, item) {
+      console.log('e', e)
+      if(item.handleChangeFileCustomerFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [item.handleChangeFileCustomerFunction, {
+          _this: this,
+          fileList: e.fileList,
+          file: e.file
+        }]);
+      }
+    },
+    handleClickButton(item) {
+      if(item.handleClickCustomerFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [item.handleClickCustomerFunction, {
+          _this: this,
+        }]);
+      }
+    },
+    customRow(record, index) {
+      let that = this;
+      return { 
+        props: {},
+        on: {
+          click: function (event) {
+            that.rowClick(record, index, event)
+          }
+        }
+      }
+    },
+    rowClick(record, index) {
+      if(this.propData.rowClickCustomFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [this.propData.rowClickCustomFunction, {
+          _this: this,
+          record,
+          index
+        }]);
+      }
+    },
     getInitData() {
       if(this.propData.dataSource?.length) {
         let that = this;
@@ -93,6 +144,7 @@ export default {
             params
           }, function (res) {
             if (res) {
+              that.resultData = res;
               that.total = res.total;
               that.tableList = res.rows;
               that.makeTableHeaderData(res.columns)
@@ -111,11 +163,12 @@ export default {
     },
     makeTableHeaderData(data = []) {
       let arr = JSON.parse(JSON.stringify(data))
+      this.traverseTreeData(arr)
       if(this.propData.showIndex) {
         arr.unshift({
           title: '序号',
-          dataIndex: 'key',
-          key: 'key',
+          dataIndex: this.propData.indexKey,
+          key: this.propData.indexKey,
           width: 80,
           render: (text, record, index) => index + 1 + this.pageSize * (this.pageNum - 1)
         })
@@ -154,6 +207,17 @@ export default {
       })
       this.tableColumns = arr
     },
+    // 遍历树状数据，赋值dateIndex
+    traverseTreeData(data = []) {
+      data.forEach(item => {
+        if(item.children?.length) {
+          this.traverseTreeData(item.children)
+        }
+        if(!item.dataIndex) {
+          item.dataIndex = item.key
+        }
+      })
+    },
     getTitleHtml() {
       if(this.propData.getTitleCustomerFunction?.length) {
         const results = IDM.invokeCustomFunctions.apply(this, [this.propData.getTitleCustomerFunction, {
@@ -180,7 +244,7 @@ export default {
       if ( table ) {
         const thead = table.querySelector('.ant-table-thead');
         const headerHeight = thead.offsetHeight;
-        let scrollHeight = `calc(100vh - ${table.getBoundingClientRect()?.top + headerHeight + 70}px)`
+        let scrollHeight = `calc(100vh - ${table.getBoundingClientRect()?.top + headerHeight + (this.propData.showPagination ? 70 : 20)}px)`
         this.scrollOptions.y = scrollHeight;
       }
     },
