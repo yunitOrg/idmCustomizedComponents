@@ -229,18 +229,18 @@ export default {
                 children: text,
                 attrs: {},
               };
+              for (let i = rowIndex - 1; i >= 0; i--) {
+                if (this.tableList[i][item.key] == record[item.key]) {
+                  obj.attrs.rowSpan = 0;
+                  return obj;
+                }
+              }
               let rowSpan = 1;
               for (let i = rowIndex + 1; i < this.tableList.length; i++) {
                 if (this.tableList[i][item.key] == record[item.key]) {
                   rowSpan++;
                 } else {
                   break;
-                }
-              }
-              for (let i = rowIndex - 1; i >= 0; i--) {
-                if (this.tableList[i][item.key] == record[item.key]) {
-                  obj.attrs.rowSpan = 0;
-                  return obj;
                 }
               }
               obj.attrs.rowSpan = rowSpan;
