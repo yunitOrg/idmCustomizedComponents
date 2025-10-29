@@ -438,6 +438,36 @@
           "text": "数据源",
           "desc": "返回数据格式：{total:0,rows:[],columns: []}",
           "bindKey": "dataSource"
+        },
+        {
+          "type": "table",
+          "text": "接收其他组件联动参数",
+          "bindKey": "linkageParamList",
+          "tabText": "参数[index]",
+          "children": [
+            {
+              "type": "input",
+              "layoutType": "inline",
+              "text": "表单标识",
+              "bindKey": "msgKey",
+              "default": ""
+            },
+            {
+              "type": "input",
+              "layoutType": "inline",
+              "text": "参数别名",
+              "bindKey": "paramKey",
+              "default": ""
+            },
+            {
+              "type": "actionSelect",
+              "layoutType": "block",
+              "text": "参数处理函数",
+              "bindKey": "paramFun",
+              "desc": "收到其他组件联动参数后会根据表单标识调用这里设置的函数返回自定义的参数内容，返回格式为字符串或对象，例如：{text:'',value:''}或者直接字符串",
+              "multiple": false
+            }
+          ]
         }
       ]
     },
@@ -445,6 +475,29 @@
       "type": "group",
       "text": "高级",
       "children": [
+        {
+          "type": "select",
+          "layoutType": "inline",
+          "text": "刷新KEY",
+          "bindKey": "messageRefreshKey",
+          "desc": "根据组件接收到的消息KEY来刷新数据，可选择多个",
+          "default": "",
+          "placeholder": "请选择刷新KEY",
+          "multiple": true,
+          "ctrlAttrObject": {
+              "mode": "tags"
+          },
+          "dictionary": [
+              {
+                  "label": "info",
+                  "value": "info"
+              },
+              {
+                  "label": "inbox",
+                  "value": "inbox"
+              }
+          ]
+        },
         {
           "type": "actionSelect",
           "layoutType": "block",

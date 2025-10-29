@@ -71,7 +71,8 @@ export default {
         y: 0
       },
       tableId: IDM.UUID(),
-      resultData: {}
+      resultData: {},
+      conditionObject: {},
     }
   },
   watch: {
@@ -130,10 +131,45 @@ export default {
         }]);
       }
     },
-    getInitData() {
+    getInitData(isInit) {
+      if(isInit) {
+        this.pageNum = 1;
+      }
       if(this.propData.dataSource?.length) {
         let that = this;
         let params = this.commonParam()
+        //接收其他组件联动参数
+        if ( this.propData.linkageParamList && this.propData.linkageParamList.length > 0 ) {
+          this.propData.linkageParamList.forEach((lpitem) => {
+            if (Object.keys(lpitem).length > 0) {
+              if (lpitem.msgKey && this.conditionObject[lpitem.msgKey]) {
+                if (lpitem.paramFun && lpitem.paramFun.length > 0) {
+                  //有函数
+                  try {
+                    params[lpitem.paramKey || lpitem.msgKey] =
+                      window[lpitem.paramFun[0].name] &&
+                      window[lpitem.paramFun[0].name].call(this, {
+                        ...params,
+                        ...lpitem.paramFun[0].param,
+                        moduleObject: this.moduleObject,
+                        paramValue: this.conditionObject[lpitem.msgKey],
+                      });
+                  } catch (error) {
+                    params[lpitem.paramKey || lpitem.msgKey] =
+                      typeof this.conditionObject[lpitem.msgKey] == "object"
+                        ? JSON.stringify(this.conditionObject[lpitem.msgKey])
+                        : this.conditionObject[lpitem.msgKey];
+                  }
+                } else {
+                  params[lpitem.paramKey || lpitem.msgKey] =
+                    typeof this.conditionObject[lpitem.msgKey] == "object"
+                      ? JSON.stringify(this.conditionObject[lpitem.msgKey])
+                      : this.conditionObject[lpitem.msgKey];
+                }
+              }
+            }
+          });
+        }
         IDM.datasource.request(
           this.propData.dataSource[0].id,
           {
@@ -210,6 +246,7 @@ export default {
     traverseTreeData(data = []) {
       data.forEach(item => {
         if(item.children?.length) {
+          item.key = undefined;
           this.traverseTreeData(item.children)
         } else {
           item.children = undefined;
@@ -252,8 +289,7 @@ export default {
     handleChangeSize(page, size) {
       console.log('分页参数-size',page,size)
       this.pageSize = size;
-      this.pageNum = 1;
-      this.getInitData()
+      this.getInitData(true)
     },
     handleChangeTable(page) {
       console.log('分页参数-page',page)
@@ -461,6 +497,23 @@ export default {
      */
     receiveBroadcastMessage(object){
       console.log("组件收到消息",object)
+      if (object.type && object.type == "linkageDemand") {
+        if (object.messageKey) {
+          this.onReInitDataMsgKey(object.message, object.messageKey);
+        }
+      }
+      // 配置了刷新KEY，消息类型是websocket，收到的消息对象有message并不为空
+      if(this.propData.messageRefreshKey && this.propData.messageRefreshKey.length && object.type === 'websocket' && object.message){
+        const messageData = typeof object.message === 'string' && JSON.parse(object.message) || object.message
+        const arr = this.propData.messageRefreshKey || [];
+        if(messageData.badgeType && arr.includes(messageData.badgeType)){
+          this.getInitData(true)
+        }
+      }
+    },
+    onReInitDataMsgKey(conditionObject, messageKey) {
+      this.conditionObject[messageKey] = conditionObject;
+      this.getInitData(true);
     },
     /**
      * 组件通信：发送消息的方法
