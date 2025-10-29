@@ -1,8 +1,8 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IMultiLevelTable_app">
-    <div class="title">{{ getTitleHtml() }}</div>
+    <div class="title" v-html="getTitleHtml()"></div>
     <div v-if="propData.showSubtitle" class="describe">
-      <span class="text">{{ getSubtitleHtml() }}</span>
+      <span class="text" v-html="getSubtitleHtml()"></span>
       <div v-if="propData.operateList?.length" class="operate_block flex_end">
         <template v-for="(item, index) in propData.operateList"> 
           <a-upload v-if="item.showType == 'upload'" :key="index"  name="file" :multiple="false" 

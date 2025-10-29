@@ -89,9 +89,9 @@
         {
           "type": "input",
           "layoutType": "inline",
-          "text": "合并列",
+          "text": "合列字段",
           "bindKey": "mergeKey",
-          "desc": "表格行合并列字段，以逗号分隔。例如: id,name,sex,age,birthday,address,phone,email,remark",
+          "desc": "表格行合并字段，以逗号分隔。例如: id,name,sex,age,birthday,address,phone,email,remark",
           "default": ""
         },
         {
