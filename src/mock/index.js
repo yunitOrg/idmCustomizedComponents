@@ -169,28 +169,6 @@ export function getMultiLevelTableHeaderList() {
       title: '考核类型',
       dataIndex: 'evaluationType',
       key: 'evaluationType',
-      customRender: (text, record, rowIndex) => {
-        const obj = {
-          children: text,
-          attrs: {},
-        };
-        let rowSpan = 1;
-        for (let i = rowIndex + 1; i < this.tableList.length; i++) {
-          if (this.tableList[i].evaluationType == record.evaluationType) {
-            rowSpan++;
-          } else {
-            break;
-          }
-        }
-        for (let i = rowIndex - 1; i >= 0; i--) {
-          if (this.tableList[i].evaluationType == record.evaluationType) {
-            obj.attrs.rowSpan = 0;
-            return obj;
-          }
-        }
-        obj.attrs.rowSpan = rowSpan;
-        return obj;
-      }
     },
     {
       title: '部门/单位名称',

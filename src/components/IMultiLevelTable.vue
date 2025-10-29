@@ -49,7 +49,8 @@ export default {
             type: 'primary',
           }
         ],
-        mergeKey: 'evaluationType',
+        indexKey: 'key',
+        mergeKey: 'A-1,evaluationType',
         getTitleCustomerFunction: [],
         getSubtitleCustomFunction: [],
       },
@@ -214,33 +215,40 @@ export default {
         this.tableColumns = arr;
         return 
       }
+      this.loopMakeCustomRender(arr)
+      this.tableColumns = arr
+    },
+    loopMakeCustomRender(arr) {
       arr.forEach(item => {
-        if(this.propData.mergeKey.includes(item.key)) {
-          item.customRender = (text, record, rowIndex) => {
-            const obj = {
-              children: text,
-              attrs: {},
-            };
-            let rowSpan = 1;
-            for (let i = rowIndex + 1; i < this.tableList.length; i++) {
-              if (this.tableList[i][item.key] == record[item.key]) {
-                rowSpan++;
-              } else {
-                break;
+        if(item.children?.length) {
+          this.loopMakeCustomRender(item.children)
+        } else {
+          if(this.propData.mergeKey.includes(item.key)) {
+            item.customRender = (text, record, rowIndex) => {
+              const obj = {
+                children: text,
+                attrs: {},
+              };
+              let rowSpan = 1;
+              for (let i = rowIndex + 1; i < this.tableList.length; i++) {
+                if (this.tableList[i][item.key] == record[item.key]) {
+                  rowSpan++;
+                } else {
+                  break;
+                }
               }
-            }
-            for (let i = rowIndex - 1; i >= 0; i--) {
-              if (this.tableList[i][item.key] == record[item.key]) {
-                obj.attrs.rowSpan = 0;
-                return obj;
+              for (let i = rowIndex - 1; i >= 0; i--) {
+                if (this.tableList[i][item.key] == record[item.key]) {
+                  obj.attrs.rowSpan = 0;
+                  return obj;
+                }
               }
+              obj.attrs.rowSpan = rowSpan;
+              return obj; 
             }
-            obj.attrs.rowSpan = rowSpan;
-            return obj; 
           }
         }
       })
-      this.tableColumns = arr
     },
     // 遍历树状数据，赋值dateIndex
     traverseTreeData(data = []) {
