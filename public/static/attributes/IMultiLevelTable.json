@@ -95,6 +95,14 @@
           "default": ""
         },
         {
+          "type": "input",
+          "layoutType": "inline",
+          "text": "对齐方式",
+          "bindKey": "align",
+          "desc": "设置列内容的对齐方式，'left' | 'right' | 'center'",
+          "default": ""
+        },
+        {
           "type": "table",
           "text": "操作项配置",
           "desc": "操作按钮项字段配置",

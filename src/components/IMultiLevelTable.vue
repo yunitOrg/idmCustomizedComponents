@@ -258,9 +258,12 @@ export default {
           this.traverseTreeData(item.children)
         } else {
           item.children = undefined;
-        }
-        if(item.key && (!item.children?.length) && !item.dataIndex) {
-          item.dataIndex = item.key
+          if(item.key && !item.dataIndex) {
+            item.dataIndex = item.key
+          }
+          if(this.propData.align) {
+            item.align = this.propData.align;
+          }
         }
       })
     },
