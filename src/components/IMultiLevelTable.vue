@@ -178,7 +178,7 @@ export default {
             _this: this,
             pageNum: this.pageNum,
             pageSize: this.pageSize,
-            params
+            ...params
           }, function (res) {
             if (res) {
               that.resultData = res;

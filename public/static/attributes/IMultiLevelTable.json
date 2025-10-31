@@ -509,7 +509,7 @@
         {
           "type": "actionSelect",
           "layoutType": "block",
-          "text": "获取标题函数",
+          "text": "获取副标题函数",
           "bindKey": "getSubtitleCustomFunction",
           "desc": "用于获取页面副标题内容，直接返回文本即可",
           "multiple": false
