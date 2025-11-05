@@ -24,6 +24,25 @@
           "type": "radio",
           "styleType": "radio",
           "layoutType": "inline",
+          "text": "显示标题",
+          "desc": "是否显示标题",
+          "bindKey": "showTitle",
+          "default": true,
+          "dictionary": [
+            {
+              "label": "是",
+              "value": true
+            },
+            {
+              "label": "否",
+              "value": false
+            }
+          ]
+        },
+        {
+          "type": "radio",
+          "styleType": "radio",
+          "layoutType": "inline",
           "text": "副标题",
           "desc": "是否显示副标题",
           "bindKey": "showSubtitle",
@@ -78,13 +97,23 @@
           ]
         },
         {
-          "type": "input",
+          "type": "radio",
+          "styleType": "radio",
           "layoutType": "inline",
-          "text": "序号key",
-          "bindKey": "indexKey",
-          "desc": "序号对应的key",
-          "display": "@[showIndex]",
-          "default": "id"
+          "text": "智能合并",
+          "desc": "合并时会根据当前列前面的列是否相同来进行合并",
+          "bindKey": "intelligentMerge",
+          "default": false,
+          "dictionary": [
+            {
+              "label": "是",
+              "value": true
+            },
+            {
+              "label": "否",
+              "value": false
+            }
+          ]
         },
         {
           "type": "input",

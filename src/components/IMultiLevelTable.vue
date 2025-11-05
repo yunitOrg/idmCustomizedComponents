@@ -1,6 +1,6 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IMultiLevelTable_app">
-    <div class="title" v-html="getTitleHtml()"></div>
+    <div v-if="propData?.showTitle" class="title" v-html="getTitleHtml()"></div>
     <div v-if="propData.showSubtitle" class="describe">
       <span class="text" v-html="getSubtitleHtml()"></span>
       <div v-if="propData.operateList?.length" class="operate_block flex_end">
@@ -27,6 +27,7 @@
         bordered
         :scroll="scrollOptions"
         :customRow="customRow"
+        rowKey="id"
       />
     </div>
   </div>
@@ -40,6 +41,8 @@ export default {
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
+        intelligentMerge: true,
+        showTitle: true,
         showSubtitle: true,
         showIndex: true,
         operateList: [
@@ -49,8 +52,7 @@ export default {
             type: 'primary',
           }
         ],
-        indexKey: 'key',
-        mergeKey: 'A-1,evaluationType',
+        mergeKey: 'taskName, tbdwText, feedbackTime, feedbackStatusText',
         getTitleCustomerFunction: [],
         getSubtitleCustomFunction: [],
       },
@@ -183,7 +185,7 @@ export default {
             if (res) {
               that.resultData = res;
               that.total = res.total;
-              that.tableList = res.rows;
+              that.makeTableDataList(res.rows)
               that.makeTableHeaderData(res.columns)
             }
           },
@@ -195,8 +197,21 @@ export default {
       } else {
         let tableColumns = getMultiLevelTableHeaderList()
         this.makeTableHeaderData(tableColumns)
-        this.tableList = getMultiLevelTableDataList()
+        let tableList = getMultiLevelTableDataList()
+        this.makeTableDataList(tableList)
       }
+    },
+    makeTableDataList(data) {
+      if(!data) {
+        this.tableList = []
+        return
+      }
+      if(this.propData.showIndex) {
+        data.forEach((item, index) => {
+          item['indexA'] = index + 1 + this.pageSize * (this.pageNum - 1)
+        })
+      }
+      this.tableList = data;
     },
     makeTableHeaderData(data = []) {
       let arr = JSON.parse(JSON.stringify(data))
@@ -204,12 +219,11 @@ export default {
       if(this.propData.showIndex) {
         arr.unshift({
           title: '序号',
-          dataIndex: this.propData.indexKey,
-          key: this.propData.indexKey,
+          dataIndex: 'indexA',
+          key: 'indexA',
           width: 80,
-          render: (text, record, index) => index + 1 + this.pageSize * (this.pageNum - 1)
+          align: this.propData.align
         })
-
       }
       if(!this.propData.mergeKey) {
         this.tableColumns = arr;
@@ -219,7 +233,10 @@ export default {
       this.tableColumns = arr
     },
     loopMakeCustomRender(arr) {
-      arr.forEach(item => {
+      let currentRowRealValue = '';
+      // 上一行的真实值
+      let preRowRealValue = '';
+      arr.forEach((item, index) => {
         if(item.children?.length) {
           this.loopMakeCustomRender(item.children)
         } else {
@@ -229,15 +246,17 @@ export default {
                 children: text,
                 attrs: {},
               };
-              for (let i = rowIndex - 1; i >= 0; i--) {
-                if (this.tableList[i][item.key] == record[item.key]) {
-                  obj.attrs.rowSpan = 0;
-                  return obj;
-                }
+              currentRowRealValue = this.getTableCellRealValue(item, index, rowIndex);
+              preRowRealValue = this.getTableCellRealValue(item, index, rowIndex - 1);
+              if (rowIndex &&  record[item.key] && currentRowRealValue == preRowRealValue) {
+                obj.attrs.rowSpan = 0;
+                return obj;
               }
+              
               let rowSpan = 1;
               for (let i = rowIndex + 1; i < this.tableList.length; i++) {
-                if (this.tableList[i][item.key] == record[item.key]) {
+                let nextRowRealValue = this.getTableCellRealValue(item, index, i);
+                if (record[item.key] && nextRowRealValue == currentRowRealValue) {
                   rowSpan++;
                 } else {
                   break;
@@ -249,6 +268,20 @@ export default {
           }
         }
       })
+    },
+    getTableCellRealValue(item, index, rowIndex) {
+      let result = '';
+      if(this.propData.intelligentMerge) {
+        for(let i = 0; i < index + 1; i++) {
+          if(this.tableColumns[i]?.key && this.propData.mergeKey?.includes(this.tableColumns[i]?.key) && this.tableList[rowIndex]?.[this.tableColumns[i]?.key]) {
+            result = result + this.tableList[rowIndex][this.tableColumns[i].key]
+          }
+        }
+      } else {
+        result = this.tableList[rowIndex]?.[item.key];
+      }
+      
+      return result
     },
     // 遍历树状数据，赋值dateIndex
     traverseTreeData(data = []) {
