@@ -24,37 +24,13 @@
       </div>
       <div class="table_block">
         <a-table :columns="tableColumn" 
-          :data-source="tableList" 
+          :data-source="tableListData" 
           bordered
           :pagination="false"
           :scroll="scroll"
           rowKey="itemId"
           :loading="loading"
-        >
-          <template slot="assessmentStandard" slot-scope="text">
-            <div style="text-align: left;" v-html="text"></div>
-          </template>
-          <template slot="weight" slot-scope="text">
-            <span>{{ text ? text : '-' }}{{ text ? '%' : '' }}</span>
-          </template>
-          <template slot="score" slot-scope="text, record, index">
-            <div v-if="status == '1'" class="input_box">
-              <input
-                v-model="record.score"
-                :min="0" 
-                :max="record.maxScore" 
-                type="number" 
-                :step="0.1"
-                @input="e => handleInput(record, index, e)"
-                @change="e => handleChange(record, index, e)" 
-                placeholder="输入分数"
-                class="input_number"
-                @wheel.prevent
-              />
-            </div>
-            <span v-else>{{ text }}</span>
-          </template>
-        </a-table>
+        />
       </div>
       <div class="footer flex_between">
         <div class="left flex_start">
@@ -99,6 +75,7 @@ export default {
   data () {
     return {
       tableList: [ ],
+      tableListData: [],
       tableColumn: [
         {
           title: '考核指标',
@@ -112,7 +89,28 @@ export default {
               attrs: {},
             };
             obj.attrs.rowSpan = row.row || 0;
-            return obj;
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+              return {
+                children: <div class="user_notice_info">
+                  <div class="left">{this.resultData?.userName}，您好！</div>
+                  <div class="left">您{this.resultData?.assessmentCycle}的绩效评分为{this.totalScore}分，请您确认该考核结果。如有异议，请您在今天下午18点之前反馈至DT负责人，如无反馈，刚视为对该考核结果无异议。</div>
+                  <div class="right">我已知悉绩效分数并确认该考核结果</div>
+                  <div class="right">
+                    <img src={this.getImageSrc(`${this.resultData?.signPhoto}`)} alt="" />
+                  </div>
+                </div>,
+                attrs: {
+                  colSpan: 6,
+                },
+              };
+            } else {
+              return {
+                children: value,
+                attrs: {
+                  rowSpan: obj.attrs.rowSpan,
+                },
+              }
+            }
           },
         },
         {
@@ -121,13 +119,44 @@ export default {
           key: 'itemName',
           align: "center",
           width: 150,
+          customRender: (value, row, index) => {
+            const obj = {
+              children: value,
+              attrs: {},
+            };
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+              obj.attrs.colSpan = 0;
+            } else {
+              obj.attrs.colSpan = 1;
+            }
+            return obj;
+          }
         },
         {
           title: '指标说明',
           dataIndex: 'assessmentStandard',
           key: 'assessmentStandard',
           align: "center",
-          scopedSlots: { customRender: 'assessmentStandard' }
+          customRender: (value, row, index) => {
+            const h = this.$createElement;
+            const obj = {
+              children: value,
+              attrs: {},
+            };
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+              obj.attrs.colSpan = 0;
+              obj.children = null;
+            } else {
+              obj.attrs.colSpan = 1;
+              obj.children = h('div', {
+                style: { textAlign: 'left' },
+                domProps: {
+                  innerHTML: value
+                }
+              })
+            }
+            return obj;
+          }
         },
         {
           title: '权重',
@@ -135,14 +164,39 @@ export default {
           key: 'weight',
           width: 100,
           align: "center",
-          scopedSlots: { customRender: 'weight' }
+          customRender: (value, row, index) => {
+            const obj = {
+              children: value,
+              attrs: {},
+            };
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+              obj.attrs.colSpan = 0;
+              obj.children = null;
+            } else {
+              obj.attrs.colSpan = 1;
+              obj.children = <span>{ value ? value : '-' }{ value ? '%' : '' }</span>
+            }
+            return obj;
+          }
         },
         {
           title: '分值',
           dataIndex: 'maxScore',
           key: 'maxScore',
           align: "center",
-          width: 100
+          width: 100,
+          customRender: (value, row, index) => {
+            const obj = {
+              children: value,
+              attrs: {},
+            };
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+              obj.attrs.colSpan = 0;
+            } else {
+              obj.attrs.colSpan = 1;
+            }
+            return obj;
+          }
         },
         {
           title: '得分',
@@ -150,7 +204,37 @@ export default {
           key: 'score',
           width: 140,
           align: "center",
-          scopedSlots: { customRender: 'score' }
+          customRender: (value, row, index) => {
+            const obj = {
+              children: value,
+              attrs: {},
+            };
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+              obj.attrs.colSpan = 0;
+              obj.children = null
+            } else {
+              obj.attrs.colSpan = 1;
+              if(this.status == '1') {
+                obj.children = <div class="input_box"> 
+                  <input
+                    value={row.score}
+                    min={0}
+                    max={row.maxScore}
+                    type="number" 
+                    step={0.1}
+                    onChange={(e) => this.handleChange(row, index, e)}
+                    onInput={(e) => this.handleInput(row, index, e)}
+                    placeholder="输入分数"
+                    class="input_number"
+                    onWheel={(e) => e.preventDefault()}
+                  />
+                </div>
+              } else { 
+                obj.children = <div>{value}</div>
+              }
+            }
+            return obj;
+          }
         }
       ],
       scroll: {
@@ -169,7 +253,9 @@ export default {
       resultData: {},
       // 查看本人考核绩效-确认功能
       isShowStatusConfirm: '',
-      confirmLoading: false
+      confirmLoading: false,
+      // 是否是个人查看页面
+      isPersonal: undefined
     }
   },
   watch: { 
@@ -184,7 +270,7 @@ export default {
     this.status = IDM.url.queryString('status');
     this.deptAssessmentId = IDM.url.queryString('deptAssessmentId')
     this.isShowStatusConfirm = IDM.url.queryString('isShowStatusConfirm')
-    console.log('this.isShowStatusConfirm',this.isShowStatusConfirm === true)
+    this.isPersonal = IDM.url.queryString('isPersonal')
     if(IDM.url.queryString('userId')){
       this.currentUserId = IDM.url.queryString('userId');
       this.getUserData()
@@ -323,6 +409,16 @@ export default {
             this.level = res.data.data.level;
             this.assessmentLevelList = res.data.data.assessmentLevelList ?? [];
             this.resultData = res.data.data;
+            if(this.isPersonal == 'true') {
+              let tableList = JSON.parse(JSON.stringify(this.tableList));
+              tableList.push({
+                id: 'customer'
+              })
+              this.tableListData = tableList;
+            } else {
+              this.tableListData = this.tableList;
+            }
+            
           } else {
             IDM.message.error(res.data.message)
           }
@@ -427,6 +523,11 @@ export default {
         font-size: 18px;
       }
     }
+    .footer_notice_block{
+      img{
+        height: 38px;
+      }
+    }
   }
   .empty_block{
     height: 100%;
@@ -463,6 +564,18 @@ export default {
         border: 1px solid #d9d9d9;
         outline: none;
       }
+    }
+  }
+  .user_notice_info{
+    img{
+      height: 40px;
+      text-align: right;
+    }
+    .left{
+      text-align: left;
+    }
+    .right{
+      text-align: right;
     }
   }
 }
