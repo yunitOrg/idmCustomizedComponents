@@ -52,7 +52,7 @@ export default {
             type: 'primary',
           }
         ],
-        mergeKey: 'taskName, tbdwText, feedbackTime, feedbackStatusText',
+        mergeKey: 'taskName',
         getTitleCustomerFunction: [],
         getSubtitleCustomFunction: [],
       },
@@ -240,6 +240,14 @@ export default {
         if(item.children?.length) {
           this.loopMakeCustomRender(item.children)
         } else {
+          let headerTitle = item.title?.split(',');
+          if(headerTitle?.length > 1) {
+            item.title = () => <div class="custome_header_cell">
+              <div class="left">{headerTitle[0]}</div>
+              <div class="right">{headerTitle[1]}</div>
+              <div class="custome_header_cell_line"></div>
+            </div>
+          } 
           if(this.propData.mergeKey.includes(item.key)) {
             item.customRender = (text, record, rowIndex) => {
               const obj = {
@@ -614,5 +622,45 @@ export default {
     }
   }
 }
+</style>
+<style lang="scss">
+.IMultiLevelTable_app{
+  .custome_header_cell{
+    .custome_header_cell_line{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom left,
+        transparent 0%,
+        transparent calc(50% - 0.5px),
+        #d9d9d9 calc(50% - 0.5px),
+        #d9d9d9 calc(50% + 0.5px),
+        transparent calc(50% + 0.5px),
+        transparent 100%
+      );
+    }
+    .left{
+      position: absolute;
+      left: 15px;
+      bottom: 17px;
+    }
+    .right{
+      position: absolute;
+      right: 15px;
+      top: 17px;
+    }
+  }
+  .ant-table-thead{
+    tr{
+      th{
+        position: relative;
+      }
+    }
+  }
+}
+
 </style>
 
