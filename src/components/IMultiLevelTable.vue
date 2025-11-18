@@ -1,8 +1,8 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IMultiLevelTable_app">
     <div v-if="propData?.showTitle" class="title" v-html="getTitleHtml()"></div>
-    <div v-if="propData.showSubtitle" class="describe">
-      <span class="text" v-html="getSubtitleHtml()"></span>
+    <div v-if="propData?.showSubtitle || propData?.operateList?.length" class="describe">
+      <span v-if="propData.showSubtitle" class="text" v-html="getSubtitleHtml()"></span>
       <div v-if="propData.operateList?.length" class="operate_block flex_end">
         <template v-for="(item, index) in propData.operateList"> 
           <a-upload v-if="item.showType == 'upload'" :key="index"  name="file" :multiple="false" 
@@ -11,9 +11,13 @@
             :beforeUpload="() => false"
             @change="e => handleChangeFile(e, item)"
           >
-            <a-button :type="item.type">{{ item.name }}</a-button>
+            <a-button :type="item.type" :loading="item.loading">
+              {{ item.name }}
+            </a-button>
           </a-upload>
-          <a-button @click="handleClickButton(item)" v-else :key="index" :type="item.type">{{ item.name }}</a-button>
+          <a-button @click="handleClickButton(item)" v-else :key="index" :loading="item.loading" :type="item.type">
+            {{ item.name }}
+          </a-button>
         </template>
         
       </div>
@@ -86,12 +90,13 @@ export default {
   created() {
     this.moduleObject = this.$root.moduleObject;
     this.convertAttrToStyleObject();
-    this.getInitData();
+    if(this.propData.loadDataCreated) {
+      this.getInitData();
+    }
   },
   mounted() {
     let that = this;
     window.addEventListener('resize', this.makeTableScrollHeight)
-    this.makeTableScrollHeight();
   },
   destroyed() {
     window.removeEventListener('resize', this.makeTableScrollHeight)
@@ -187,6 +192,9 @@ export default {
               that.total = res.total;
               that.makeTableDataList(res.rows)
               that.makeTableHeaderData(res.columns)
+              that.$nextTick(() => {
+                that.makeTableScrollHeight()
+              })
             }
           },
           function (error) {
@@ -199,6 +207,9 @@ export default {
         this.makeTableHeaderData(tableColumns)
         let tableList = getMultiLevelTableDataList()
         this.makeTableDataList(tableList)
+        this.$nextTick(() => {
+          this.makeTableScrollHeight()
+        })
       }
     },
     makeTableDataList(data) {

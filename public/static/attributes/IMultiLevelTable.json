@@ -24,6 +24,25 @@
           "type": "radio",
           "styleType": "radio",
           "layoutType": "inline",
+          "text": "初始加载",
+          "desc": "是否在组件初始化时请求接口数据",
+          "bindKey": "loadDataCreated",
+          "default": true,
+          "dictionary": [
+            {
+              "label": "是",
+              "value": true
+            },
+            {
+              "label": "否",
+              "value": false
+            }
+          ]
+        },
+        {
+          "type": "radio",
+          "styleType": "radio",
+          "layoutType": "inline",
           "text": "显示标题",
           "desc": "是否显示标题",
           "bindKey": "showTitle",
@@ -137,7 +156,6 @@
           "desc": "操作按钮项字段配置",
           "bindKey": "operateList",
           "tabText": "按钮项[index]",
-          "display": "@[showSubtitle]",
           "children": [
             {
               "type": "select",
