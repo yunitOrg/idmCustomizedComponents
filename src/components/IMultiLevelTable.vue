@@ -43,8 +43,8 @@ export default {
   name: 'IMultiLevelTable',
   data(){
     return {
-      moduleObject:{},
-      propData:this.$root.propData.compositeAttr||{
+      moduleObject: this._moduleObject||{},
+      propData: this._propData?.compositeAttr||this.$root?.propData?.compositeAttr || {
         intelligentMerge: true,
         showTitle: true,
         showSubtitle: true,
@@ -86,9 +86,11 @@ export default {
     
   },
   props: {
+    _moduleObject: Object,
+    _propData: Object
   },
   created() {
-    this.moduleObject = this.$root.moduleObject;
+    this.moduleObject = this._moduleObject||this.$root.moduleObject;
     this.convertAttrToStyleObject();
     if(this.propData.loadDataCreated) {
       this.getInitData();
@@ -96,6 +98,7 @@ export default {
   },
   mounted() {
     let that = this;
+    this._moduleObject&&IDM.callBackComponentMountComplete?.apply(this,[this._moduleObject]);
     window.addEventListener('resize', this.makeTableScrollHeight)
   },
   destroyed() {
