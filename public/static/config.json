@@ -73,6 +73,13 @@
       "className": "IStatisticsCoordinationSystem",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.erppurchaserequest",
+      "comName": "erp采购申请",
+      "className": "IErpPurchaseRequest",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
