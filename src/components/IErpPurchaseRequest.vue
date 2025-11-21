@@ -40,11 +40,11 @@
     </div>
     <div class="situation">
       <div class="budget">
-        <div class="header"><span>采购预算卡</span></div>
+        <div class="header"><span>采购计划</span></div>
         <div class="container">
           <div class="content">
             <div class="top">
-              <div class="left"><div class="field">采购预算：{{budgetData.budget}}w</div></div>
+              <div class="left"><div class="field">采购报备总计：{{budgetData.budget}}w</div></div>
               <div class="right"><div class="field">外采种类：{{budgetData.list.length}}</div></div>
             </div>
             <div class="bottom">
