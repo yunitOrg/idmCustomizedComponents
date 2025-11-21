@@ -1,7 +1,7 @@
 {
-  "classId": "idm.component.idmCustomizedComponents.imultileveltable",
-  "comName": "多级表头表格",
-  "className": "IMultiLevelTable",
+  "classId": "idm.component.idmCustomizedComponents.idraftstorelist",
+  "comName": "电气起草收藏列表",
+  "className": "IDraftStoreList",
   "comType": "common",
   "comLangue": "vue",
   "compositeAttr": [
@@ -62,9 +62,29 @@
           "type": "radio",
           "styleType": "radio",
           "layoutType": "inline",
-          "text": "副标题",
-          "desc": "是否显示副标题",
-          "bindKey": "showSubtitle",
+          "text": "显示搜索",
+          "desc": "是否显示搜索框",
+          "bindKey": "showSearch",
+          "default": true,
+          "dictionary": [
+            {
+              "label": "是",
+              "value": true
+            },
+            {
+              "label": "否",
+              "value": false
+            }
+          ]
+        },
+        
+        {
+          "type": "radio",
+          "styleType": "radio",
+          "layoutType": "inline",
+          "text": "模块标题",
+          "desc": "是否显示各个模块的标题",
+          "bindKey": "showTypeTitle",
           "default": true,
           "dictionary": [
             {
@@ -81,9 +101,9 @@
           "type": "radio",
           "styleType": "radio",
           "layoutType": "inline",
-          "text": "显示分页",
-          "desc": "是否显示分页功能",
-          "bindKey": "showPagination",
+          "text": "收藏图标",
+          "desc": "是否显示收藏图标按钮",
+          "bindKey": "showStoreButton",
           "default": true,
           "dictionary": [
             {
@@ -97,169 +117,20 @@
           ]
         },
         {
-          "type": "radio",
-          "styleType": "radio",
-          "layoutType": "inline",
-          "text": "显示序号",
-          "desc": "是否显示列表序号",
-          "bindKey": "showIndex",
-          "default": true,
-          "dictionary": [
-            {
-              "label": "是",
-              "value": true
-            },
-            {
-              "label": "否",
-              "value": false
-            }
-          ]
-        },
-        {
-          "type": "radio",
-          "styleType": "radio",
-          "layoutType": "inline",
-          "text": "智能合并",
-          "desc": "合并时会根据当前列前面的列是否相同来进行合并",
-          "bindKey": "intelligentMerge",
-          "default": false,
-          "dictionary": [
-            {
-              "label": "是",
-              "value": true
-            },
-            {
-              "label": "否",
-              "value": false
-            }
-          ]
-        },
-        {
           "type": "input",
           "layoutType": "inline",
-          "text": "表格行key",
-          "bindKey": "rowKey",
-          "desc": "表格行 key 的取值",
-          "default": "id"
+          "text": "标题",
+          "desc": "组件大标题",
+          "bindKey": "title",
+          "display": "@[showTitle]"
         },
         {
-          "type": "input",
+          "type": "inputNumber",
           "layoutType": "inline",
-          "text": "合列字段",
-          "bindKey": "mergeKey",
-          "desc": "表格行合并字段，以逗号分隔。例如: id,name,sex,age,birthday,address,phone,email,remark",
-          "default": ""
-        },
-        {
-          "type": "input",
-          "layoutType": "inline",
-          "text": "对齐方式",
-          "bindKey": "align",
-          "desc": "设置列内容的对齐方式，'left' | 'right' | 'center'",
-          "default": ""
-        },
-        {
-          "type": "table",
-          "text": "操作项配置",
-          "desc": "操作按钮项字段配置",
-          "bindKey": "operateList",
-          "tabText": "按钮项[index]",
-          "children": [
-            {
-              "type": "select",
-              "layoutType": "inline",
-              "text": "显示类型",
-              "bindKey": "showType",
-              "default": "default",
-              "dictionary": [
-                {
-                    "label": "普通按钮",
-                    "value": "default"
-                },
-                {
-                    "label": "上传按钮",
-                    "value": "upload"
-                }
-              ]
-            },
-            {
-              "type": "input",
-              "layoutType": "inline",
-              "text": "按钮名称",
-              "bindKey": "name",
-              "default": "操作"
-            },
-            {
-              "type": "input",
-              "layoutType": "inline",
-              "text": "按钮类型",
-              "bindKey": "type",
-              "desc": "按钮类型，可选值：primary、success、warning、danger、info、text",
-              "default": "primary"
-            },
-            {
-              "type": "input",
-              "layoutType": "inline",
-              "text": "文件类型",
-              "bindKey": "acceptType",
-              "desc": "上传文件类型，多个文件类型用英文逗号分隔，例如: .jpg,.png,.gif",
-              "default": ""
-            },
-            {
-              "type": "actionSelect",
-              "layoutType": "block",
-              "text": "点击事件函数",
-              "bindKey": "handleClickCustomerFunction",
-              "display": "@[showType=='default']",
-              "multiple": false
-            },
-            {
-              "type": "actionSelect",
-              "layoutType": "block",
-              "text": "上传事件函数",
-              "bindKey": "handleChangeFileCustomerFunction",
-              "display": "@[showType=='upload']",
-              "multiple": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "group",
-      "text": "标题样式设置",
-      "desc": "点击？查看样式设置用法指南",
-      "children": [
-        {
-          "type": "font",
-          "layoutType": "block",
-          "text": "文字",
-          "bindKey": "fontTitle"
-        },
-        {
-          "type": "box",
-          "layoutType": "block",
-          "text": "内外边距",
-          "bindKey": "boxTitle"
-        }
-      ]
-    },
-    {
-      "type": "group",
-      "text": "副标题样式设置",
-      "desc": "点击？查看样式设置用法指南",
-      "children": [
-        {
-          "type": "font",
-          "layoutType": "block",
-          "text": "文字",
-          "bindKey": "fontSubTitle"
-        },
-        {
-          "type": "box",
-          "layoutType": "block",
-          "text": "内外边距",
-          "bindKey": "boxSubTitle"
+          "text": "列数",
+          "desc": "列表一行展示多少列",
+          "bindKey": "columnNumber",
+          "default": 2
         }
       ]
     },
@@ -499,7 +370,7 @@
           "type": "dataSourceSelect",
           "layoutType": "block",
           "text": "数据源",
-          "desc": "返回数据格式：{total:0,rows:[],columns: []}",
+          "desc": "返回数据格式：[]",
           "bindKey": "dataSource"
         },
         {
@@ -564,25 +435,33 @@
         {
           "type": "actionSelect",
           "layoutType": "block",
-          "text": "获取标题函数",
-          "bindKey": "getTitleCustomerFunction",
-          "desc": "用于获取页面标题内容，直接返回文本即可",
+          "text": "收藏自定义函数",
+          "bindKey": "storeCustomerFunction",
+          "desc": "点击收藏图标后触发自定义函数,参数为：{item,_this}",
           "multiple": false
         },
         {
           "type": "actionSelect",
           "layoutType": "block",
-          "text": "获取副标题函数",
-          "bindKey": "getSubtitleCustomFunction",
-          "desc": "用于获取页面副标题内容，直接返回文本即可",
+          "text": "取消收藏自定义函数",
+          "bindKey": "unStoreCustomerFunction",
+          "desc": "点击取消收藏图标后触发自定义函数,参数为：{item,_this}",
           "multiple": false
         },
         {
           "type": "actionSelect",
           "layoutType": "block",
           "text": "行点击事件",
-          "bindKey": "rowClickCustomFunction",
-          "desc": "点击行触发的自定义事件，参数为：{record,index,_this}",
+          "bindKey": "itemClickCustomFunction",
+          "desc": "点击行触发的自定义事件，参数为：{item,_this}",
+          "multiple": false
+        },
+        {
+          "type": "actionSelect",
+          "layoutType": "block",
+          "text": "搜索事件",
+          "bindKey": "searchCustomFunction",
+          "desc": "点击行触发的自定义事件，参数为：{value,_this}",
           "multiple": false
         }
       ]

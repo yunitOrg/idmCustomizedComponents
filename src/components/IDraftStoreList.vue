@@ -1,84 +1,62 @@
 <template>
-  <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IMultiLevelTable_app">
-    <div v-if="propData?.showTitle" class="title" v-html="getTitleHtml()"></div>
-    <div v-if="propData?.showSubtitle || propData?.operateList?.length" class="describe">
-      <span v-if="propData.showSubtitle" class="text" v-html="getSubtitleHtml()"></span>
-      <div v-if="propData.operateList?.length" class="operate_block flex_end">
-        <template v-for="(item, index) in propData.operateList"> 
-          <a-upload v-if="item.showType == 'upload'" :key="index"  name="file" :multiple="false" 
-            :showUploadList="false" 
-            :accept="item.acceptType" 
-            :beforeUpload="() => false"
-            @change="e => handleChangeFile(e, item)"
-          >
-            <a-button :type="item.type" :loading="item.loading">
-              {{ item.name }}
-            </a-button>
-          </a-upload>
-          <a-button @click="handleClickButton(item)" v-else :key="index" :loading="item.loading" :type="item.type">
-            {{ item.name }}
-          </a-button>
-        </template>
-        
-      </div>
+  <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IDraftStoreList_app">
+    <div v-if="propData?.showTitle" class="IDraftStoreList_app_title">
+      {{ propData.title }}
     </div>
-    <div class="table">
-      <a-table
-        :id="tableId"
-        :columns="tableColumns"
-        :data-source="tableList"
-        :pagination="propData?.showPagination ? paginationOptions : false"
-        bordered
-        :scroll="scrollOptions"
-        :customRow="customRow"
-        :rowKey="propData?.rowKey || 'id'"
-      />
+    <div class="IDraftStoreList_app_main">
+      <div v-if="propData.showSearch" class="search_block">
+        <a-input v-model="searchValue" @change="handleSearch" placeholder="搜索文件类型" allowClear>
+          <SvgIcon slot="prefix" icon-class="search" />
+        </a-input>
+      </div>
+      <div class="list_block">
+        <vue-scroll :ops="scrollOps">
+          <div v-for="(item, index) in dataList" :key="index" class="type_block">
+            <div v-if="propData?.showTypeTitle && item.typeNme" class="title">
+              {{ item.typeNme }}
+            </div>
+            <div class="main" :class="`grid${propData.columnNumber}`">
+              <div v-for="(item1, index1) in item.subList" :key="index1" class="list">
+                <div class="text">
+                  <span @click="handleClickItem(item1)">{{ item1.businessName }}</span>
+                </div>
+                <div v-if="propData.showStoreButton" class="icon_block" :class="item1.alreadyCollection == '1' ? 'icon_block_already' : ''">
+                  <a-icon @click.stop="handleStoreCancel(item1)" v-if="item1.alreadyCollection == '1'" type="star" theme="filled" title="取消收藏" />
+                  <a-icon @click.stop="handleStore(item1)" v-else type="star" title="收藏" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </vue-scroll>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getMultiLevelTableHeaderList, getMultiLevelTableDataList } from "@/mock/index.js"
+import vuescroll from '../mixins/vueScroll'
+import SvgIcon from '../icons/SvgIcon.vue';
+import { getDraftStoreData } from "@/mock/index.js"
 export default {
-  name: 'IMultiLevelTable',
+  name: 'IDraftStoreList',
+  mixins: [ vuescroll ],
+  components: {
+    SvgIcon
+  },
   data(){
     return {
       moduleObject: this._moduleObject||{},
       propData: this._propData?.compositeAttr||this.$root?.propData?.compositeAttr || {
         loadDataCreated: true,
-        intelligentMerge: true,
         showTitle: true,
-        showSubtitle: true,
-        showIndex: true,
-        operateList: [
-          {
-            name: "导入",
-            showType: 'upload',
-            type: 'primary',
-          }
-        ],
-        mergeKey: 'taskName',
-        getTitleCustomerFunction: [],
-        getSubtitleCustomFunction: [],
+        title: "收藏列表",
+        showTypeTitle: true,
+        showSearch: true,
+        columnNumber: 3,
+        showStoreButton: true
       },
-      tableColumns: [],
-      tableList: [],
-      pageNum: 1,
-      pageSize: 10,
-      paginationOptions: {
-        current: this.pageNum,
-        pageSize: this.pageSize,
-        showQuickJumper: true,
-        showSizeChanger: true,
-        pageSizeOptions: ['10', '20', '30', '40', '50'],
-        showTotal: (total, range) => `共 ${total} 条记录`,
-        onShowSizeChange: this.handleChangeSize,
-        onChange: this.handleChangeTable
-      },
-      scrollOptions: {
-        y: 0
-      },
-      tableId: IDM.UUID(),
+      searchValue: '',
+      dataList: [],
       resultData: {},
       conditionObject: {},
     }
@@ -100,53 +78,11 @@ export default {
   mounted() {
     let that = this;
     this._moduleObject&&IDM.callBackComponentMountComplete?.apply(this,[this._moduleObject]);
-    window.addEventListener('resize', this.makeTableScrollHeight)
   },
   destroyed() {
-    window.removeEventListener('resize', this.makeTableScrollHeight)
   },
   methods:{
-    handleChangeFile(e, item) {
-      console.log('e', e)
-      if(item.handleChangeFileCustomerFunction?.length) {
-        IDM.invokeCustomFunctions.apply(this, [item.handleChangeFileCustomerFunction, {
-          _this: this,
-          fileList: e.fileList,
-          file: e.file
-        }]);
-      }
-    },
-    handleClickButton(item) {
-      if(item.handleClickCustomerFunction?.length) {
-        IDM.invokeCustomFunctions.apply(this, [item.handleClickCustomerFunction, {
-          _this: this,
-        }]);
-      }
-    },
-    customRow(record, index) {
-      let that = this;
-      return { 
-        props: {},
-        on: {
-          click: function (event) {
-            that.rowClick(record, index, event)
-          }
-        }
-      }
-    },
-    rowClick(record, index) {
-      if(this.propData.rowClickCustomFunction?.length) {
-        IDM.invokeCustomFunctions.apply(this, [this.propData.rowClickCustomFunction, {
-          _this: this,
-          record,
-          index
-        }]);
-      }
-    },
     getInitData(isInit) {
-      if(isInit) {
-        this.pageNum = 1;
-      }
       if(this.propData.dataSource?.length) {
         let that = this;
         let params = this.commonParam()
@@ -187,18 +123,11 @@ export default {
           {
             moduleObject: this.moduleObject,
             _this: this,
-            pageNum: this.pageNum,
-            pageSize: this.pageSize,
             ...params
           }, function (res) {
             if (res) {
               that.resultData = res;
-              that.total = res.total;
-              that.makeTableDataList(res.rows)
-              that.makeTableHeaderData(res.columns)
-              that.$nextTick(() => {
-                that.makeTableScrollHeight()
-              })
+              that.dataList = res;
             }
           },
           function (error) {
@@ -207,161 +136,42 @@ export default {
           }
         );
       } else {
-        let tableColumns = getMultiLevelTableHeaderList()
-        this.makeTableHeaderData(tableColumns)
-        let tableList = getMultiLevelTableDataList()
-        this.makeTableDataList(tableList)
-        this.$nextTick(() => {
-          this.makeTableScrollHeight()
-        })
+        this.dataList = getDraftStoreData()
       }
     },
-    makeTableDataList(data) {
-      if(!data) {
-        this.tableList = []
-        return
-      }
-      if(this.propData.showIndex) {
-        data.forEach((item, index) => {
-          item['indexA'] = index + 1 + this.pageSize * (this.pageNum - 1)
-        })
-      }
-      this.tableList = data;
-    },
-    makeTableHeaderData(data = []) {
-      let arr = JSON.parse(JSON.stringify(data))
-      this.traverseTreeData(arr)
-      if(this.propData.showIndex) {
-        arr.unshift({
-          title: '序号',
-          dataIndex: 'indexA',
-          key: 'indexA',
-          width: 80,
-          align: this.propData.align
-        })
-      }
-      if(!this.propData.mergeKey) {
-        this.tableColumns = arr;
-        return 
-      }
-      this.loopMakeCustomRender(arr)
-      this.tableColumns = arr
-    },
-    loopMakeCustomRender(arr) {
-      let currentRowRealValue = '';
-      // 上一行的真实值
-      let preRowRealValue = '';
-      arr.forEach((item, index) => {
-        if(item.children?.length) {
-          this.loopMakeCustomRender(item.children)
-        } else {
-          let headerTitle = item.title?.split(',');
-          if(headerTitle?.length > 1) {
-            item.title = () => <div class="custome_header_cell">
-              <div class="left">{headerTitle[0]}</div>
-              <div class="right">{headerTitle[1]}</div>
-              <div class="custome_header_cell_line"></div>
-            </div>
-          } 
-          if(this.propData.mergeKey.includes(item.key)) {
-            item.customRender = (text, record, rowIndex) => {
-              const obj = {
-                children: text,
-                attrs: {},
-              };
-              currentRowRealValue = this.getTableCellRealValue(item, index, rowIndex);
-              preRowRealValue = this.getTableCellRealValue(item, index, rowIndex - 1);
-              if (rowIndex &&  record[item.key] && currentRowRealValue == preRowRealValue) {
-                obj.attrs.rowSpan = 0;
-                return obj;
-              }
-              
-              let rowSpan = 1;
-              for (let i = rowIndex + 1; i < this.tableList.length; i++) {
-                let nextRowRealValue = this.getTableCellRealValue(item, index, i);
-                if (record[item.key] && nextRowRealValue == currentRowRealValue) {
-                  rowSpan++;
-                } else {
-                  break;
-                }
-              }
-              obj.attrs.rowSpan = rowSpan;
-              return obj; 
-            }
-          }
-        }
-      })
-    },
-    getTableCellRealValue(item, index, rowIndex) {
-      let result = '';
-      if(this.propData.intelligentMerge) {
-        for(let i = 0; i < index + 1; i++) {
-          if(this.tableColumns[i]?.key && this.propData.mergeKey?.includes(this.tableColumns[i]?.key) && this.tableList[rowIndex]?.[this.tableColumns[i]?.key]) {
-            result = result + this.tableList[rowIndex][this.tableColumns[i].key]
-          }
-        }
-      } else {
-        result = this.tableList[rowIndex]?.[item.key];
-      }
-      
-      return result
-    },
-    // 遍历树状数据，赋值dateIndex
-    traverseTreeData(data = []) {
-      data.forEach(item => {
-        if(item.children?.length) {
-          item.key = undefined;
-          this.traverseTreeData(item.children)
-        } else {
-          item.children = undefined;
-          if(item.key && !item.dataIndex) {
-            item.dataIndex = item.key
-          }
-          if(this.propData.align) {
-            item.align = this.propData.align;
-          }
-        }
-      })
-    },
-    getTitleHtml() {
-      if(this.propData.getTitleCustomerFunction?.length) {
-        const results = IDM.invokeCustomFunctions.apply(this, [this.propData.getTitleCustomerFunction, {
-          _this: this
+    handleStore(item) {
+      console.log(item)
+      if(this.propData.storeCustomerFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [this.propData.storeCustomerFunction, {
+          _this: this,
+          item,
         }]);
-        return results?.[0]
-      } else {
-        return `民主测评考核`
       }
     },
-    getSubtitleHtml() {
-      if(this.propData.getSubtitleCustomFunction?.length) {
-        const results = IDM.invokeCustomFunctions.apply(this, [this.propData.getSubtitleCustomFunction, {
-          _this: this
+    handleStoreCancel(item) {
+      if(this.propData.unStoreCustomerFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [this.propData.unStoreCustomerFunction, {
+          _this: this,
+          item,
         }]);
-        return results?.[0]
-      } else {
-        return `考核时间：`
       }
     },
-    makeTableScrollHeight() {
-      let that = this;
-      let table = document.getElementById(that.tableId);
-      if ( table ) {
-        const thead = table.querySelector('.ant-table-thead');
-        const headerHeight = thead.offsetHeight;
-        let scrollHeight = `calc(100vh - ${table.getBoundingClientRect()?.top + headerHeight + (this.propData.showPagination ? 70 : 20)}px)`
-        this.scrollOptions.y = scrollHeight;
+    handleClickItem(item) {
+      if(this.propData.itemClickCustomFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [this.propData.itemClickCustomFunction, {
+          _this: this,
+          item,
+        }]);
       }
     },
-    handleChangeSize(page, size) {
-      console.log('分页参数-size',page,size)
-      this.pageSize = size;
-      this.getInitData(true)
-    },
-    handleChangeTable(page) {
-      console.log('分页参数-page',page)
-      this.pageNum = page;
-      this.getInitData()
+    handleSearch(e) {
+      console.log(e.target.value)
+      if(this.propData.searchCustomFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [this.propData.searchCustomFunction, {
+          _this: this,
+          value: e.target.value
+        }]);
+      }
     },
     getImageSrc(url,name) {
       if ( url ) {
@@ -611,71 +421,108 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.IMultiLevelTable_app{
+.IDraftStoreList_app{
   height: 100vh;
-  &>.title{
-    font-weight: 700;
-    font-size: 20px;
-    color: #333333;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  .IDraftStoreList_app_title{
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
     text-align: center;
+    font-size: 22px;
+    color: #333;
+    font-weight: 600;
   }
-  &>.describe{
-    height: 38px;
-    line-height: 38px;
-    position: relative;
-    text-align: center;
-    .operate_block{
-      position: absolute;
-      right: 0;
-      top: 0;
-      .ant-btn{
-        margin-left: 10px;
+  .IDraftStoreList_app_main{
+    width: 100%;
+    height: 0;
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 20px 0;
+    .search_block{
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .list_block{
+      width: 100%;
+      height: 0;
+      flex-grow: 2;
+      .type_block{
+        margin-top: 30px;
         &:nth-child(1){
-          margin-left: 0;
+          margin-top: 0;
+        }
+        &>.title{
+          margin-bottom: 10px;
+          font-size: 18px;
+          font-weight: 600;
+          color: #333;
+        }
+        &>.main{
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 10px 20px; /* 列间距 */
+          &>.list{
+            height: 46px;
+            line-height: 46px;
+            position: relative;
+            padding: 0 50px 0 12px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            background: rgb(248, 249, 250);
+            border: 1px solid rgb(233, 236, 239);
+            border-radius: 8px;
+            box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 3px;
+            &:hover{
+              color: #fff;
+              background: #0086D9;
+            }
+            .text{
+              width: 100%;
+              height: 100%;
+              cursor: pointer;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              overflow: hidden;
+            }
+            .icon_block{
+              position: absolute;
+              right: 12px;
+              top: 0;
+              .anticon{
+                cursor: pointer;
+              }
+            }
+          }
+        }
+        &>.grid1{
+          grid-template-columns: 1fr;
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+        &>.grid2{
+          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        &>.grid3{
+          grid-template-columns: 1fr 1fr 1fr;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        &>.grid4{
+          grid-template-columns: 1fr 1fr 1fr 1fr;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        &>.grid5{
+          grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
         }
       }
     }
   }
 }
 </style>
-<style lang="scss">
-.IMultiLevelTable_app{
-  .custome_header_cell{
-    .custome_header_cell_line{
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        to bottom left,
-        transparent 0%,
-        transparent calc(50% - 0.5px),
-        #d9d9d9 calc(50% - 0.5px),
-        #d9d9d9 calc(50% + 0.5px),
-        transparent calc(50% + 0.5px),
-        transparent 100%
-      );
-    }
-    .left{
-      position: absolute;
-      left: 15px;
-      bottom: 17px;
-    }
-    .right{
-      position: absolute;
-      right: 15px;
-      top: 17px;
-    }
-  }
-  .ant-table-thead{
-    tr{
-      th{
-        position: relative;
-      }
-    }
-  }
-}
 
-</style>
 

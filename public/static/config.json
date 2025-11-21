@@ -108,6 +108,13 @@
       "className": "IMultiLevelTable",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.idraftstorelist",
+      "comName": "电气起草收藏列表",
+      "className": "IDraftStoreList",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
