@@ -115,6 +115,20 @@
       "className": "IDraftStoreList",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.erppurchaserequest",
+      "comName": "erp采购申请",
+      "className": "IErpPurchaseRequest",
+      "comType": "common",
+      "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.travelschedule",
+      "comName": "行程安排",
+      "className": "ITravelSchedule",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
