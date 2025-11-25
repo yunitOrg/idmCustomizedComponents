@@ -355,7 +355,7 @@ export default {
       let totalScore = 0;
       tableList.forEach(item => {
         if(item.weight){
-          totalScore = totalScore + (item.score / Number(item.maxScore)) * item.scoreType * parseInt(item.weight) / 100;
+          totalScore = totalScore + (Number(item.score) / Number(item.maxScore)) * item.scoreType * Number(item.weight) / 100;
         } else {
           if(item.score){
             totalScore = totalScore + Number(item.score);
@@ -382,11 +382,12 @@ export default {
     handleInput(item, index, e){
       console.log(item, index)
       console.log(e.target.value)
-      if(e.target.value > parseInt(item.maxScore)){
+      if(e.target.value > Number(item.maxScore)){
         item.score = item.maxScore
-      }
-      if(e.target.value < 0){
+      } else if(e.target.value < 0){
         item.score = 0
+      } else {
+        item.score = e.target.value;
       }
       this.getTotalScore()
     },
