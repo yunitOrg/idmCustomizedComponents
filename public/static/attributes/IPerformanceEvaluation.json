@@ -59,6 +59,25 @@
             ]
           },
           {
+            "type": "radio",
+            "styleType": "radio",
+            "layoutType": "inline",
+            "text": "评分签名",
+            "desc":"是否显示评分底部备注以及个人签名",
+            "bindKey": "showNotice",
+            "default": true,
+            "dictionary": [
+                {
+                    "label": "是",
+                    "value": true
+                },
+                {
+                    "label": "否",
+                    "value": false
+                }
+            ]
+          },
+          {
             "type": "input",
             "layoutType": "inline",
             "text": "标题",
@@ -319,6 +338,21 @@
                 "default":"list"
               }
             ]
+          }
+        ]
+      },
+      {
+        "type": "group",
+        "text": "高级",
+        "desc": "点击？查看高级设置用法指南",
+        "children": [
+          {
+            "type": "actionSelect",
+            "layoutType": "block",
+            "text": "点击提交动作",
+            "bindKey": "clickSubmitFunction",
+            "desc": "点击的时候会调用设置的自定义函数，接收参数为格式为{...自定义的}",
+            "multiple": false
           }
         ]
       }

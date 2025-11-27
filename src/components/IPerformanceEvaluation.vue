@@ -44,11 +44,15 @@
             </div>
           </template>
         </div>
+        <div v-if="status == '1'" class="submit_button">
+          <a-button @click="handleScoreSubmit()" type="primary" :loading="scoreSubmitButtonLoading" block>提交</a-button>
+        </div>
       </div>
       <div class="right">
         <IPerformanceEvaluationUser 
           :userId="userId"
           :moduleObject="moduleObject"
+          :propData="propData"
           @update="update"
         />
       </div>
@@ -72,8 +76,10 @@ export default {
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
-        showHeader: false,
-        showLeft: false
+        showHeader: true,
+        showLeft: true,
+        showNotice: false,
+        showScoreSubmitButton: true
       },
       statisticsList: [
         {
@@ -126,7 +132,9 @@ export default {
       deptName: '部门',
       departData: {},
       userId: '',
-      deptAssessmentId: ''
+      deptAssessmentId: '',
+      scoreSubmitButtonLoading: false,
+      status: '', // 1可评分 2只允许查看
     }
   },
   watch: {
@@ -137,6 +145,7 @@ export default {
   created() {
     this.moduleObject = this.$root.moduleObject;
     this.convertAttrToStyleObject();
+    this.status = IDM.url.queryString('status');
     if(IDM.url.queryString('deptAssessmentId')){
       this.deptAssessmentId = IDM.url.queryString('deptAssessmentId');
     }
@@ -149,6 +158,13 @@ export default {
   },
   destroyed() {},
   methods:{
+    handleScoreSubmit() {
+      if(this.propData.clickSubmitFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this,[this.propData.clickSubmitFunction,{
+          _this: this,
+        }])
+      }
+    },
     handleSearchUser(){
       this.getUserList()
     },
