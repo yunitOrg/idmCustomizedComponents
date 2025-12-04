@@ -404,7 +404,8 @@ export default {
         this.loading = true
         IDM.http.get('/ctrl/indicator/loadByUserId',{
           deptAssessmentId: this.deptAssessmentId,
-          userId: this.currentUserId
+          userId: this.currentUserId,
+          status: this.status
         }).then((res) => {
           this.loading = false;
           if ( res.data.code == 200 ) {
