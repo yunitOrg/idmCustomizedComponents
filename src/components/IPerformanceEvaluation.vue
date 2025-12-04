@@ -55,10 +55,10 @@
           :propData="propData"
           @update="update"
         />
-        <div @click="handleExpandCollapse('isheaderCollapse')" class="expand_collapse_block_header flex_center" :class="isheaderCollapse ? 'collapse' : ''">
+        <div v-if="propData?.showHeaderCollapseButton" @click="handleExpandCollapse('isheaderCollapse')" class="expand_collapse_block_header flex_center" :class="isheaderCollapse ? 'collapse' : ''">
           <span></span>
         </div>
-        <div @click="handleExpandCollapse('isLeftCollapse')" class="expand_collapse_block_left flex_center" :class="isLeftCollapse ? 'collapse' : ''">
+        <div v-if="propData?.showLeftCollapseButton" @click="handleExpandCollapse('isLeftCollapse')" class="expand_collapse_block_left flex_center" :class="isLeftCollapse ? 'collapse' : ''">
           <span></span>
         </div>
       </div>

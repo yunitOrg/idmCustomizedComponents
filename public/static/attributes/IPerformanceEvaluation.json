@@ -43,10 +43,48 @@
             "type": "radio",
             "styleType": "radio",
             "layoutType": "inline",
+            "text": "头部折叠",
+            "desc":"是否显示头部折叠按钮",
+            "bindKey": "showHeaderCollapseButton",
+            "default": false,
+            "dictionary": [
+                {
+                    "label": "是",
+                    "value": true
+                },
+                {
+                    "label": "否",
+                    "value": false
+                }
+            ]
+          },
+          {
+            "type": "radio",
+            "styleType": "radio",
+            "layoutType": "inline",
             "text": "显示左侧",
             "desc":"是否显示左侧部门人员",
             "bindKey": "showLeft",
             "default": true,
+            "dictionary": [
+                {
+                    "label": "是",
+                    "value": true
+                },
+                {
+                    "label": "否",
+                    "value": false
+                }
+            ]
+          },
+          {
+            "type": "radio",
+            "styleType": "radio",
+            "layoutType": "inline",
+            "text": "左侧折叠",
+            "desc":"是否显示左侧部门人员折叠按钮",
+            "bindKey": "showLeftCollapseButton",
+            "default": false,
             "dictionary": [
                 {
                     "label": "是",
