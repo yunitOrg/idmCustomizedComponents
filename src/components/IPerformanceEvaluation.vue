@@ -657,7 +657,7 @@ export default {
         position: absolute;
         left: 0;
         top: 50%;
-        transform: translate(-50%);
+        transform: translate(0,-50%);
         clip-path: polygon(100% 10px, 0 0, 0 100%, 100% calc(100% - 10px));
         background-color: rgba(0,115,202,1);
         overflow: hidden;
