@@ -129,6 +129,13 @@
       "className": "ITravelSchedule",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.unitsecondarylist",
+      "comName": "山东烟草单位二级列表",
+      "className": "IUnitSecondaryList",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }

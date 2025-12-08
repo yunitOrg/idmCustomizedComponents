@@ -6,6 +6,7 @@
         <a-button @click="handlePrevWeek"> 上一周 </a-button>
         <a-button @click="handleCurrentWeek"> 当前周 </a-button>
         <a-button @click="handleNextWeek"> 下一周 </a-button>
+        <a-button type="primary" @click="handleOut"> 外出 </a-button>
         <a-button type="primary" @click="handleApply"> 请假 </a-button>
       </a-space>
     </div>
@@ -14,6 +15,7 @@
       :data-source="dataSource"
       bordered
       :customRow="customRow"
+      :pagination="false"
     >
     </a-table>
   </div>
@@ -24,10 +26,18 @@ import travelScheduleData from "@/mock/ITravelSchedule";
 const { workContent } = travelScheduleData;
 export default {
   name: "UnitSchedule",
+  props: {
+    propData: {
+      type: Object,
+      default: () => {},
+    },
+    moduleObject: {
+      type: Object,
+      default: () => {},
+    },
+  },
   data() {
     return {
-      moduleObject: {},
-      propData: this.$root.propData.compositeAttr || {},
       columns: [
         {
           title: "时间",
@@ -81,7 +91,6 @@ export default {
       searchVal: "",
     };
   },
-  props: {},
   created() {
     this.renderDate();
   },
@@ -89,7 +98,20 @@ export default {
     handleReturn() {
       this.$emit("changeViewType", "unit");
     },
-    handleApply() {},
+    handleOut() {
+      window.open(
+        IDM.url.getContextWebUrl(
+          "ctrl/formControl/form?moduleId=251122154232aYI1jgXimPjINwTbS9w&listId=251122172126UOd9o2F1DARlpv2yQHa&nodeId=0"
+        )
+      );
+    },
+    handleApply() {
+      window.open(
+        IDM.url.getContextWebUrl(
+          "ctrl/formControl/form?moduleId=251122115115EcVjDg7RToupSmdieE5&listId=251122131420suVrXvsEShLg1C3lbvW&nodeId=0"
+        )
+      );
+    },
     handlePrevWeek() {
       this.nowDate = dayjs(this.nowDate)
         .subtract(1, "week")
@@ -112,11 +134,15 @@ export default {
       };
     },
     renderDate() {
-      const nowDate = dayjs(this.nowDate).format("YYYY-MM-DD");
-      const weekStart = dayjs(nowDate).startOf("iosweek");
-      for (let i = 0; i < 7; i++) {
-        const date = dayjs(weekStart).add(i, "day").format("YYYY-MM-DD");
-        const isWeekend = i === 5 || i === 6; // 周六(5)和周日(6)
+      // const nowDate = dayjs(this.nowDate).format("YYYY-MM-DD");
+      // const weekStart = dayjs(nowDate).startOf("iosweek");
+
+
+      
+      this.$emit("changeTitle",`${IDM.user.getCurrentUserInfo().username || ''} 第${dayjs(this.nowDate,'YYYY-MM-DD').isoWeek()}周出行情况`)
+      // for (let i = 0; i < 7; i++) {
+      //   const date = dayjs(weekStart).add(i, "day").format("YYYY-MM-DD");
+      //   const isWeekend = i === 5 || i === 6; // 周六(5)和周日(6)
 
         // this.columns.push({
         //   title: `${date}（${this.weeks[i]}）`,
@@ -153,33 +179,85 @@ export default {
         //     },
         //   ],
         // });
-      }
+      // }
 
       this.initData();
     },
     initData() {
-      const res = workContent;
-      this.dataSource = [];
-      let bgc = "#fff";
-      res.forEach((item, index) => {
-        this.dataSource.push({
-          date: item.date,
-          weekStr: item.weekStr,
-          workContent: item.morningWorkContent,
-          time: "上午",
-          rowSpan: 2,
-          bgc,
+      if (!this.moduleObject.env || this.moduleObject.env == "develop") {
+        const res = workContent.data;
+        this.dataSource = [];
+        let bgc = "#fff";
+        res.forEach((item, index) => {
+          this.dataSource.push({
+            date: item.date,
+            weekStr: item.weekStr,
+            workContent: item.morningWorkContent,
+            time: "上午",
+            rowSpan: 2,
+            bgc,
+          });
+          this.dataSource.push({
+            date: item.date,
+            weekStr: item.weekStr,
+            workContent: item.afternoonWorkContent,
+            time: "下午",
+            rowSpan: 0,
+            bgc,
+          });
+          bgc = bgc === "#fff" ? "#f2f2f2" : "#fff";
         });
-        this.dataSource.push({
-          date: item.date,
-          weekStr: item.weekStr,
-          workContent: item.afternoonWorkContent,
-          time: "下午",
-          rowSpan: 0,
-          bgc,
-        });
-        bgc = bgc === "#fff" ? "#f2f2f2" : "#fff";
-      });
+      } else {
+        if (
+          this.propData.personDataSource &&
+          this.propData.personDataSource.length
+        ) {
+          IDM.datasource.request(
+            this.propData.personDataSource[0].id,
+            {
+              moduleObject: this.moduleObject,
+              _this: this,
+              param: {
+                startDate: dayjs(this.nowDate)
+                  .startOf("isoWeek")
+                  .format("YYYY-MM-DD"),
+                endDate: dayjs(this.nowDate)
+                  .endOf("isoWeek")
+                  .format("YYYY-MM-DD"),
+              },
+            },
+            (res) => {
+              console.log(res,"weekSchedule");
+              this.dataSource = [];
+              let bgc = "#fff";
+              res.forEach((item, index) => {
+                this.dataSource.push({
+                  date: item.date,
+                  weekStr: item.weekStr,
+                  workContent: item.morningWorkContent,
+                  time: "上午",
+                  rowSpan: 2,
+                  bgc,
+                });
+                this.dataSource.push({
+                  date: item.date,
+                  weekStr: item.weekStr,
+                  workContent: item.afternoonWorkContent,
+                  time: "下午",
+                  rowSpan: 0,
+                  bgc,
+                });
+                bgc = bgc === "#fff" ? "#f2f2f2" : "#fff";
+              });
+              console.log(this.dataSource,"表格");
+            },
+            function (error) {
+              //这里是请求失败的返回结果
+              console.log("error", error);
+            }
+          );
+        }
+      }
     },
   },
 };

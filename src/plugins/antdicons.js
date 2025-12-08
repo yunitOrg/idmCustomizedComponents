@@ -13,3 +13,9 @@ export {
 export {
   default as ExclamationCircleOutline
 } from '@ant-design/icons/lib/outline/ExclamationCircleOutline';
+export {
+  default as FileSearchOutline
+} from '@ant-design/icons/lib/outline/FileSearchOutline';
+export {
+  default as DownloadOutline
+} from '@ant-design/icons/lib/outline/DownloadOutline';

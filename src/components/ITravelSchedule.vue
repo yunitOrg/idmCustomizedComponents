@@ -10,11 +10,11 @@
    :idm-ctrl-id="moduleObject.id" class="idm-travel-schedule-outer">
    <div class="header">
     <div class="title">
-      中国西电集团本部部门负责人2025年第47周出行情况
+      {{title}}
     </div>
    </div>
-   <UnitSchedule v-if="viewType=='unit'" @changeViewType="viewType=$event"></UnitSchedule>
-   <WeekSchedule v-else @changeViewType="viewType=$event"></WeekSchedule>
+   <UnitSchedule v-if="viewType=='unit'" @changeViewType="viewType=$event" @changeTitle="title=$event" :propData="propData" :moduleObject="moduleObject"></UnitSchedule>
+   <WeekSchedule v-else @changeViewType="viewType=$event" @changeTitle="title=$event" :propData="propData" :moduleObject="moduleObject"></WeekSchedule>
   </div>
 </template>
 
@@ -32,7 +32,8 @@ export default {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
       },
-      viewType:"unit"
+      viewType:"unit",
+      title:""
     }
   },
   props: {
