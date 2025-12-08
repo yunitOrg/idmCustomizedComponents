@@ -69,6 +69,10 @@ export default {
     moduleObject: {
       type: Object,
       default: () => {}
+    },
+    propData: {
+      type: Object,
+      default: () => {}
     }
   },
 
@@ -89,7 +93,7 @@ export default {
               attrs: {},
             };
             obj.attrs.rowSpan = row.row || 0;
-            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true' && this.propData.showNotice) {
               return {
                 children: <div class="user_notice_info">
                   <div class="left">{this.resultData?.userName}，您好！</div>
@@ -124,7 +128,7 @@ export default {
               children: value,
               attrs: {},
             };
-            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true' && this.propData.showNotice) {
               obj.attrs.colSpan = 0;
             } else {
               obj.attrs.colSpan = 1;
@@ -143,7 +147,7 @@ export default {
               children: value,
               attrs: {},
             };
-            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true' && this.propData.showNotice) {
               obj.attrs.colSpan = 0;
               obj.children = null;
             } else {
@@ -169,7 +173,7 @@ export default {
               children: value,
               attrs: {},
             };
-            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true' && this.propData.showNotice) {
               obj.attrs.colSpan = 0;
               obj.children = null;
             } else {
@@ -190,7 +194,7 @@ export default {
               children: value,
               attrs: {},
             };
-            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true' && this.propData.showNotice) {
               obj.attrs.colSpan = 0;
             } else {
               obj.attrs.colSpan = 1;
@@ -209,7 +213,7 @@ export default {
               children: value,
               attrs: {},
             };
-            if(index == this.tableListData.length - 1 && this.isPersonal == 'true') {
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true' && this.propData.showNotice) {
               obj.attrs.colSpan = 0;
               obj.children = null
             } else {
@@ -400,7 +404,8 @@ export default {
         this.loading = true
         IDM.http.get('/ctrl/indicator/loadByUserId',{
           deptAssessmentId: this.deptAssessmentId,
-          userId: this.currentUserId
+          userId: this.currentUserId,
+          status: this.status
         }).then((res) => {
           this.loading = false;
           if ( res.data.code == 200 ) {
@@ -410,7 +415,7 @@ export default {
             this.level = res.data.data.level;
             this.assessmentLevelList = res.data.data.assessmentLevelList ?? [];
             this.resultData = res.data.data;
-            if(this.isPersonal == 'true') {
+            if(this.isPersonal == 'true' && this.propData.showNotice) {
               let tableList = JSON.parse(JSON.stringify(this.tableList));
               tableList.push({
                 id: 'customer'

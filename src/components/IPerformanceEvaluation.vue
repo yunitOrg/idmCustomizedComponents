@@ -1,6 +1,6 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IPerformanceEvaluation_app">
-    <div v-if="propData?.showHeader" class="IPerformanceEvaluation_app_header">
+    <div v-if="propData?.showHeader" class="IPerformanceEvaluation_app_header" :class="isheaderCollapse ? 'collapse' : ''">
       <div class="title">{{ propData?.title }}</div>
       <div class="bottom flex_between">
         <div v-for="(item,index) in statisticsList" :key="index" class="list">
@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="IPerformanceEvaluation_app_main flex_between">
-      <div v-if="propData?.showLeft" class="left">
+      <div v-if="propData?.showLeft" class="left" :class="isLeftCollapse ? 'collapse' : ''">
         <div class="input_box">
           <a-input v-model="userName" 
             @change="handleSearchUser" 
@@ -44,13 +44,23 @@
             </div>
           </template>
         </div>
+        <div v-if="status == '1'" class="submit_button">
+          <a-button @click="handleScoreSubmit()" type="primary" :loading="scoreSubmitButtonLoading" block>提交</a-button>
+        </div>
       </div>
       <div class="right">
         <IPerformanceEvaluationUser 
           :userId="userId"
           :moduleObject="moduleObject"
+          :propData="propData"
           @update="update"
         />
+        <div v-if="propData?.showHeaderCollapseButton" @click="handleExpandCollapse('isheaderCollapse')" class="expand_collapse_block_header flex_center" :class="isheaderCollapse ? 'collapse' : ''">
+          <span></span>
+        </div>
+        <div v-if="propData?.showLeftCollapseButton" @click="handleExpandCollapse('isLeftCollapse')" class="expand_collapse_block_left flex_center" :class="isLeftCollapse ? 'collapse' : ''">
+          <span></span>
+        </div>
       </div>
     </div>
   </div>
@@ -72,8 +82,10 @@ export default {
     return {
       moduleObject:{},
       propData:this.$root.propData.compositeAttr||{
-        showHeader: false,
-        showLeft: false
+        showHeader: true,
+        showLeft: true,
+        showNotice: false,
+        showScoreSubmitButton: true
       },
       statisticsList: [
         {
@@ -126,7 +138,11 @@ export default {
       deptName: '部门',
       departData: {},
       userId: '',
-      deptAssessmentId: ''
+      deptAssessmentId: '',
+      scoreSubmitButtonLoading: false,
+      status: '', // 1可评分 2只允许查看
+      isheaderCollapse: false, // 头部是否折叠
+      isLeftCollapse: false, // 左侧是否折叠
     }
   },
   watch: {
@@ -137,6 +153,7 @@ export default {
   created() {
     this.moduleObject = this.$root.moduleObject;
     this.convertAttrToStyleObject();
+    this.status = IDM.url.queryString('status');
     if(IDM.url.queryString('deptAssessmentId')){
       this.deptAssessmentId = IDM.url.queryString('deptAssessmentId');
     }
@@ -149,6 +166,16 @@ export default {
   },
   destroyed() {},
   methods:{
+    handleExpandCollapse(key) {
+      this.$data[key] = !this.$data[key];
+    },
+    handleScoreSubmit() {
+      if(this.propData.clickSubmitFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this,[this.propData.clickSubmitFunction,{
+          _this: this,
+        }])
+      }
+    },
     handleSearchUser(){
       this.getUserList()
     },
@@ -418,10 +445,17 @@ export default {
   padding: 10px 12px;
   background: #f4f4f4;
   .IPerformanceEvaluation_app_header{
+    position: relative;
     margin-bottom: 10px;
     padding: 18px 20px;
     background: white;
     border-radius: 8px;
+    &.collapse{
+      height: 0;
+      padding: 0;
+      margin-bottom: 0;
+      overflow: hidden;
+    }
     &>.title{
       text-align: center;
       font-family: AlibabaPuHuiTi,AlibabaPuHuiTi;
@@ -464,6 +498,7 @@ export default {
         }
       }
     }
+    
   }
   .IPerformanceEvaluation_app_main{
     flex-grow: 2;
@@ -475,6 +510,12 @@ export default {
       margin-right: 10px;
       padding: 20px;
       background: white;
+      &.collapse{
+        width: 0;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+      }
       .input_box{
         margin-bottom: 14px;
         .ant-input-prefix{
@@ -580,9 +621,62 @@ export default {
     &>.right{
       width: 0;
       height: 100%;
+      position: relative;
       flex-grow: 2;
       padding: 15px 18px;
       background: white;
+      .expand_collapse_block_header{
+        width: 55px;
+        height: 9px;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%);
+        clip-path: polygon(calc(100% - 10px) 100%, 10px 100%, 0 0, 100% 0);
+        background-color: rgba(0,115,202,1);
+        overflow: hidden;
+        cursor: pointer;
+        &.collapse{
+          span{
+            border-top: 5px solid white;
+            border-bottom: none;
+          }
+        }
+        span{
+          width: 0;
+          height: 0;
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-bottom: 5px solid white; /* 等边三角形高度 */
+          border-top: none;
+        }
+      }
+      .expand_collapse_block_left{
+        width: 9px;
+        height: 55px;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translate(0,-50%);
+        clip-path: polygon(100% 10px, 0 0, 0 100%, 100% calc(100% - 10px));
+        background-color: rgba(0,115,202,1);
+        overflow: hidden;
+        cursor: pointer;
+        &.collapse{
+          span{
+            border-left: 5px solid white;
+            border-right: none;
+          }
+        }
+        span{
+          width: 0;
+          height: 0;
+          border-left: none;
+          border-right: 5px solid white;
+          border-bottom: 5px solid transparent; /* 等边三角形高度 */
+          border-top: 5px solid transparent;
+        }
+      }
     }
   }
 }
