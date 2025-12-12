@@ -8,6 +8,8 @@
             <span class="name">{{ resultData?.userName }}</span>
             <span class="label">{{ resultData?.jobSerialText }}</span>
             <span v-if="!userId" class="date">{{ resultData?.assessmentCycle }}</span>
+            <a-button @click="handleClickWorkHour()" class="button">工时详情</a-button>
+            <a-button @click="handleClickAttendance()" class="button">考勤详情</a-button>
           </div>
           <div v-if="!(userId && resultData.submitStatus == '1')" class="right">
             <div class="confirm_status">
@@ -32,22 +34,31 @@
           :loading="loading"
         />
       </div>
-      <div class="footer flex_between">
-        <div class="left flex_start">
-          <div class="score">
-            当前总分：<span>{{ totalScore }}</span>
+      <div class="footer ">
+        <div class="row remark flex_start">
+          <div>备注：</div>
+          <div v-if="status == '1'" class="input_box">
+            <a-textarea v-model="remark" placeholder="请输入备注" allowClear></a-textarea>
           </div>
-          <div class="grade">
-            考核等级：<span>{{ levelText ? levelText : '未考核' }}</span>
+          <div v-else v-html="resultData.remark"></div>
+        </div>
+        <div class="row flex_between">
+          <div class="left flex_start">
+            <div class="score">
+              当前总分：<span>{{ totalScore }}</span>
+            </div>
+            <div class="grade">
+              考核等级：<span>{{ levelText ? levelText : '未考核' }}</span>
+            </div>
           </div>
-        </div>
-        <div v-if="status == '1'" class="right">
-          <a-button @click="handleSave" type="primary" :loading="saveLoading">保存</a-button>
-        </div>
-        <div v-else-if="isShowStatusConfirm == 'true' && resultData?.confirmStatus == '1'" class="right">
-          <a-button @click="handleConfirm" :loading="confirmLoading" type="primary">
-            确认
-          </a-button>
+          <div v-if="status == '1'" class="right">
+            <a-button @click="handleSave" type="primary" :loading="saveLoading">保存</a-button>
+          </div>
+          <div v-else-if="isShowStatusConfirm == 'true' && resultData?.confirmStatus == '1'" class="right">
+            <a-button @click="handleConfirm" :loading="confirmLoading" type="primary">
+              确认
+            </a-button>
+          </div>
         </div>
       </div>
     </template>
@@ -80,6 +91,7 @@ export default {
     return {
       tableList: [ ],
       tableListData: [],
+      remark: '',
       tableColumn: [
         {
           title: '考核指标',
@@ -203,6 +215,25 @@ export default {
           }
         },
         {
+          title: '上月得分',
+          dataIndex: 'lastMonthScore',
+          key: 'lastMonthScore',
+          align: "center",
+          width: 100,
+          customRender: (value, row, index) => {
+            const obj = {
+              children: value,
+              attrs: {},
+            };
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true' && this.propData.showNotice) {
+              obj.attrs.colSpan = 0;
+            } else {
+              obj.attrs.colSpan = 1;
+            }
+            return obj;
+          }
+        },
+        {
           title: '得分',
           dataIndex: 'score',
           key: 'score',
@@ -226,11 +257,43 @@ export default {
                     max={row.maxScore}
                     type="number" 
                     step={0.1}
-                    onChange={(e) => this.handleChange(row, index, e)}
-                    onInput={(e) => this.handleInput(row, index, e)}
+                    onInput={(e) => this.handleInput(row, index, e, 'score')}
                     placeholder="输入分数"
                     class="input_number"
                     onWheel={(e) => e.preventDefault()}
+                  />
+                </div>
+              } else { 
+                obj.children = <div>{value}</div>
+              }
+            }
+            return obj;
+          }
+        },
+        {
+          title: '备注',
+          dataIndex: 'remark',
+          key: 'remark',
+          width: 140,
+          align: "center",
+          customRender: (value, row, index) => {
+            const obj = {
+              children: value,
+              attrs: {},
+            };
+            if(index == this.tableListData.length - 1 && this.isPersonal == 'true' && this.propData.showNotice) {
+              obj.attrs.colSpan = 0;
+              obj.children = null
+            } else {
+              obj.attrs.colSpan = 1;
+              if(this.status == '1') {
+                obj.children = <div class="input_box"> 
+                  <input
+                    value={row.remark}
+                    type="text" 
+                    onInput={(e) => this.handleInput(row, index, e, 'remark')}
+                    placeholder="输入备注"
+                    class="input_number"
                   />
                 </div>
               } else { 
@@ -284,6 +347,20 @@ export default {
     
   },
   methods: {
+    handleClickWorkHour() {
+      if(this.propData.clickWorkHourFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this,[this.propData.clickWorkHourFunction,{
+          _this: this,
+        }])
+      }
+    },
+    handleClickAttendance() {
+      if(this.propData.clickAttendanceFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this,[this.propData.clickAttendanceFunction,{
+          _this: this,
+        }])
+      }
+    },
     handleConfirm(){
       const that = this
       this.$confirm({
@@ -330,7 +407,8 @@ export default {
         level: this.level,
         levelText: this.levelText,
         deptAssessmentId: this.deptAssessmentId,
-        indicatorList: this.tableList
+        indicatorList: this.tableList,
+        remark: this.remark
       }
       console.log(params)
       this.saveLoading = true;
@@ -383,17 +461,21 @@ export default {
         }
       })
     },
-    handleInput(item, index, e){
+    handleInput(item, index, e, key){
       console.log(item, index)
       console.log(e.target.value)
-      if(e.target.value > Number(item.maxScore)){
-        item.score = item.maxScore
-      } else if(e.target.value < 0){
-        item.score = 0
+      if(key == 'score') {
+        if(e.target.value > Number(item.maxScore)){
+          item.score = item.maxScore
+        } else if(e.target.value < 0){
+          item.score = 0
+        } else {
+          item.score = e.target.value;
+        }
+        this.getTotalScore()
       } else {
-        item.score = e.target.value;
+        item[key] = e.target.value;
       }
-      this.getTotalScore()
     },
     handleChange(item, index, e){
       console.log(item, index)
@@ -415,6 +497,7 @@ export default {
             this.level = res.data.data.level;
             this.assessmentLevelList = res.data.data.assessmentLevelList ?? [];
             this.resultData = res.data.data;
+            this.remark = res.data.remark;
             if(this.isPersonal == 'true' && this.propData.showNotice) {
               let tableList = JSON.parse(JSON.stringify(this.tableList));
               tableList.push({
@@ -483,6 +566,9 @@ export default {
           font-family: PingFangSC, PingFang SC;
           font-size: 14px;
         }
+        .button{
+          margin-left: 10px;
+        }
       }
       &>.right{
         font-family: PingFangSC, PingFang SC;
@@ -514,24 +600,28 @@ export default {
   }
   &>.footer{
     margin-top: 15px;
-    &>.left{
-      font-family: AlibabaPuHuiTi, AlibabaPuHuiTi;
-      font-weight: 400;
-      font-size: 14px;
-      color: #262f35;
-      .score{
-        margin-right: 20px;
-      }
-      span{
-        color: #e63026;
-        margin: 0 3px;
-        font-weight: 600;
-        font-size: 18px;
+    &>.row{
+      &>.left{
+        font-family: AlibabaPuHuiTi, AlibabaPuHuiTi;
+        font-weight: 400;
+        font-size: 14px;
+        color: #262f35;
+        .score{
+          margin-right: 20px;
+        }
+        span{
+          color: #e63026;
+          margin: 0 3px;
+          font-weight: 600;
+          font-size: 18px;
+        }
       }
     }
-    .footer_notice_block{
-      img{
-        height: 38px;
+    .remark{
+      margin-bottom: 5px;
+      .input_box{
+        flex-grow: 2;
+        width: 0;
       }
     }
   }
