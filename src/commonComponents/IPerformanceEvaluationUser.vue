@@ -76,6 +76,7 @@
       width="1200px" 
       :footer="null"
       @cancel="handleCancelAttendanceDetailPop"
+      wrapClassName="AttendanceWorkHourDetailPop"
     >
       <AttendanceWorkHourDetail 
         :currentUserId="currentUserId"

@@ -84,8 +84,9 @@
     }
   }
 </script>
-<style lang="scss" scoped>
-.AttendanceDetail_app{
+<style lang="scss">
+.AttendanceWorkHourDetailPop{
+  .AttendanceDetail_app{
   .statistics_block{
     margin-bottom: 20px;
     .title{
@@ -134,5 +135,6 @@
       }
     }
   }
+}
 }
 </style>
