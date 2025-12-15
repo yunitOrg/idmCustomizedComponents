@@ -354,33 +354,6 @@
       },
       {
         "type": "group",
-        "text": "数据源",
-        "children":[
-          {
-            "type": "dataSourceSelect",
-            "layoutType": "block",
-            "text": "音乐列表数据源",
-            "desc":"返回数据格式：[{music,title,name,image}]",
-            "bindKey": "dataSource"
-          },
-          {
-            "type": "group",
-            "text": "字段设置",
-            "children":[
-              {
-                "type": "input",
-                "layoutType": "inline",
-                "text": "列表字段",
-                "bindKey": "listData",
-                "desc": "列表数据的字段，当其他组件向当前组件传结果值时，根据此字段值获取列表数据",
-                "default":"list"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "group",
         "text": "高级",
         "desc": "点击？查看高级设置用法指南",
         "children": [

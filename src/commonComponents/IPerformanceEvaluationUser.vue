@@ -67,11 +67,31 @@
         <a-empty />
       </div>
     </template>
+    <!-- 考勤详情模块、工时详情模块 -->
+    <a-modal 
+      v-model="showAttendanceDetailPop" 
+      :title="statisticType == 'attendance' ? '考勤详情' : '工时详情'" 
+      :destroyOnClose="true" 
+      :maskClosable="false"
+      width="1200px" 
+      :footer="null"
+      @cancel="handleCancelAttendanceDetailPop"
+    >
+      <AttendanceWorkHourDetail 
+        :currentUserId="currentUserId"
+        :yearMonth="resultData?.assessmentCycle"
+        :statisticType="statisticType"
+      />
+    </a-modal>
   </div>
 </template>
 <script>
+import AttendanceWorkHourDetail from "@/commonComponents/AttendanceWorkHourDetail"
 export default {
   name: 'IPerformanceEvaluationUser',
+  components: {
+    AttendanceWorkHourDetail,
+  },
   props: {
     userId: {
       type: String,
@@ -116,7 +136,7 @@ export default {
                   </div>
                 </div>,
                 attrs: {
-                  colSpan: 6,
+                  colSpan: 8,
                 },
               };
             } else {
@@ -322,7 +342,10 @@ export default {
       isShowStatusConfirm: '',
       confirmLoading: false,
       // 是否是个人查看页面
-      isPersonal: undefined
+      isPersonal: undefined,
+      // 考勤详情
+      showAttendanceDetailPop: false,
+      statisticType: ''
     }
   },
   watch: { 
@@ -348,18 +371,16 @@ export default {
   },
   methods: {
     handleClickWorkHour() {
-      if(this.propData.clickWorkHourFunction?.length) {
-        IDM.invokeCustomFunctions.apply(this,[this.propData.clickWorkHourFunction,{
-          _this: this,
-        }])
-      }
+      this.statisticType = 'kpiHours';
+      this.showAttendanceDetailPop = true;
     },
     handleClickAttendance() {
-      if(this.propData.clickAttendanceFunction?.length) {
-        IDM.invokeCustomFunctions.apply(this,[this.propData.clickAttendanceFunction,{
-          _this: this,
-        }])
-      }
+      this.statisticType = 'attendance';
+      this.showAttendanceDetailPop = true;
+    },
+    handleCancelAttendanceDetailPop() {
+      this.showAttendanceDetailPop = false;
+      this.statisticType = '';
     },
     handleConfirm(){
       const that = this
@@ -497,7 +518,7 @@ export default {
             this.level = res.data.data.level;
             this.assessmentLevelList = res.data.data.assessmentLevelList ?? [];
             this.resultData = res.data.data;
-            this.remark = res.data.remark;
+            this.remark = res.data.data.remark;
             if(this.isPersonal == 'true' && this.propData.showNotice) {
               let tableList = JSON.parse(JSON.stringify(this.tableList));
               tableList.push({
