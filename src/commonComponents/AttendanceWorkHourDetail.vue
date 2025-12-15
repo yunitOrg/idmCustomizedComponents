@@ -1,5 +1,8 @@
 <template>
   <div class="AttendanceDetail_app">
+    <div v-if="tip" class="tip">
+      {{ tip }}
+    </div>
     <div class="statistics_block">
       <div class="title">{{ statisticType == 'kpiHours' ? '工时' : '考勤' }}统计</div>
       <div class="main">
@@ -49,7 +52,8 @@
     data() {
       return {
         statistics_list: [],
-        subTableList: []
+        subTableList: [],
+        tip: ''
       }
     },
     created() {
@@ -74,6 +78,7 @@
           if ( res.data.code == 200 ) {
             this.statistics_list = res.data.data.itemList;
             this.subTableList = res.data.data.subTableList;
+            this.tip = res.data.data.remark;
           } else {
             IDM.message.error(res.data.message)
           }
@@ -87,54 +92,62 @@
 <style lang="scss">
 .AttendanceWorkHourDetailPop{
   .AttendanceDetail_app{
-  .statistics_block{
-    margin-bottom: 20px;
-    .title{
-      font-size: 16px;
-      font-weight: 600;
-      color: #333333;
+    .tip{
       margin-bottom: 10px;
+      background: rgba(247, 115, 33, 0.1);
+      border-radius: 4px;
+      padding: 8px 11px;
+      color: #f77321;
+      font-size: 14px;
     }
-    .main{
-      display: grid;
-      grid-auto-flow: column; /* 横向排列 */
-      grid-auto-columns: 1fr; /* 所有列等宽 */
-      gap: 0 20px;
-      .list{
-        padding: 15px 20px;
-        background: white;
-        border: 1px solid rgb(230, 230, 230);
-        box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
-        border-radius: 4px;
-        .name{
-          font-size: 14px;
-          color: #333333;
-          font-weight: 600;
-        }
-        .value{
-          .number{
-            margin-right: 3px;
-            font-size: 18px;
-            font-weight: 700;
-          }
-        }
-      }
-    }
-  }
-  .table_block{
-    .table_item{
+    .statistics_block{
       margin-bottom: 20px;
-      &:last-child{
-        margin-bottom: 0;
-      }
       .title{
         font-size: 16px;
         font-weight: 600;
         color: #333333;
         margin-bottom: 10px;
       }
+      .main{
+        display: grid;
+        grid-auto-flow: column; /* 横向排列 */
+        grid-auto-columns: 1fr; /* 所有列等宽 */
+        gap: 0 20px;
+        .list{
+          padding: 15px 20px;
+          background: white;
+          border: 1px solid rgb(230, 230, 230);
+          box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
+          border-radius: 4px;
+          .name{
+            font-size: 14px;
+            color: #333333;
+            font-weight: 600;
+          }
+          .value{
+            .number{
+              margin-right: 3px;
+              font-size: 18px;
+              font-weight: 700;
+            }
+          }
+        }
+      }
     }
-  }
+    .table_block{
+      .table_item{
+        margin-bottom: 20px;
+        &:last-child{
+          margin-bottom: 0;
+        }
+        .title{
+          font-size: 16px;
+          font-weight: 600;
+          color: #333333;
+          margin-bottom: 10px;
+        }
+      }
+    }
 }
 }
 </style>
