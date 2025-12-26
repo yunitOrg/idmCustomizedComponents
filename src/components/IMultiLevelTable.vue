@@ -73,7 +73,8 @@ export default {
         pageSizeOptions: ['10', '20', '30', '40', '50'],
         showTotal: (total, range) => `共 ${total} 条记录`,
         onShowSizeChange: this.handleChangeSize,
-        onChange: this.handleChangeTable
+        onChange: this.handleChangeTable,
+        total: 0,
       },
       scrollOptions: {
         y: 0
@@ -193,7 +194,7 @@ export default {
           }, function (res) {
             if (res) {
               that.resultData = res;
-              that.total = res.total;
+              that.paginationOptions.total = res.total;
               that.makeTableDataList(res.rows)
               that.makeTableHeaderData(res.columns)
               that.$nextTick(() => {
