@@ -60,17 +60,16 @@ export default {
         mergeKey: 'taskName',
         getTitleCustomerFunction: [],
         getSubtitleCustomFunction: [],
+        showPagination: true,
       },
       tableColumns: [],
       tableList: [],
-      pageNum: 1,
-      pageSize: 10,
       paginationOptions: {
-        current: this.pageNum,
-        pageSize: this.pageSize,
+        current: 1,
+        pageSize: 10,
         showQuickJumper: true,
         showSizeChanger: true,
-        pageSizeOptions: ['10', '20', '30', '40', '50'],
+        pageSizeOptions: ['2', '20', '30', '40', '50'],
         showTotal: (total, range) => `共 ${total} 条记录`,
         onShowSizeChange: this.handleChangeSize,
         onChange: this.handleChangeTable,
@@ -146,7 +145,7 @@ export default {
     },
     getInitData(isInit) {
       if(isInit) {
-        this.pageNum = 1;
+        this.paginationOptions.current = 1;
       }
       if(this.propData.dataSource?.length) {
         let that = this;
@@ -188,8 +187,8 @@ export default {
           {
             moduleObject: this.moduleObject,
             _this: this,
-            pageNum: this.pageNum,
-            pageSize: this.pageSize,
+            pageNum: this.paginationOptions.current,
+            pageSize: this.paginationOptions.pageSize,
             ...params
           }, function (res) {
             if (res) {
@@ -212,6 +211,7 @@ export default {
         this.makeTableHeaderData(tableColumns)
         let tableList = getMultiLevelTableDataList()
         this.makeTableDataList(tableList)
+        this.paginationOptions.total = tableList.length;
         this.$nextTick(() => {
           this.makeTableScrollHeight()
         })
@@ -224,7 +224,7 @@ export default {
       }
       if(this.propData.showIndex) {
         data.forEach((item, index) => {
-          item['indexA'] = index + 1 + this.pageSize * (this.pageNum - 1)
+          item['indexA'] = index + 1 + this.paginationOptions.pageSize * (this.paginationOptions.current - 1)
         })
       }
       this.tableList = data;
@@ -356,12 +356,13 @@ export default {
     },
     handleChangeSize(page, size) {
       console.log('分页参数-size',page,size)
-      this.pageSize = size;
+      this.paginationOptions.pageSize = size;
+      this.paginationOptions.current = 1;
       this.getInitData(true)
     },
     handleChangeTable(page) {
       console.log('分页参数-page',page)
-      this.pageNum = page;
+      this.paginationOptions.current = page;
       this.getInitData()
     },
     getImageSrc(url,name) {
