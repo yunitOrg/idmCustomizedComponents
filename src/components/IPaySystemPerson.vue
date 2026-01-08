@@ -339,6 +339,10 @@ export default {
             label: '应发合计'
           },
           {
+            key: 'personalIncomeTax',
+            label: '个人所得税'
+          },
+          {
             key: 'realSent',
             label: '实发金额'
           }
