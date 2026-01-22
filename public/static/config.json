@@ -136,6 +136,20 @@
       "className": "IUnitSecondaryList",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.iversioncontrol",
+      "comName": "三重一大版本管理",
+      "className": "IVersionControl",
+      "comType": "common",
+      "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.ichangelog",
+      "comName": "三重一大变更记录",
+      "className": "IChangeLog",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
