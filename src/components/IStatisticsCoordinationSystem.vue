@@ -273,11 +273,13 @@ export default {
       if(!this.active_item?.active) {
         return
       }
-      IDM.http.get('ctrl/fourSynergies/getRecordById', {
+      var params = {
         id: this.active_item.active,
         pageNumber: this.tablePagination.current,
-        pageSize: this.tablePagination.pageSize
-      }).then((res) => {
+        pageSize: this.tablePagination.pageSize,
+        leaderId: this.type != 4 ? undefined :this.leaderId
+      }
+      IDM.http.get('ctrl/fourSynergies/getRecordById', params).then((res) => {
         this.tableData = res.data.data?.data || [];
         this.tablePagination.total = res.data?.data?.total;
         this.describe = res.data.data?.desc;
