@@ -1,0 +1,681 @@
+<template>
+  <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IOnlineReportSupplyChainProduct_app">
+    <div v-if="propData?.showTitle" class="title">
+      {{ propData.title }}
+    </div>
+    <div class="form_block flex_start">
+      <div class="list flex_start">
+        <div class="label">省份：</div>
+        <div class="select_box" style="width: 120px;">
+          <a-select
+            v-model="formData.province_text"
+            :options="provinceList"
+            placeholder="请选择"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">认证词条：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.certification_term"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">产品名称：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.product_name"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">已收到样品：</div>
+        <div class="select_box" style="width: 120px;">
+          <a-select
+            v-model="formData.is_sample_received_text"
+            :options="booleanList"
+            placeholder="请选择"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">品牌名称：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.brand_name_text"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">品类：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.product_category_text"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">是否经由系统：</div>
+        <div class="select_box" style="width: 120px;">
+          <a-select
+            v-model="formData.is_from_supply_system_text"
+            :options="booleanList"
+            placeholder="请选择"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">商标名称：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.trademark_name_value"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">产品编号：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.greenproduct_code_value"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list button_box">
+        <a-button type="primary" @click="getInitData(true)">筛选</a-button>
+      </div>
+
+    </div>
+    <div class="table">
+      <a-table
+        :id="tableId"
+        :columns="tableColumns"
+        :data-source="tableList"
+        :pagination="propData?.showPagination ? paginationOptions : false"
+        bordered
+        :scroll="scrollOptions"
+        :customRow="customRow"
+        :rowKey="propData?.rowKey || 'id'"
+      />
+    </div>
+  </div>
+</template>
+
+<script>
+import { getOnlineReportSupplyChainProductTableHeaderList, getOnlineReportSupplyChainProductTableDataList, getProvinceList } from "@/mock/index.js"
+export default {
+  name: 'IOnlineReportSupplyChainProduct',
+  data(){
+    return {
+      moduleObject: this._moduleObject||{},
+      propData: this._propData?.compositeAttr||this.$root?.propData?.compositeAttr || {
+        loadDataCreated: true,
+        intelligentMerge: false,
+        showTitle: true,
+        title: "产品信息在线报表",
+        showIndex: true,
+        mergeKey: 'p_product_name,province_text,city_text,county_text,certification_term,enterprise_name',
+        showPagination: true,
+        rowKey: 'id'
+      },
+      formData: {},
+      tableColumns: [],
+      tableList: [],
+      paginationOptions: {
+        current: 1,
+        pageSize: 30,
+        showQuickJumper: true,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '30', '40', '50'],
+        showTotal: (total, range) => `共 ${total} 条记录`,
+        onShowSizeChange: this.handleChangeSize,
+        onChange: this.handleChangeTable,
+        total: 0,
+      },
+      scrollOptions: {
+        y: 0
+      },
+      tableId: IDM.UUID(),
+      resultData: {},
+      conditionObject: {},
+      provinceList: getProvinceList(),
+      booleanList: [
+        { label: '是', value: '是' },
+        { label: '否', value: '否' }
+      ]
+    }
+  },
+  watch: {
+    
+  },
+  props: {
+    _moduleObject: Object,
+    _propData: Object
+  },
+  created() {
+    this.moduleObject = this._moduleObject||this.$root.moduleObject;
+    this.convertAttrToStyleObject();
+    let tableColumns = getOnlineReportSupplyChainProductTableHeaderList()
+    this.makeTableHeaderData(tableColumns)
+    if(this.propData.loadDataCreated) {
+      this.getInitData();
+    }
+  },
+  mounted() {
+    let that = this;
+    this._moduleObject&&IDM.callBackComponentMountComplete?.apply(this,[this._moduleObject]);
+    window.addEventListener('resize', this.makeTableScrollHeight)
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.makeTableScrollHeight)
+  },
+  methods:{
+    handleChangeFile(e, item) {
+      console.log('e', e)
+      if(item.handleChangeFileCustomerFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [item.handleChangeFileCustomerFunction, {
+          _this: this,
+          fileList: e.fileList,
+          file: e.file
+        }]);
+      }
+    },
+    handleClickButton(item) {
+      if(item.handleClickCustomerFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [item.handleClickCustomerFunction, {
+          _this: this,
+        }]);
+      }
+    },
+    customRow(record, index) {
+      let that = this;
+      return { 
+        props: {},
+        on: {
+          click: function (event) {
+            that.rowClick(record, index, event)
+          }
+        }
+      }
+    },
+    rowClick(record, index) {
+      if(this.propData.rowClickCustomFunction?.length) {
+        IDM.invokeCustomFunctions.apply(this, [this.propData.rowClickCustomFunction, {
+          _this: this,
+          record,
+          index
+        }]);
+      }
+    },
+    getInitData(isInit) {
+      if(isInit) {
+        this.paginationOptions.current = 1;
+      }
+      IDM.http.get('/ctrl/productDictionary/getAggregateToJson',{
+        page: this.paginationOptions.current,
+        limit: this.paginationOptions.pageSize,
+        ...this.formData
+      }).then((res) => {
+        if(res.data?.type == 'success') {
+          this.resultData = res.data.data || {};
+          let tableList = res.data.data.dataList ?? [];
+          this.paginationOptions.total = res.data.data?.total ?? 0;
+          this.makeTableDataList(tableList)
+          this.$nextTick(() => {
+            this.makeTableScrollHeight()
+          })
+        }
+      })
+    },
+    makeTableDataList(data) {
+      if(!data) {
+        this.tableList = []
+        return
+      }
+      if(this.propData.showIndex) {
+        data.forEach((item, index) => {
+          item['indexA'] = index + 1 + this.paginationOptions.pageSize * (this.paginationOptions.current - 1)
+        })
+      }
+      this.tableList = data.map(item => {
+        return {
+          ...item,
+          id: item.id ?? IDM.UUID(),
+        }
+      });
+    },
+    makeTableHeaderData(data = []) {
+      let arr = JSON.parse(JSON.stringify(data))
+      this.traverseTreeData(arr)
+      if(this.propData.showIndex) {
+        arr.unshift({
+          title: '序号',
+          dataIndex: 'indexA',
+          key: 'indexA',
+          width: 80,
+          align: this.propData.align
+        })
+      }
+      if(!this.propData.mergeKey) {
+        this.tableColumns = arr;
+        return 
+      }
+      this.loopMakeCustomRender(arr)
+      this.tableColumns = arr
+    },
+    loopMakeCustomRender(arr) {
+      let currentRowRealValue = '';
+      // 上一行的真实值
+      let preRowRealValue = '';
+      arr.forEach((item, index) => {
+        if(item.children?.length) {
+          this.loopMakeCustomRender(item.children)
+        } else {
+          if(this.propData.mergeKey.includes(item.key)) {
+            item.customRender = (text, record, rowIndex) => {
+              const obj = {
+                children: text,
+                attrs: {},
+              };
+              currentRowRealValue = record['p_product_name'];
+              preRowRealValue = this.tableList[rowIndex - 1]?.['p_product_name'];
+              if (rowIndex && record['p_product_name'] && record['p_product_name'] == preRowRealValue) {
+                obj.attrs.rowSpan = 0;
+                return obj;
+              }
+              
+              let rowSpan = 1;
+              for (let i = rowIndex + 1; i < this.tableList.length; i++) {
+                let nextRowRealValue = this.tableList[i]?.['p_product_name'];
+                if (nextRowRealValue == currentRowRealValue && currentRowRealValue) {
+                  rowSpan++;
+                } else {
+                  break;
+                }
+              }
+              obj.attrs.rowSpan = rowSpan;
+              return obj; 
+            }
+          } else {
+            item.customRender = (text, record, rowIndex) => {
+              return {
+                children: text,
+              };
+            }
+          }
+        }
+      })
+    },
+    
+    // 遍历树状数据，赋值dateIndex
+    traverseTreeData(data = []) {
+      data.forEach(item => {
+        if(item.children?.length) {
+          item.key = undefined;
+          this.traverseTreeData(item.children)
+        } else {
+          item.children = undefined;
+          if(item.key && !item.dataIndex) {
+            item.dataIndex = item.key
+          }
+          if(this.propData.align) {
+            item.align = this.propData.align;
+          }
+        }
+      })
+    },
+    
+    makeTableScrollHeight() {
+      let that = this;
+      let table = document.getElementById(that.tableId);
+      if ( table ) {
+        const thead = table.querySelector('.ant-table-thead');
+        const headerHeight = thead.offsetHeight;
+        let scrollHeight = `calc(100vh - ${table.getBoundingClientRect()?.top + headerHeight + (this.propData.showPagination ? 70 : 20)}px)`
+        this.scrollOptions.y = scrollHeight;
+      }
+    },
+    handleChangeSize(page, size) {
+      console.log('分页参数-size',page,size)
+      this.paginationOptions.pageSize = size;
+      this.paginationOptions.current = 1;
+      this.getInitData(true)
+    },
+    handleChangeTable(page) {
+      console.log('分页参数-page',page)
+      this.paginationOptions.current = page;
+      this.getInitData()
+    },
+    getImageSrc(url,name) {
+      if ( url ) {
+        return IDM.url.getWebPath(url)
+      } else {
+        return IDM.url.getModuleAssetsWebPath(require(`../assets/${name}.png`),this.moduleObject)
+      }
+    },
+    makeParamsData(data) {
+        let result = {};
+        if ( this.propData.paramsMakeFunction && this.propData.paramsMakeFunction.length && window[this.propData.paramsMakeFunction[0].name] ) {
+            result = window[this.propData.paramsMakeFunction[0].name].call(this, {
+                ...data,
+                ...this.propData.paramsMakeFunction[0].param,
+                moduleObject: this.moduleObject,
+                _this: this
+            });
+            console.log('自定义参数函数',result)
+            return result
+        }
+        return data
+    },
+    /**
+     * 提供父级组件调用的刷新prop数据组件
+     */
+    propDataWatchHandle(propData){
+      this.propData = propData.compositeAttr||{};
+      this.convertAttrToStyleObject();
+    },
+    /**
+     * 把属性转换成样式对象
+     */
+    convertAttrToStyleObject(){
+      this.convertAttrToStyleObjectTitle()
+      this.convertAttrToStyleObjectSubTitle()
+      var styleObject = {};
+      if(this.propData.bgSize&&this.propData.bgSize=="custom"){
+        styleObject["background-size"]=(this.propData.bgSizeWidth?this.propData.bgSizeWidth.inputVal+this.propData.bgSizeWidth.selectVal:"auto")+" "+(this.propData.bgSizeHeight?this.propData.bgSizeHeight.inputVal+this.propData.bgSizeHeight.selectVal:"auto")
+      }else if(this.propData.bgSize){
+        styleObject["background-size"]=this.propData.bgSize;
+      }
+      if(this.propData.positionX&&this.propData.positionX.inputVal){
+        styleObject["background-position-x"]=this.propData.positionX.inputVal+this.propData.positionX.selectVal;
+      }
+      if(this.propData.positionY&&this.propData.positionY.inputVal){
+        styleObject["background-position-y"]=this.propData.positionY.inputVal+this.propData.positionY.selectVal;
+      }
+      for (const key in this.propData) {
+        if (this.propData.hasOwnProperty.call(this.propData, key)) {
+          const element = this.propData[key];
+          if(!element&&element!==false&&element!=0){
+            continue;
+          }
+          switch (key) {
+            case "width":
+            case "height":
+              styleObject[key]=element;
+              break;
+            case "bgColor":
+              if(element&&element.hex8){
+                styleObject["background-color"]=element.hex8;
+              }
+              break;
+            case "box":
+              IDM.style.setBoxStyle(styleObject,element)
+              break;
+            case "bgImgUrl":
+              styleObject["background-image"]=`url(${window.IDM.url.getWebPath(element)})`;
+              break;
+            case "positionX":
+              //背景横向偏移
+              
+              break;
+            case "positionY":
+              //背景纵向偏移
+              
+              break;
+            case "bgRepeat":
+              //平铺模式
+                styleObject["background-repeat"]=element;
+              break;
+            case "bgAttachment":
+              //背景模式
+                styleObject["background-attachment"]=element;
+              break;
+            case "border":
+              IDM.style.setBorderStyle(styleObject,element)
+              break;
+            case "font":
+              IDM.style.setFontStyle(styleObject,element)
+              break;
+          }
+        }
+      }
+      window.IDM.setStyleToPageHead(this.moduleObject.id,styleObject);
+    },
+    convertAttrToStyleObjectTitle() {
+      let styleObject = {};
+      for (const key in this.propData) {
+        if (this.propData.hasOwnProperty.call(this.propData, key)) {
+          const element = this.propData[key];
+          if(!element&&element!==false&&element!=0){
+            continue;
+          }
+          switch (key) {
+            case "fontTitle":
+              IDM.style.setFontStyle(styleObject,element)
+              break;
+            case "boxTitle":
+              IDM.style.setBoxStyle(styleObject,element)
+              break;
+          }
+        }
+      }
+      window.IDM.setStyleToPageHead(this.moduleObject.id + ' .title',styleObject);
+    },
+    convertAttrToStyleObjectSubTitle() {
+      let styleObject = {};
+      for (const key in this.propData) {
+        if (this.propData.hasOwnProperty.call(this.propData, key)) {
+          const element = this.propData[key];
+          if(!element&&element!==false&&element!=0){
+            continue;
+          }
+          switch (key) {
+            case "fontSubTitle":
+              IDM.style.setFontStyle(styleObject,element)
+              break;
+            case "boxSubTitle":
+              IDM.style.setBoxStyle(styleObject,element)
+              break;
+          }
+        }
+      }
+      window.IDM.setStyleToPageHead(this.moduleObject.id + ' .describe',styleObject);
+    },
+    /**
+     * 通用的url参数对象
+     * 所有地址的url参数转换
+     */
+    commonParam(){
+      let urlObject = IDM.url.queryObject();
+      var params = {
+        pageId:
+          window.IDM.broadcast && window.IDM.broadcast.pageModule
+            ? window.IDM.broadcast.pageModule.id
+            : "",
+        urlData: JSON.stringify(urlObject),
+      };
+      return params;
+    },
+
+    /**
+     * 通用的获取表达式匹配后的结果
+     */
+    getExpressData(dataName,dataFiled,resultData){
+      //给defaultValue设置dataFiled的值
+      var _defaultVal = undefined;
+      if(dataFiled){
+        var filedExp = dataFiled;
+        filedExp =
+          dataName +
+          (filedExp.startsWiths("[") ? "" : ".") +
+          filedExp;
+        var dataObject = { IDM: window.IDM };
+        dataObject[dataName] = resultData;
+        _defaultVal = window.IDM.express.replace.call(
+          this,
+          "@[" + filedExp + "]",
+          dataObject
+        );
+      }
+      //对结果进行再次函数自定义
+      if(this.propData.customFunction&&this.propData.customFunction.length>0){
+        var params = this.commonParam();
+        var resValue = "";
+        try {
+          resValue = window[this.propData.customFunction[0].name]&&window[this.propData.customFunction[0].name].call(this,{
+            ...params,
+            ...this.propData.customFunction[0].param,
+            moduleObject:this.moduleObject,
+            expressData:_defaultVal,interfaceData:resultData
+          });
+        } catch (error) {
+        }
+        _defaultVal = resValue;
+      }
+      
+      return _defaultVal;
+    },
+    /**
+     * 组件通信：接收消息的方法
+     * @param {
+     *  type:"发送消息的时候定义的类型，这里可以自己用来要具体做什么，统一规定的type：linkageResult（组件联动传结果值）、linkageDemand（组件联动传需求值）、linkageReload（联动组件重新加载）
+     * 、linkageOpenDialog（打开弹窗）、linkageCloseDialog（关闭弹窗）、linkageShowModule（显示组件）、linkageHideModule（隐藏组件）、linkageResetDefaultValue（重置默认值）"
+     *  message:{发送的时候传输的消息对象数据}
+     *  messageKey:"消息数据的key值，代表数据类型是什么，常用于表单交互上，比如通过这个key判断是什么数据"
+     *  isAcross:如果为true则代表发送来源是其他页面的组件，默认为false
+     * } object 
+     */
+    receiveBroadcastMessage(object){
+      console.log("组件收到消息",object)
+      if (object.type && object.type == "linkageDemand") {
+        if (object.messageKey) {
+          this.onReInitDataMsgKey(object.message, object.messageKey);
+        }
+      }
+      // 配置了刷新KEY，消息类型是websocket，收到的消息对象有message并不为空
+      if(this.propData.messageRefreshKey && this.propData.messageRefreshKey.length && object.type === 'websocket' && object.message){
+        const messageData = typeof object.message === 'string' && JSON.parse(object.message) || object.message
+        const arr = this.propData.messageRefreshKey || [];
+        if(messageData.badgeType && arr.includes(messageData.badgeType)){
+          this.getInitData(true)
+        }
+      }
+    },
+    onReInitDataMsgKey(conditionObject, messageKey) {
+      this.conditionObject[messageKey] = conditionObject;
+      this.getInitData(true);
+    },
+    /**
+     * 组件通信：发送消息的方法
+     * @param {
+     *  type:"自己定义的，统一规定的type：linkageResult（组件联动传结果值）、linkageDemand（组件联动传需求值）、linkageReload（联动组件重新加载）
+     * 、linkageOpenDialog（打开弹窗）、linkageCloseDialog（关闭弹窗）、linkageShowModule（显示组件）、linkageHideModule（隐藏组件）、linkageResetDefaultValue（重置默认值）",
+     *  message:{实际的消息对象},
+     *  rangeModule:"为空发送给全部，根据配置的属性中设定的值（值的内容是组件的packageid数组），不取子表的，比如直接 this.$root.propData.compositeAttr["attrKey"]（注意attrKey是属性中定义的bindKey）,这里的格式为：['1','2']"",
+     *  className:"指定的组件类型，比如只给待办组件发送，然后再去过滤上面的值"
+     *  globalSend:如果为true则全站发送消息，注意全站rangeModule是无效的，只有className才有效，默认为false
+     * } object 
+     */
+    sendBroadcastMessage(object){
+      window.IDM.broadcast&&window.IDM.broadcast.send(object);
+    },
+    /**
+     * 交互功能：设置组件的上下文内容值
+     * @param {
+     *  type:"定义的类型，已知类型：pageCommonInterface（页面统一接口返回值）、"
+     *  key:"数据key标识，页面每个接口设置的数据集名称，方便识别获取自己需要的数据"
+     *  data:"数据集，内容为：字符串 or 数组 or 对象"
+     * }
+     */
+    setContextValue(object) {
+      console.log("统一接口设置的值", object);
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.IOnlineReportSupplyChainProduct_app{
+  height: 100vh;
+  padding: 0 12px;
+  &>.title{
+    padding: 20px 0;
+    font-weight: 700;
+    font-size: 20px;
+    color: #4CAF50;
+    text-align: center;
+  }
+  .form_block{
+    flex-wrap: wrap;
+    .list{
+      margin-right: 10px;
+      margin-bottom: 12px;
+      &:last-child{
+        margin-right: 0;
+      }
+      .ant-select{
+        width: 100%;
+      }
+      .label{
+        white-space: nowrap;
+      }
+    }
+  }
+}
+</style>
+<style lang="scss">
+.IOnlineReportSupplyChainProduct_app{
+  .custome_header_cell{
+    .custome_header_cell_line{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom left,
+        transparent 0%,
+        transparent calc(50% - 0.5px),
+        #d9d9d9 calc(50% - 0.5px),
+        #d9d9d9 calc(50% + 0.5px),
+        transparent calc(50% + 0.5px),
+        transparent 100%
+      );
+    }
+    .left{
+      position: absolute;
+      left: 15px;
+      bottom: 17px;
+    }
+    .right{
+      position: absolute;
+      right: 15px;
+      top: 17px;
+    }
+  }
+  .ant-table-thead{
+    tr{
+      th{
+        position: relative;
+      }
+    }
+  }
+}
+
+</style>
+

@@ -150,6 +150,13 @@
       "className": "IChangeLog",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.ionlinereportsupplychainproduct",
+      "comName": "供销社产品在线报表",
+      "className": "IOnlineReportSupplyChainProduct",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
