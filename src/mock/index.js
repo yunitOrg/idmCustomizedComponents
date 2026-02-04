@@ -510,31 +510,37 @@ export function getOnlineReportSupplyChainProductTableHeaderList() {
           dataIndex: "province_text",
           title: "省份",
           key: "province_text",
+          align: "center",
         },
         {
           dataIndex: "city_text",
           title: "地市",
           key: "city_text",
+          align: "center",
         },
         {
           dataIndex: "county_text",
           title: "区县",
           key: "county_text",
+          align: "center",
         },
         {
           dataIndex: "certification_term",
           title: "认证词条",
           key: "certification_term",
+          align: "center",
         },
         {
           dataIndex: "p_product_name",
           title: "产品名称",
           key: "p_product_name",
+          align: "center",
         },
         {
-          dataIndex: "enterprise_name",
+          dataIndex: "p_enterprise_name",
           title: "企业",
-          key: "enterprise_name",
+          key: "p_enterprise_name",
+          align: "center",
         }
       ]
     },
@@ -547,34 +553,37 @@ export function getOnlineReportSupplyChainProductTableHeaderList() {
           dataIndex: "is_sample_received_text",
           title: "已收到样品",
           key: "is_sample_received_text",
-          customRender: (text) => {
-            return text == "是" ? 1 : 0;
-          }
+          align: "center",
         },
         {
           dataIndex: "specification",
           title: "规格",
           key: "specification",
+          align: "center",
         },
         {
           dataIndex: "brand_name",
           title: "品牌名",
           key: "brand_name",
+          align: "center",
         },
         {
           dataIndex: "c_enterprise_name",
           title: "企业",
           key: "c_enterprise_name",
+          align: "center",
         },
         {
           dataIndex: "product_category_text",
           title: "品类",
           key: "product_category_text",
+          align: "center",
         },
         {
           dataIndex: "is_from_supply_system_text",
           title: "是否经由系统",
           key: "is_from_supply_system_text",
+          align: "center",
         }
       ]
     },
@@ -587,31 +596,37 @@ export function getOnlineReportSupplyChainProductTableHeaderList() {
           dataIndex: "trademark_name_value",
           title: "商标名称",
           key: "trademark_name_value",
+          align: "center",
         },
         {
           dataIndex: "greenproduct_code_value",
           title: "产品编号",
           key: "greenproduct_code_value",
+          align: "center",
         },
         {
           dataIndex: "approved_output_value",
           title: "核准产量(吨)",
           key: "approved_output_value",
+          align: "center",
         },
         {
           dataIndex: "enterprise_name_value",
           title: "企业名称",
           key: "enterprise_name_value",
+          align: "center",
         },
         {
           dataIndex: "start_date_value",
           title: "开始日期",
-          key: "start_date_value)",
+          key: "start_date_value",
+          align: "center",
         },
         {
           dataIndex: "end_date_value",
           title: "截至日期",
           key: "end_date_value",
+          align: "center",
         }
       ]
     }

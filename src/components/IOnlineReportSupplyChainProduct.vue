@@ -314,8 +314,12 @@ export default {
             }
           } else {
             item.customRender = (text, record, rowIndex) => {
+              let result = text;
+              if(item.key == "start_date_value" || item.key == "end_date_value") {
+                result = text ? text.split(' ')[0] : '';
+              }
               return {
-                children: text,
+                children: result,
               };
             }
           }
