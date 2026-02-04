@@ -498,3 +498,227 @@ export function getDraftStoreData() {
     }
   ]
 }
+
+export function getOnlineReportSupplyChainProductTableHeaderList() {
+  return [
+    {
+      dataIndex: "productCatalog",
+      title: "产品目录",
+      key: "productCatalog",
+      children: [
+        {
+          dataIndex: "province_text",
+          title: "省份",
+          key: "province_text",
+        },
+        {
+          dataIndex: "city_text",
+          title: "地市",
+          key: "city_text",
+        },
+        {
+          dataIndex: "county_text",
+          title: "区县",
+          key: "county_text",
+        },
+        {
+          dataIndex: "certification_term",
+          title: "认证词条",
+          key: "certification_term",
+        },
+        {
+          dataIndex: "p_product_name",
+          title: "产品名称",
+          key: "p_product_name",
+        },
+        {
+          dataIndex: "enterprise_name",
+          title: "企业",
+          key: "enterprise_name",
+        }
+      ]
+    },
+    {
+      dataIndex: "sample",
+      title: "已有样品及渠道",
+      key: "sample",
+      children: [
+        {
+          dataIndex: "is_sample_received_text",
+          title: "已收到样品",
+          key: "is_sample_received_text",
+          customRender: (text) => {
+            return text == "是" ? 1 : 0;
+          }
+        },
+        {
+          dataIndex: "specification",
+          title: "规格",
+          key: "specification",
+        },
+        {
+          dataIndex: "brand_name",
+          title: "品牌名",
+          key: "brand_name",
+        },
+        {
+          dataIndex: "c_enterprise_name",
+          title: "企业",
+          key: "c_enterprise_name",
+        },
+        {
+          dataIndex: "product_category_text",
+          title: "品类",
+          key: "product_category_text",
+        },
+        {
+          dataIndex: "is_from_supply_system_text",
+          title: "是否经由系统",
+          key: "is_from_supply_system_text",
+        }
+      ]
+    },
+    {
+      dataIndex: "greenProduct",
+      title: "绿色产品认证",
+      key: "greenProduct",
+      children: [
+        {
+          dataIndex: "trademark_name_value",
+          title: "商标名称",
+          key: "trademark_name_value",
+        },
+        {
+          dataIndex: "greenproduct_code_value",
+          title: "产品编号",
+          key: "greenproduct_code_value",
+        },
+        {
+          dataIndex: "approved_output_value",
+          title: "核准产量(吨)",
+          key: "approved_output_value",
+        },
+        {
+          dataIndex: "enterprise_name_value",
+          title: "企业名称",
+          key: "enterprise_name_value",
+        },
+        {
+          dataIndex: "start_date_value",
+          title: "开始日期",
+          key: "start_date_value)",
+        },
+        {
+          dataIndex: "end_date_value",
+          title: "截至日期",
+          key: "end_date_value",
+        }
+      ]
+    }
+  ];
+}
+export function getOnlineReportSupplyChainProductTableDataList() {
+  return [
+    {
+      id: "1",
+      province_text: "江苏省",
+      city_text: "南京市",
+      county_text: "江宁区",
+      certification_term: "绿色建材",
+      product_name: "环保砖",
+      enterprise_name: "南京环保建材有限公司",
+      is_sample_received_text: "是",
+      specification: "1.5M*1.5M*0.5M",
+      brand_name: "绿砖",
+      product_category_text: "建筑材料",
+      is_from_supply_system_text: "是",
+      trademark_name_value: "绿建",
+      greenproduct_code_value: "GP-2023-001",
+      approved_output_value: "5000",
+      enterprise_name_value: "南京环保建材有限公司",
+      start_date_value: "2023-01-01",
+      end_date_value: "2023-12-31"
+    },
+    {
+      id: "2",
+      province_text: "江苏省",
+      city_text: "南京市",
+      county_text: "江宁区",
+      certification_term: "绿色建材",
+      product_name: "环保砖",
+      enterprise_name: "南京环保建材有限公司",
+      is_sample_received_text: "否",
+      specification: "",
+      brand_name: "环保砖",
+      product_category_text: "建筑材料",
+      is_from_supply_system_text: "是",
+      trademark_name_value: "绿建",
+      greenproduct_code_value: "GP-2023-001",
+      approved_output_value: "5000",
+      enterprise_name_value: "南京环保建材有限公司",
+      start_date_value: "2023-01-01",
+      end_date_value: "2023-12-31"
+    },
+    {
+      id: "3",
+      province_text: "河南省",
+      city_text: "郑州市",
+      county_text: "江宁区",
+      certification_term: "绿色建材",
+      product_name: "三色球",
+      enterprise_name: "南京环保建材有限公司",
+      is_sample_received_text: "否",
+      specification: "",
+      brand_name: "",
+      product_category_text: "建筑材料",
+      is_from_supply_system_text: "是",
+      trademark_name_value: "绿建",
+      greenproduct_code_value: "GP-2023-001",
+      approved_output_value: "5000",
+      enterprise_name_value: "南京环保建材有限公司",
+      start_date_value: "2023-01-01",
+      end_date_value: "2023-12-31"
+    }
+  ]
+}
+
+// 使用标准行政区划数据
+export function getProvinceList() {
+  return [
+    { value: '北京市', label: '北京市' },
+    { value: '天津市', label: '天津市' },
+    { value: '河北省', label: '河北省' },
+    { value: '山西省', label: '山西省' },
+    { value: '内蒙古自治区', label: '内蒙古自治区' },
+    { value: '辽宁省', label: '辽宁省' },
+    { value: '吉林省', label: '吉林省' },
+    { value: '黑龙江省', label: '黑龙江省' },
+    { value: '上海市', label: '上海市' },
+    { value: '江苏省', label: '江苏省' },
+    { value: '浙江省', label: '浙江省' },
+    { value: '安徽省', label: '安徽省' },
+    { value: '福建省', label: '福建省' },
+    { value: '江西省', label: '江西省' },
+    { value: '山东省', label: '山东省' },
+    { value: '河南省', label: '河南省' },
+    { value: '湖北省', label: '湖北省' },
+    { value: '湖南省', label: '湖南省' },
+    { value: '广东省', label: '广东省' },
+    { value: '广西壮族自治区', label: '广西壮族自治区' },
+    { value: '海南省', label: '海南省' },
+    { value: '重庆市', label: '重庆市' },
+    { value: '四川省', label: '四川省' },
+    { value: '贵州省', label: '贵州省' },
+    { value: '云南省', label: '云南省' },
+    { value: '西藏自治区', label: '西藏自治区' },
+    { value: '陕西省', label: '陕西省' },
+    { value: '甘肃省', label: '甘肃省' },
+    { value: '青海省', label: '青海省' },
+    { value: '宁夏回族自治区', label: '宁夏回族自治区' },
+    { value: '新疆维吾尔自治区', label: '新疆维吾尔自治区' },
+    { value: '台湾省', label: '台湾省' },
+    { value: '香港特别行政区', label: '香港特别行政区' },
+    { value: '澳门特别行政区', label: '澳门特别行政区' }
+  ];
+}
+
