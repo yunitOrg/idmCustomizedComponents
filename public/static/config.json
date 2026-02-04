@@ -150,6 +150,13 @@
       "className": "IChangeLog",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.irregularitiesstatistics",
+      "comName": "三重一大监管统计面板",
+      "className": "IRegulatoryStatisticsPanel",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
