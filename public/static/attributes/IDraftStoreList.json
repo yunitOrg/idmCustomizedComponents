@@ -435,6 +435,14 @@
         {
           "type": "actionSelect",
           "layoutType": "block",
+          "text": "收藏显示隐藏自定义函数",
+          "bindKey": "storeShowStatusCustomerFunction",
+          "desc": "收藏按钮是否显示的自定义函数,显示返回true，隐藏返回false。这里会覆盖基本属性里的显示隐藏开关。参数为：{item,_this}",
+          "multiple": false
+        },
+        {
+          "type": "actionSelect",
+          "layoutType": "block",
           "text": "收藏自定义函数",
           "bindKey": "storeCustomerFunction",
           "desc": "点击收藏图标后触发自定义函数,参数为：{item,_this}",

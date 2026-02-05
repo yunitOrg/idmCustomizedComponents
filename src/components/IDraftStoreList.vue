@@ -20,7 +20,7 @@
                 <div class="text">
                   <span @click="handleClickItem(item1)">{{ item1.businessName }}</span>
                 </div>
-                <div v-if="propData.showStoreButton" class="icon_block" :class="item1.alreadyCollection == '1' ? 'icon_block_already' : ''">
+                <div v-if="getStoreButtonShowStatus(item1)" class="icon_block" :class="item1.alreadyCollection == '1' ? 'icon_block_already' : ''">
                   <a-icon @click.stop="handleStoreCancel(item1)" v-if="item1.alreadyCollection == '1'" type="star" theme="filled" title="取消收藏" />
                   <a-icon @click.stop="handleStore(item1)" v-else type="star" title="收藏" />
                 </div>
@@ -82,6 +82,19 @@ export default {
   destroyed() {
   },
   methods:{
+    getStoreButtonShowStatus(item) {
+      var params = this.commonParam();
+      if(this.propData.storeShowStatusCustomerFunction?.length) {
+        let result = IDM.invokeCustomFunctions.apply(this, [this.propData.storeShowStatusCustomerFunction, {
+          _this: this,
+          item,
+          ...params
+        }]);
+        return result?.[0];
+      } else {
+        return this.propData.showStoreButton;
+      }
+    },
     getInitData(isInit) {
       if(this.propData.dataSource?.length) {
         let that = this;
