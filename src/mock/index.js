@@ -536,12 +536,12 @@ export function getOnlineReportSupplyChainProductTableHeaderList() {
           key: "p_product_name",
           align: "center",
         },
-        {
-          dataIndex: "p_enterprise_name",
-          title: "企业",
-          key: "p_enterprise_name",
-          align: "center",
-        }
+        // {
+        //   dataIndex: "p_enterprise_name",
+        //   title: "企业",
+        //   key: "p_enterprise_name",
+        //   align: "center",
+        // }
       ]
     },
     {
