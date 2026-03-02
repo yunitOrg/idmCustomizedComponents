@@ -52,6 +52,7 @@
             </div>
           </div>
           <div v-if="status == '1'" class="right">
+            <a-button @click="makeScoreByLastMonth" type="primary" style="margin-right: 10px;">按上月得分进行赋分</a-button>
             <a-button @click="handleSave" type="primary" :loading="saveLoading">保存</a-button>
           </div>
           <div v-else-if="isShowStatusConfirm == 'true' && resultData?.confirmStatus == '1'" class="right">
@@ -371,6 +372,34 @@ export default {
     
   },
   methods: {
+    makeScoreByLastMonth() {
+      console.log('makeScoreByLastMonth', this.tableListData)
+      const that = this
+      this.$confirm({
+        title: '提示',
+        content: h => <div style="color:red;">
+          按照上月得分进行评分并保存，是否确定？
+        </div>,
+        onOk() {
+          that.makeScoreByLastMonthSubmit()
+        },
+        onCancel() {
+          console.log('Cancel');
+        },
+      });
+      
+    },
+    makeScoreByLastMonthSubmit() { 
+      if(this.tableListData?.length > 0) { 
+        this.tableListData.forEach(item => { 
+          if(item.lastMonthScore) { 
+            item.score = item.lastMonthScore;
+          }
+        })
+      }
+      this.getTotalScore()
+      this.handleSave()
+    },
     handleClickWorkHour() {
       this.statisticType = 'kpiHours';
       this.showAttendanceDetailPop = true;
