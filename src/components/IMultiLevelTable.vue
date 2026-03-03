@@ -267,7 +267,7 @@ export default {
           if(this.propData.mergeKey.includes(item.key)) {
             item.customRender = (text, record, rowIndex) => {
               const obj = {
-                children: text,
+                children: <div domPropsInnerHTML={text}></div>,
                 attrs: {},
               };
               currentRowRealValue = this.getTableCellRealValue(item, index, rowIndex);
@@ -320,6 +320,9 @@ export default {
           }
           if(this.propData.align) {
             item.align = this.propData.align;
+          }
+          item.customRender = (text, record, rowIndex) => {
+            return <div class="custome_cell" domPropsInnerHTML={text}></div>
           }
         }
       })

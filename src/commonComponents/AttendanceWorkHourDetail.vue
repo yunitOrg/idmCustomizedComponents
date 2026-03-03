@@ -64,7 +64,10 @@
         return columns.map(item => {
           return {
             ...item,
-            dataIndex: item.key
+            dataIndex: item.key,
+            customRender: (text, record) => {
+              return <div domPropsInnerHTML={text}></div>
+            }
           }
         })
       },
