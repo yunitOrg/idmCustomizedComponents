@@ -587,9 +587,9 @@ export function getOnlineReportSupplyChainProductTableHeaderList() {
           align: "center",
         },
         {
-          dataIndex: "enterprise_name",
+          dataIndex: "c_enterprise_name",
           title: "供应商",
-          key: "enterprise_name",
+          key: "c_enterprise_name",
           align: "center",
         },
         {
