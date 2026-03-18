@@ -551,9 +551,9 @@ export function getOnlineReportSupplyChainProductTableHeaderList() {
       key: "sample",
       children: [
         {
-          dataIndex: "product_name",
+          dataIndex: "commodity_name_value",
           title: "商品名称",
-          key: "product_name",
+          key: "commodity_name_value",
           align: "center",
         },
         {

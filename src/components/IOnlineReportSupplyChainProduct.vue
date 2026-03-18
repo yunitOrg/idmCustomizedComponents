@@ -29,7 +29,7 @@
         <div class="label">品牌目录：</div>
         <div class="input_box" style="width: 200px;">
           <a-input
-            v-model="formData.product_name"
+            v-model="formData.commodity_name_value"
             placeholder="请输入"
             allow-clear
           />
@@ -59,7 +59,7 @@
         <div class="label">商品名称：</div>
         <div class="input_box" style="width: 200px;">
           <a-input
-            v-model="formData.c_product_name"
+            v-model="formData.commodity_name_value"
             placeholder="请输入"
             allow-clear
           />
