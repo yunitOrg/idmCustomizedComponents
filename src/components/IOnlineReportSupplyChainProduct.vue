@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="list flex_start">
-        <div class="label">产品名称：</div>
+        <div class="label">品牌目录：</div>
         <div class="input_box" style="width: 200px;">
           <a-input
             v-model="formData.product_name"
@@ -36,12 +36,31 @@
         </div>
       </div>
       <div class="list flex_start">
-        <div class="label">已收到样品：</div>
-        <div class="select_box" style="width: 120px;">
-          <a-select
-            v-model="formData.is_sample_received_text"
-            :options="booleanList"
-            placeholder="请选择"
+        <div class="label">产品认证：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.product_certification_text"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">产品分类：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.p_product_category"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">商品名称：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.c_product_name"
+            placeholder="请输入"
             allow-clear
           />
         </div>
@@ -50,24 +69,86 @@
         <div class="label">品牌名称：</div>
         <div class="input_box" style="width: 200px;">
           <a-input
-            v-model="formData.brand_name_text"
+            v-model="formData.brand_name"
             placeholder="请输入"
             allow-clear
           />
         </div>
       </div>
       <div class="list flex_start">
-        <div class="label">品类：</div>
+        <div class="label">供应商：</div>
         <div class="input_box" style="width: 200px;">
           <a-input
-            v-model="formData.product_category_text"
+            v-model="formData.enterprise_name"
             placeholder="请输入"
             allow-clear
           />
         </div>
       </div>
       <div class="list flex_start">
-        <div class="label">是否经由系统：</div>
+        <div class="label">供货价：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.cost_price"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">一件代发价：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.dropship_price"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">建议零售价：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.retail_price"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">最低零售价：</div>
+        <div class="input_box" style="width: 200px;">
+          <a-input
+            v-model="formData.tax_incl_price"
+            placeholder="请输入"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">是否有机认证：</div>
+        <div class="select_box" style="width: 120px;">
+          <a-select
+            v-model="formData.is_top_text"
+            :options="booleanList"
+            placeholder="请选择"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">是否绿色认证：</div>
+        <div class="select_box" style="width: 120px;">
+          <a-select
+            v-model="formData.is_historyfile_text"
+            :options="booleanList"
+            placeholder="请选择"
+            allow-clear
+          />
+        </div>
+      </div>
+      <div class="list flex_start">
+        <div class="label">是否经由或来自供销系统：</div>
         <div class="select_box" style="width: 120px;">
           <a-select
             v-model="formData.is_from_supply_system_text"
@@ -78,25 +159,28 @@
         </div>
       </div>
       <div class="list flex_start">
-        <div class="label">商标名称：</div>
-        <div class="input_box" style="width: 200px;">
-          <a-input
-            v-model="formData.trademark_name_value"
-            placeholder="请输入"
+        <div class="label">是否提供样品：</div>
+        <div class="select_box" style="width: 120px;">
+          <a-select
+            v-model="formData.is_sample_received_text"
+            :options="booleanList"
+            placeholder="请选择"
             allow-clear
           />
         </div>
       </div>
       <div class="list flex_start">
-        <div class="label">产品编号：</div>
-        <div class="input_box" style="width: 200px;">
-          <a-input
-            v-model="formData.greenproduct_code_value"
-            placeholder="请输入"
+        <div class="label">是否展示中心陈列：</div>
+        <div class="select_box" style="width: 120px;">
+          <a-select
+            v-model="formData.is_cascade_text"
+            :options="booleanList"
+            placeholder="请选择"
             allow-clear
           />
         </div>
       </div>
+      
       <div class="list button_box">
         <a-button type="primary" @click="getInitData(true)">筛选</a-button>
       </div>
@@ -130,10 +214,11 @@ export default {
         showTitle: true,
         title: "产品信息在线报表",
         showIndex: true,
-        mergeKey: 'p_product_name,province_text,city_text,county_text,certification_term,enterprise_name',
+        mergeKey: 'province_text,city_text,county_text,certification_term,p_product_name,product_certification_text',
         showPagination: true,
         rowKey: 'id'
       },
+      imgBaseUrl: IDM.url.getWebPath("/ctrl/file/downloadImage4ue?fileName="),
       formData: {},
       tableColumns: [],
       tableList: [],
@@ -315,11 +400,11 @@ export default {
           } else {
             item.customRender = (text, record, rowIndex) => {
               let result = text;
-              if(item.key == "start_date_value" || item.key == "end_date_value") {
-                result = text ? text.split(' ')[0] : '';
+              if(item.key == "sample_image") {
+                result = <img src={`${this.imgBaseUrl}${text}`} style={{ width: "100px", height: "100px" }} />;
               }
               return {
-                children: result,
+                children: text ? result : '',
               };
             }
           }

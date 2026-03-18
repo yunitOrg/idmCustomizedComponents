@@ -503,12 +503,12 @@ export function getOnlineReportSupplyChainProductTableHeaderList() {
   return [
     {
       dataIndex: "productCatalog",
-      title: "产品目录",
+      title: "品类信息",
       key: "productCatalog",
       children: [
         {
           dataIndex: "province_text",
-          title: "省份",
+          title: "省",
           key: "province_text",
           align: "center",
         },
@@ -530,29 +530,36 @@ export function getOnlineReportSupplyChainProductTableHeaderList() {
           key: "certification_term",
           align: "center",
         },
+
         {
           dataIndex: "p_product_name",
-          title: "产品名称",
+          title: "品类目录",
           key: "p_product_name",
           align: "center",
         },
-        // {
-        //   dataIndex: "p_enterprise_name",
-        //   title: "企业",
-        //   key: "p_enterprise_name",
-        //   align: "center",
-        // }
+        {
+          dataIndex: "product_certification_text",
+          title: "产品认证",
+          key: "product_certification_text",
+          align: "center",
+        }
       ]
     },
     {
       dataIndex: "sample",
-      title: "已有样品及渠道",
+      title: "商品信息",
       key: "sample",
       children: [
         {
-          dataIndex: "is_sample_received_text",
-          title: "已收到样品",
-          key: "is_sample_received_text",
+          dataIndex: "product_name",
+          title: "商品名称",
+          key: "product_name",
+          align: "center",
+        },
+        {
+          dataIndex: "brand_name",
+          title: "品牌名称",
+          key: "brand_name",
           align: "center",
         },
         {
@@ -562,70 +569,93 @@ export function getOnlineReportSupplyChainProductTableHeaderList() {
           align: "center",
         },
         {
-          dataIndex: "brand_name",
-          title: "品牌名",
-          key: "brand_name",
+          dataIndex: "sample_image",
+          title: "图片",
+          key: "sample_image",
           align: "center",
         },
         {
-          dataIndex: "c_enterprise_name",
-          title: "企业",
-          key: "c_enterprise_name",
+          dataIndex: "p_product_category",
+          title: "产品分类",
+          key: "p_product_category",
           align: "center",
         },
         {
-          dataIndex: "product_category_text",
-          title: "品类",
-          key: "product_category_text",
+          dataIndex: "public_bz",
+          title: "商品介绍",
+          key: "public_bz",
+          align: "center",
+        },
+        {
+          dataIndex: "enterprise_name",
+          title: "供应商",
+          key: "enterprise_name",
+          align: "center",
+        },
+        {
+          dataIndex: "c_contact_person",
+          title: "联系人",
+          key: "c_contact_person",
+          align: "center",
+        },
+        {
+          dataIndex: "c_contact_phone",
+          title: "联系方式",
+          key: "c_contact_phone",
+          align: "center",
+        },
+        {
+          dataIndex: "remarks",
+          title: "备注",
+          key: "remarks",
+          align: "center",
+        },
+        {
+          dataIndex: "cost_price",
+          title: "供货价(含税不含运)",
+          key: "cost_price",
+          align: "center",
+        },
+        {
+          dataIndex: "dropship_price",
+          title: "一件代发价格",
+          key: "dropship_price",
+          align: "center",
+        },
+        {
+          dataIndex: "retail_price",
+          title: "建议零售价",
+          key: "retail_price",
+          align: "center",
+        },
+        {
+          dataIndex: "is_top_text",
+          title: "是否有机认证",
+          key: "is_top_text",
+          align: "center",
+        },
+        {
+          dataIndex: "is_historyfile_text",
+          title: "是否绿色认证",
+          key: "is_historyfile_text",
           align: "center",
         },
         {
           dataIndex: "is_from_supply_system_text",
-          title: "是否经由系统",
+          title: "是否经由或来自供销系统",
           key: "is_from_supply_system_text",
           align: "center",
-        }
-      ]
-    },
-    {
-      dataIndex: "greenProduct",
-      title: "绿色产品认证",
-      key: "greenProduct",
-      children: [
+        },
         {
-          dataIndex: "trademark_name_value",
-          title: "商标名称",
-          key: "trademark_name_value",
+          dataIndex: "is_sample_received_text",
+          title: "是否提供样品",
+          key: "is_sample_received_text",
           align: "center",
         },
         {
-          dataIndex: "greenproduct_code_value",
-          title: "产品编号",
-          key: "greenproduct_code_value",
-          align: "center",
-        },
-        {
-          dataIndex: "approved_output_value",
-          title: "核准产量(吨)",
-          key: "approved_output_value",
-          align: "center",
-        },
-        {
-          dataIndex: "enterprise_name_value",
-          title: "企业名称",
-          key: "enterprise_name_value",
-          align: "center",
-        },
-        {
-          dataIndex: "start_date_value",
-          title: "开始日期",
-          key: "start_date_value",
-          align: "center",
-        },
-        {
-          dataIndex: "end_date_value",
-          title: "截至日期",
-          key: "end_date_value",
+          dataIndex: "is_cascade_text",
+          title: "是否展示中心陈列",
+          key: "is_cascade_text",
           align: "center",
         }
       ]
