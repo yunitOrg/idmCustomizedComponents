@@ -164,6 +164,34 @@
       "className": "IOnlineReportSupplyChainProduct",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.iunitsituationtable",
+      "comName": "上海化工区-单位预算执行情况表",
+      "className": "IUnitSituationTable",
+      "comType": "common",
+      "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.ideptsituationtable",
+      "comName": "上海化工区-处室专项执行情况表",
+      "className": "IDeptSituationTable",
+      "comType": "common",
+      "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.iunitalltable",
+      "comName": "上海化工区-单位预算执行总表",
+      "className": "IUnitAllTable",
+      "comType": "common",
+      "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.itree",
+      "comName": "上海化工区-树",
+      "className": "ITree",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
