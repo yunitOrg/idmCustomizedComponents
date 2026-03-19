@@ -31,7 +31,7 @@
           />
         </div>
       </div>
-      <span class="operation-btn primary">导出</span>
+      <span class="operation-btn primary" @click="exportData">导出</span>
     </div>
     <div class="content-main">
       <div class="title">
@@ -228,6 +228,24 @@ export default {
         url += "&" + field + "=" + (item.queryCondition[field] || "");
       }
       window.open(url);
+    },
+    exportData() {
+      const params = {
+        year: this.year,
+        startDate: this.startDate,
+        endDate: this.endDate,
+      };
+      const url = `ctrl/expenseManagement/exportUnitBudgetExecutionStatisticsTotal?${IDM.url.stringify(
+        params
+      )}`;
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.setAttribute("target", "_blank");
+      a.setAttribute("download", IDM.url.getWebPath(url));
+      a.href = IDM.url.getWebPath(url);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     },
     /**
      * 提供父级组件调用的刷新prop数据组件
