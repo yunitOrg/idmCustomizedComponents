@@ -87,7 +87,7 @@
                   <span class="num">{{ item.initialBudgetAmount }}</span>
                 </td>
                 <td>
-                  <span class="num">{{ tableData.adjustAmount }}</span>
+                  <span class="num">{{ item.adjustAmount }}</span>
                 </td>
                 <td>
                   <span class="num">{{ item.adjustedBudgetAmount }}</span>
