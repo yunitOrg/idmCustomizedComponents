@@ -55,11 +55,11 @@
         <div ref="tableBody" class="table_body">
           <template v-if="table_data_object[active_tab] && table_data_object[active_tab].length">
             <vue-scroll :ops="scrollOps">
-              <div v-for="(item,index) in table_data_object[active_tab]" :key="index" class="row table_body_row flex_between">
+              <div v-for="(item,index) in table_data_object[active_tab]" :key="index" class="row table_body_row flex_between" :class="!item.id ? 'total_row' : ''">
                 <template v-for="(item1,index1) in header_object[active_tab]">
                   <div :key="index1" class="cell flex_center">
                     <template v-if="item1.key == 'issueDate' || item1.key == 'salaryDate'">
-                      <span>{{ IDM.dateFormat(item[item1.key]) }}</span>
+                      <span>{{ item[item1.key] ? IDM.dateFormat(item[item1.key]) : "" }}</span>
                     </template>
                     <template v-else>
                       <span>{{ index1 == 0 && !item.id ? '合计' : item[item1.key] }}</span>
@@ -682,6 +682,7 @@ export default {
         letter-spacing: 0;
         font-weight: 500;
         border-left: 1px solid rgba(230, 230, 230, 1);
+        font-weight: bold;
         // overflow: hidden;
 
       }
@@ -704,6 +705,11 @@ export default {
           font-size: 14px;
           text-align: center;
           border-left: 1px solid rgba(230, 230, 230, 1);
+        }
+      }
+      .total_row {
+        .cell {
+          font-weight: bold;
         }
       }
     }
