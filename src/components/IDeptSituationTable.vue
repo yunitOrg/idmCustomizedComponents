@@ -43,7 +43,7 @@
         <label>日期：</label>
         <div class="con">
           <a-range-picker
-            v-model="dateTime"
+            :default-value="defaultRangeDate"
             :format="dateFormat"
             @change="changeDate"
           />
@@ -149,7 +149,7 @@ export default {
       deptValue: "",
       yearOptions: [],
       year: "",
-      dateTime: [],
+      defaultRangeDate: [],
       startDate: "",
       endDate: "",
       dateFormat: "YYYY-MM-DD",
@@ -166,6 +166,14 @@ export default {
   created() {
     this.moduleObject = this.$root.moduleObject;
     this.convertAttrToStyleObject();
+
+    let nowYear = moment().format("YYYY");
+    this.startDate = nowYear + "-01-01";
+    this.endDate = nowYear + "-12-31";
+    this.defaultRangeDate = [
+      moment(this.startDate, this.dateFormat),
+      moment(this.endDate, this.dateFormat),
+    ];
   },
   mounted() {
     if (!this.moduleObject.env || this.moduleObject.env == "develop") {
@@ -285,8 +293,11 @@ export default {
     },
     goDetails(item) {
       let url = IDM.url.getWebPath(
-        "ctrl/list/2603111753337w9P3CZiKzNGGSonoLf?moduleId=260115164011ItK50SrF9FxkO36bOrR"
+        "ctrl/list/260327101256wIit00Mq0FRWfhktDwT?moduleId=260115164029CB21hjPneWKmmJu5o6W"
       );
+      if (this.startDate && this.endDate) {
+        url += "&starttime=" + this.startDate + "&endtime=" + this.endDate;
+      }
       for (let field in item.queryCondition) {
         url += "&" + field + "=" + (item.queryCondition[field] || "");
       }
@@ -299,7 +310,9 @@ export default {
         endDate: this.endDate,
         deptId: this.deptValue,
       };
-      const url = `ctrl/expenseManagement/exportDeptSpecialExecutionStatistics?${IDM.url.stringify(params)}`;
+      const url = `ctrl/expenseManagement/exportDeptSpecialExecutionStatistics?${IDM.url.stringify(
+        params
+      )}`;
       const a = document.createElement("a");
       a.style.display = "none";
       a.setAttribute("target", "_blank");
