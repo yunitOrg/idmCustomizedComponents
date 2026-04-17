@@ -10,7 +10,7 @@
       <div class="item">
         <label>年份：</label>
         <div class="con">
-          <a-select v-model="year" style="width: 120px" @change="initData">
+          <a-select v-model="year" style="width: 120px" @change="changeYear">
             <a-select-option
               :value="item.value"
               v-for="item in yearOptions"
@@ -25,8 +25,10 @@
         <label>日期：</label>
         <div class="con">
           <a-range-picker
+            v-model="defaultRangeDate"
             :default-value="defaultRangeDate"
             :format="dateFormat"
+            :disabled-date="disabledDate"
             @change="changeDate"
           />
         </div>
@@ -72,7 +74,7 @@
                   <span class="num">{{ tableData.executionRate }}</span>
                 </td>
               </tr>
-              <tr v-for="item in itemData" :key="item.itemName">
+              <tr v-for="(item,index) in itemData" :key="index">
                 <td
                   class="text-left"
                   :style="{ 'padding-left': item.level + 'em' }"
@@ -161,6 +163,20 @@ export default {
           }
         })
         .catch((err) => {});
+    },
+    changeYear(selYear) {
+      this.startDate = selYear + "-01-01";
+      this.endDate = selYear + "-12-31";
+      this.defaultRangeDate = [
+        moment(this.startDate, this.dateFormat),
+        moment(this.endDate, this.dateFormat),
+      ];
+      this.initData();
+    },
+    // 禁用非当前年份的日期
+    disabledDate(current) {
+      if (!current || !this.year) return false;
+      return current.year() !== Number(this.year);
     },
     initData() {
       console.log("加载数据");
