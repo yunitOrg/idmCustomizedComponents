@@ -192,6 +192,13 @@
       "className": "ITree",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.ielectricalsuperviselist",
+      "comName": "电气督办统计",
+      "className": "ILectricalSuperviseList",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }

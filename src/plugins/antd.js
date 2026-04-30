@@ -20,7 +20,7 @@ import { Button, Popover, Progress,Slider,Empty,Select,Input,DatePicker, TreeSel
   InputNumber,
   Tag,
   Upload,
-  Descriptions
+  Descriptions,
 } from 'ant-design-vue'
 
 /* v1.1.3+ registration methods */
