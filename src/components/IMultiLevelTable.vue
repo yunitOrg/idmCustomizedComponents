@@ -69,14 +69,15 @@ export default {
         pageSize: 10,
         showQuickJumper: true,
         showSizeChanger: true,
-        pageSizeOptions: ['2', '20', '30', '40', '50'],
+        pageSizeOptions: ['10', '20', '30', '40', '50'],
         showTotal: (total, range) => `共 ${total} 条记录`,
         onShowSizeChange: this.handleChangeSize,
         onChange: this.handleChangeTable,
         total: 0,
       },
       scrollOptions: {
-        y: 0
+        y: 0,
+        x: 'auto',
       },
       tableId: IDM.UUID(),
       resultData: {},
@@ -93,6 +94,7 @@ export default {
   created() {
     this.moduleObject = this._moduleObject||this.$root.moduleObject;
     this.convertAttrToStyleObject();
+    this.initProps();
     if(this.propData.loadDataCreated) {
       this.getInitData();
     }
@@ -395,6 +397,11 @@ export default {
     propDataWatchHandle(propData){
       this.propData = propData.compositeAttr||{};
       this.convertAttrToStyleObject();
+      this.initProps();
+    },
+    initProps() {
+      this.scrollOptions.x = this.propData.scrollX || 'auto';
+      this.scrollOptions.y = this.propData.scrollY || 'auto';
     },
     /**
      * 把属性转换成样式对象

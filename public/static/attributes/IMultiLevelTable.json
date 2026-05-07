@@ -222,6 +222,22 @@
               "multiple": false
             }
           ]
+        },
+        {
+          "type": "input",
+          "layoutType": "inline",
+          "text": "滚动条x轴",
+          "bindKey": "scrollX",
+          "desc": "设置表格滚动条x轴的宽度，默认值为auto",
+          "default": "auto"
+        },
+        {
+          "type": "input",
+          "layoutType": "inline",
+          "text": "滚动条y轴",
+          "bindKey": "scrollY",
+          "desc": "设置表格滚动条y轴的高度，默认值为auto",
+          "default": "auto"
         }
       ]
     },
