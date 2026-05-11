@@ -82,6 +82,8 @@ export default {
       tableId: IDM.UUID(),
       resultData: {},
       conditionObject: {},
+      colWidths: [],
+      colIndex: 0,
     }
   },
   watch: {
@@ -326,6 +328,8 @@ export default {
           item.customRender = (text, record, rowIndex) => {
             return <div class="custome_cell" domPropsInnerHTML={text}></div>
           }
+          item.width = this.colWidths[this.colIndex] || 'auto';
+          this.colIndex++;
         }
       })
     },
@@ -402,6 +406,8 @@ export default {
     initProps() {
       this.scrollOptions.x = this.propData.scrollX || 'auto';
       this.scrollOptions.y = this.propData.scrollY || 'auto';
+      this.colWidths = this.propData?.colWidths?.split(',') || [];
+      this.colIndex = 0;
     },
     /**
      * 把属性转换成样式对象

@@ -238,6 +238,14 @@
           "bindKey": "scrollY",
           "desc": "设置表格滚动条y轴的高度，默认值为auto",
           "default": "auto"
+        },
+        {
+          "type": "input",
+          "layoutType": "inline",
+          "text": "列宽度",
+          "bindKey": "colWidths",
+          "desc": "设置表格各列宽度，用逗号分割，每个宽度值对应一列的宽度，不需要固定宽度的列可以填写auto，不可跳过，按列顺序填写，例如: 100px,200px,300px,auto",
+          "default": ""
         }
       ]
     },
