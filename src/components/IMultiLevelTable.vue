@@ -61,6 +61,7 @@ export default {
         getTitleCustomerFunction: [],
         getSubtitleCustomFunction: [],
         showPagination: true,
+        pageSize: 20
       },
       tableColumns: [],
       tableList: [],
@@ -95,6 +96,9 @@ export default {
   },
   created() {
     this.moduleObject = this._moduleObject||this.$root.moduleObject;
+    if(this.propData.pageSize) {
+      this.paginationOptions.pageSize = this.propData.pageSize;
+    }
     this.convertAttrToStyleObject();
     this.initProps();
     if(this.propData.loadDataCreated) {
