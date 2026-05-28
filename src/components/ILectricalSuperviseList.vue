@@ -24,9 +24,9 @@
             >
               <a-select-option
                 v-for="item in yearList"
-                :key="item.value"
-                :value="item.value"
-                >{{ item.text }}
+                :key="item.codeValue"
+                :value="item.codeValue"
+                >{{ item.codeName }}
               </a-select-option>
             </a-select>
           </div>
@@ -41,30 +41,38 @@
             >
               <a-select-option
                 v-for="item in deptList"
-                :key="item.value"
-                :value="item.value"
-                >{{ item.text }}
+                :key="item.id"
+                :value="item.id"
+                >{{ item.name }}
               </a-select-option>
             </a-select>
           </div>
         </div>
       </div>
       <div class="list-box">
-        <a-button
+        <a-badge
           v-for="(item, index) in atnList"
           :key="index"
-          :value="item.value"
-          type="primary"
-          ghost
-          >{{ item.text }} {{ item.value }}</a-button
+          :count="item.noReadCountNum"
+          :overflow-count="99"
         >
+          <a-button
+            :value="item.typeCode"
+            type="primary"
+            ghost
+            @click="handleClickInfo(item)"
+          >
+            <span class="name">{{ item.typeText }}</span>
+            <span class="num">{{ item.countNum }}</span>
+          </a-button>
+        </a-badge>
       </div>
     </div>
 
     <div class="section-box">项目情况</div>
     <div class="section-content">
       <div class="stats-row">
-        <div class="stat-card" v-for="item in stats" :key="item.status">
+        <div @click="handleClickProject(item)" class="stat-card" v-for="item in stats" :key="item.status">
           <svg-icon :iconClass="item.icon" class="stat-icon" />
           <div class="stat-info">
             <span class="num">{{ item.total }}</span>
@@ -90,78 +98,35 @@ export default {
     return {
       moduleObject: {},
       propData: this.$root.propData.compositeAttr || {},
-      yearList: [
-        {
-          value: "2026",
-          text: "2026年",
-        },
-        {
-          value: "2025",
-          text: "2025年",
-        },
-        {
-          value: "2024",
-          text: "2024年",
-        },
-      ],
-      year: "2026",
-      dept: "",
-      deptList: [
-        {
-          value: "",
-          text: "全部",
-        },
-        {
-          value: "10",
-          text: "10",
-        },
-        {
-          value: "20",
-          text: "20",
-        },
-        {
-          value: "30",
-          text: "30",
-        },
-      ],
-      atnList: [
-        {
-          text: "督办工作专报",
-          value: "1",
-        },
-        {
-          text: "督办工作专报",
-          value: "2",
-        },
-        {
-          text: "督办工作专报",
-          value: "3",
-        },
-      ],
+      yearList: [ ],
+      year: undefined,
+      dept: undefined,
+      deptList: [ ],
+      atnList: [ ],
       stats: [
         {
           status: "项目",
-          total: 100,
+          total: 0,
           icon: "xiangmu",
         },
         {
           status: "办结",
-          total: 200,
+          total: 2,
           icon: "banjie",
         },
         {
           status: "在办",
-          total: 300,
+          total: 0,
           icon: "zaiban",
         },
         {
           status: "超期",
-          total: 300,
+          total: 0,
           icon: "chaoqi",
         },
         {
           status: "变更",
-          total: 300,
+          total: 0,
           icon: "biangeng",
         },
       ],
@@ -169,49 +134,49 @@ export default {
       chartBarDept: null,
       chartBarSource: null,
       deptData: {
-        categories: [
-          "办公室",
-          "战略发展部",
-          "科技创新部",
-          "财务资产部",
-          "企业管理部",
-          "党委组织部",
-          "市场部",
-          "法律合规部",
-          "党建工作部",
-          "纪委监督执纪",
-          "党委巡视办",
-        ],
-        dataIn: [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        dataOverdue: [1, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0],
-        dataFinished: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        categories: [ ],
+        dataIn: [],
+        dataOverdue: [],
+        dataFinished: [],
       },
       sourceData: {
-        categories: [
-          "职工代表提案",
-          "决策会议",
-          "月度运营分析会",
-          "重点工作推进会",
-          "年中工作会议",
-          "年度工作会议",
-          "领导班子碰头会",
-          "国务院国资委重大事项",
-          "习近平总书记指示批示",
-        ],
-        dataIn: [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        dataOverdue: [1, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0],
-        dataFinished: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        categories: [ ],
+        dataIn: [],
+        dataOverdue: [],
+        dataFinished: [],
       },
+      projectInfo: undefined
     };
   },
   props: {},
+  watch: {
+    year: {
+      handler(value) {
+        if(value) {
+          this.getInfo()
+          if(this.dept) {
+            this.getProjectInfo()
+          }
+        }
+      }
+    },
+    dept: {
+      handler(value) {
+        if(this.year) {
+          this.getProjectInfo()
+          this.getInfo()
+        }
+      }
+    }
+  },
   created() {
     this.moduleObject = this.$root.moduleObject;
     this.convertAttrToStyleObject();
   },
   mounted() {
+    this.getYearList()
+    this.getDepartList()
     this.$nextTick(() => {
-      this.initCharts();
       window.addEventListener("resize", this.resizeCharts);
     });
   },
@@ -224,6 +189,110 @@ export default {
     window.removeEventListener("resize", this.resizeCharts);
   },
   methods: {
+    handleClickInfo(item) {
+      if(this.propData.clickFunction1?.length) {
+        IDM.invokeCustomFunctions.apply(this, [this.propData.clickFunction1, {
+          item,
+          _this: this
+        }]); 
+      }
+    },
+    handleClickProject(item) {
+      if(this.propData.clickFunction2?.length) {
+        IDM.invokeCustomFunctions.apply(this, [this.propData.clickFunction2, {
+          item,
+          _this: this
+        }]); 
+      }
+    },
+    getYearList() {
+      IDM.http.get('/ctrl/superviseV6/m/getYears', {
+      }).done((res) => {
+        if(res.type == 'success') {
+          this.yearList = res.data;
+          this.year = res.data?.[0]?.codeValue;
+        }
+      }).error((response) => {
+      })
+    },
+    getDepartList() {
+      IDM.http.get('/ctrl/superviseV6/m/list/dept', {
+      }).done((res) => {
+        if(res.type == 'success') {
+          let departList = [{
+            name: "全部",
+            id: "0"
+          }]
+          departList.push(...res.data);
+          this.deptList = departList;
+          this.dept = departList[0].id;
+        }
+      }).error((response) => {
+      })
+    },
+    getInfo() {
+      IDM.http.get('/ctrl/superviseV6/m/zb/info', {
+        dateType: this.year,
+        deptId: this.dept
+      }).done((res) => {
+        if(res.type == 'success') {
+          this.atnList = res.data;
+        }
+      }).error((response) => {
+      })
+    },
+    getProjectInfo() {
+      IDM.http.post('/ctrl/superviseV6/m/statistics/project', {
+        dateType: this.year,
+        deptId: this.dept
+      }).done((res) => {
+        if(res.type == "success") {
+          this.projectInfo = res.data.pInfo;
+          this.stats[0].total = res.data.pInfo.sum;
+          this.stats[1].total = res.data.pInfo.close;
+          this.stats[2].total = res.data.pInfo.process;
+          this.stats[3].total = res.data.pInfo.over;
+          this.stats[4].total = res.data.pInfo.changeNum;
+          this.makeEchartData()
+          this.initCharts()
+        }
+      }).error((response) => {
+      })
+    },
+    makeEchartData() {
+      let categories = [];
+      let dataIn = [];
+      let dataFinished = [];
+      let dataOverdue = [];
+      this.projectInfo.dept.forEach(item => {
+        categories.push(item.deptName)
+        dataFinished.push(item.closePro)
+        dataOverdue.push(item.overPro)
+        dataIn.push(item.process)
+      })
+      this.deptData = {
+        categories,
+        dataIn,
+        dataFinished,
+        dataOverdue
+      }
+      categories = [];
+      dataIn = [];
+      dataFinished = [];
+      dataOverdue = [];
+      this.projectInfo.sourceInfo.forEach(item => {
+        categories.push(item.typeText)
+        dataFinished.push(item.closePro)
+        dataOverdue.push(item.overPro)
+        dataIn.push(item.process)
+      })
+      this.sourceData = {
+        categories,
+        dataIn,
+        dataFinished,
+        dataOverdue
+      }
+    },
     initCharts: function () {
       this.initPieChart();
       this.initDeptBarChart();
@@ -256,9 +325,9 @@ export default {
             label: { show: false },
             emphasis: { label: { show: true } },
             data: [
-              { value: 3, name: "在办", itemStyle: { color: "#e6a23c" } },
-              { value: 2, name: "办结", itemStyle: { color: "#67c23a" } },
-              { value: 26, name: "超期", itemStyle: { color: "#f56c6c" } },
+              { value: this.projectInfo?.process, name: "在办", itemStyle: { color: "#e6a23c" } },
+              { value: this.projectInfo?.close, name: "办结", itemStyle: { color: "#67c23a" } },
+              { value: this.projectInfo?.over, name: "超期", itemStyle: { color: "#f56c6c" } },
             ],
           },
         ],
@@ -343,21 +412,21 @@ export default {
             stack: "total",
             barWidth: "60%",
             itemStyle: { color: "#f56c6c" },
-            data: this.deptData.dataOverdue,
+            data: this.sourceData.dataOverdue,
           },
           {
             name: "在办",
             type: "bar",
             stack: "total",
             itemStyle: { color: "#e6a23c" },
-            data: this.deptData.dataIn,
+            data: this.sourceData.dataIn,
           },
           {
             name: "办结",
             type: "bar",
             stack: "total",
             itemStyle: { color: "#67c23a" },
-            data: this.deptData.dataFinished,
+            data: this.sourceData.dataFinished,
           },
         ],
       };
@@ -763,6 +832,13 @@ export default {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+
+    .ant-badge {
+      line-height: 1;
+    }
+    .name{
+      margin-right: 10px;
+    }
   }
 
   .section-box {
@@ -808,6 +884,7 @@ export default {
       align-items: center;
       color: #fff;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
       .stat-icon {
         font-size: 28px;
         margin-right: 15px;

@@ -21,6 +21,7 @@ import { Button, Popover, Progress,Slider,Empty,Select,Input,DatePicker, TreeSel
   Tag,
   Upload,
   Descriptions,
+  badge,
 } from 'ant-design-vue'
 
 /* v1.1.3+ registration methods */
@@ -44,4 +45,5 @@ Vue.use(Icon)
 Vue.use(Tag)
 Vue.use(Upload)
 Vue.use(Descriptions)
+Vue.use(badge)
 Vue.prototype.$confirm = Modal.confirm
