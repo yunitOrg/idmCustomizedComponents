@@ -149,6 +149,10 @@ export default {
             label: '纪检监察办案人员补贴'
           },
           {
+            key: 'jcgdjjt',
+            label: '监察官等级津贴'
+          },
+          {
             key: 'singleChildFee',
             label: '独生子女费'
           },
