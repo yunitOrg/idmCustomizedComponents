@@ -199,6 +199,13 @@
       "className": "ILectricalSuperviseList",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.component.idmCustomizedComponents.iportalnewslist",
+      "comName": "发展研究中心-门户栏目列表",
+      "className": "IPortalNewsList",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
