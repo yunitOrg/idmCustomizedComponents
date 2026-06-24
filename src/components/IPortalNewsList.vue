@@ -14,6 +14,15 @@
           @click="changeTab(index)"
           >{{ item.columnName }}</span
         >
+        <template v-for="(item, index) in dataList">
+          <div class="more" :key="'more' + index" :class="{ active: activeTab == 'tab' + index }" v-if="item.moreUrl" @click="openMore(item)">
+            <a-tooltip>
+              <template slot="title"> 更多 </template>
+              <svg-icon iconClass="more2"></svg-icon>
+              <!-- <img :src="getImageSrc('more2.svg')" alt="" /> -->
+            </a-tooltip>
+          </div>
+        </template>
       </div>
       <div class="IPortalNewsList_app_main">
         <vue-scroll :ops="scrollOps">
@@ -52,11 +61,8 @@ export default {
   mixins: [vuescroll],
   data() {
     return {
-      moduleObject: this._moduleObject || {},
-      propData: this._propData?.compositeAttr ||
-        this.$root?.propData?.compositeAttr || {
-          loadDataCreated: true,
-        },
+      moduleObject: {},
+      propData: this.$root.propData.compositeAttr || {},
       dataList: [],
       resultData: {},
       conditionObject: {},
@@ -64,25 +70,20 @@ export default {
     };
   },
   watch: {},
-  props: {
-    _moduleObject: Object,
-    _propData: Object,
-  },
   created() {
-    this.moduleObject = this._moduleObject || this.$root.moduleObject;
+    this.moduleObject = this.$root.moduleObject;
     this.convertAttrToStyleObject();
-    if (this.propData.loadDataCreated) {
-      this.getInitData();
-    }
+    this.getInitData();
   },
-  mounted() {
-    this._moduleObject &&
-      IDM.callBackComponentMountComplete?.apply(this, [this._moduleObject]);
-  },
+  mounted() {},
   destroyed() {},
   methods: {
     changeTab(index) {
       this.activeTab = "tab" + index;
+    },
+    openMore(item){
+      console.log(item.moreUrl);
+      window.open(item.moreUrl);
     },
     getInitData() {
       if (!this.moduleObject.env || this.moduleObject.env == "develop") {
@@ -386,6 +387,7 @@ export default {
   display: flex;
   flex-direction: column;
   .IPortalNewsList_app_tabs {
+    position: relative;
     display: flex;
     align-items: flex-end;
     margin: 0 20px -2px 20px;
@@ -401,6 +403,21 @@ export default {
       &.active {
         color: rgba(0, 115, 202, 1);
         border-bottom: 2px solid rgba(0, 115, 202, 1);
+      }
+    }
+    .more {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 5px 15px;
+      cursor: pointer;
+      z-index: 2;
+      display: none;
+      &.active {
+        display: block;
+      }
+      .svg-icon {
+        outline: none;
       }
     }
   }

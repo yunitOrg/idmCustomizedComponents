@@ -19,27 +19,7 @@
         "type": "group",
         "text": "基本属性",
         "desc": "提供设置组件能达到展示效果的基本属性设置信息",
-        "children": [
-          {
-            "type": "radio",
-            "styleType": "radio",
-            "layoutType": "inline",
-            "text": "初始加载",
-            "desc":"是否在组件初始化时就加载数据",
-            "bindKey": "loadDataCreated",
-            "default": true,
-            "dictionary": [
-                {
-                    "label": "是",
-                    "value": true
-                },
-                {
-                    "label": "否",
-                    "value": false
-                }
-            ]
-          }
-        ]
+        "children": []
       },
       {
           "type": "group",
