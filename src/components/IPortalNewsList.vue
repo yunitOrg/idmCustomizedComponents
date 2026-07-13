@@ -89,7 +89,7 @@ export default {
       if (!this.moduleObject.env || this.moduleObject.env == "develop") {
         this.dataList = mockData.data || [];
       } else {
-        let url = `ctrl/sfzyjzxcustom/jyhColumnData?orderBy=display_asc`;
+        let url = `ctrl/sfzyjzxcustom/jyhColumnData?orderBy=display_desc`;
         IDM.http
           .get(url)
           .done((res) => {
