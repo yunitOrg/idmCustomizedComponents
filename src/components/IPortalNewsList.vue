@@ -36,9 +36,10 @@
                 <div class="text" :title="item.title">
                   <span>{{ item.title }}</span>
                 </div>
-                <!-- <div class="date">
-                  <span>{{ item.displayDate }}</span>
-                </div> -->
+                <div class="date">
+                  <!-- IDM.dateFormat(item.displayDate,"Y-m-d H:i") -->
+                  <span>{{ item.displayDate ? IDM.dateFormat(item.displayDate,"Y-m-d") : "" }}</span>
+                </div> 
               </div>
             </div>
           </template>
@@ -446,7 +447,7 @@ export default {
           text-overflow: ellipsis;
         }
         .date {
-          width: 160px;
+          width: 120px;
           text-align: right;
         }
         &:hover {
