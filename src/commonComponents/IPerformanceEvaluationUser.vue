@@ -35,6 +35,30 @@
         />
       </div>
       <div class="footer ">
+        <div class="flex_end radio_block">
+          <div class="list flex_end">
+            <div class="label">工时是否扣款：</div>
+            <div class="value flex_end">
+              <a-radio-group v-model="workingHoursDeduction" :disabled="status == '1' ? false : true">
+                <a-radio v-for="item in deductList" :key="item.value" :value="item.value">{{ item.label }}</a-radio>
+              </a-radio-group>
+              <div v-if="workingHoursDeduction == '0'" class="input_box">
+                <a-input v-model="workingHoursNoDeductionReason" :disabled="status == '1' ? false : true" allowClear />
+              </div>
+            </div>
+          </div>
+          <div class="list flex_end">
+            <div class="label">考勤是否扣款：</div>
+            <div class="value flex_end">
+              <a-radio-group v-model="attendanceDeduction" :disabled="status == '1' ? false : true">
+                <a-radio v-for="item in deductList" :key="item.value" :value="item.value">{{ item.label }}</a-radio>
+              </a-radio-group>
+              <div v-if="attendanceDeduction == '0'" class="input_box">
+                <a-input v-model="attendanceNoDeductionReason" :disabled="status == '1' ? false : true" allowClear />
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="row remark flex_start">
           <div>备注：</div>
           <div v-if="status == '1'" class="input_box">
@@ -42,6 +66,7 @@
           </div>
           <div v-else v-html="resultData.remark"></div>
         </div>
+        
         <div class="row flex_between">
           <div class="left flex_start">
             <div class="score">
@@ -347,7 +372,17 @@ export default {
       isPersonal: undefined,
       // 考勤详情
       showAttendanceDetailPop: false,
-      statisticType: ''
+      statisticType: '',
+      // 工时是否扣款
+      workingHoursDeduction: "",
+      workingHoursNoDeductionReason: '',
+      deductList: [
+        {label: '是', value: "1"},
+        {label: '否', value: "0"}
+      ],
+      // 考勤是否扣款
+      attendanceDeduction: "",
+      attendanceNoDeductionReason: '',
     }
   },
   watch: { 
@@ -452,6 +487,24 @@ export default {
         IDM.message.error('请填写评分！')
         return
       }
+      if(!this.workingHoursDeduction) {
+        IDM.message.error('请选择工时是否扣款！')
+        return
+      } else {
+        if(this.workingHoursDeduction == '0' && !this.workingHoursNoDeductionReason) {
+          IDM.message.error('请填写工时不扣款理由！')
+          return
+        }
+      }
+      if(!this.attendanceDeduction) {
+        IDM.message.error('请选择考勤是否扣款！')
+        return
+      } else {
+        if(this.attendanceDeduction == '0' && !this.attendanceNoDeductionReason) {
+          IDM.message.error('请填写考勤不扣款理由！')
+          return
+        }
+      }
       let params = {
         totalScore: this.totalScore,
         userId: this.currentUserId,
@@ -459,7 +512,13 @@ export default {
         levelText: this.levelText,
         deptAssessmentId: this.deptAssessmentId,
         indicatorList: this.tableList,
-        remark: this.remark
+        remark: this.remark,
+        attendanceDeduction: this.attendanceDeduction,
+        attendanceNoDeductionReason: this.attendanceNoDeductionReason,
+        attendanceDeductionText: this.attendanceDeduction == '1' ? '是' : '否',
+        workingHoursDeduction: this.workingHoursDeduction,
+        workingHoursNoDeductionReason: this.workingHoursNoDeductionReason,
+        workingHoursDeductionText: this.workingHoursDeduction == '1' ? '是' : '否',
       }
       console.log(params)
       this.saveLoading = true;
@@ -549,6 +608,11 @@ export default {
             this.assessmentLevelList = res.data.data.assessmentLevelList ?? [];
             this.resultData = res.data.data;
             this.remark = res.data.data.remark;
+            this.attendanceDeduction = res.data.data.attendanceDeduction || "";
+            this.attendanceNoDeductionReason = res.data.data.attendanceNoDeductionReason;
+            this.workingHoursDeduction = res.data.data.workingHoursDeduction || "";
+            this.workingHoursNoDeductionReason = res.data.data.workingHoursNoDeductionReason;
+
             if(this.isPersonal == 'true' && this.propData.showNotice) {
               let tableList = JSON.parse(JSON.stringify(this.tableList));
               tableList.push({
@@ -673,6 +737,18 @@ export default {
       .input_box{
         flex-grow: 2;
         width: 0;
+      }
+    }
+    .radio_block{
+      margin-bottom: 5px;
+      &>.list{
+        margin-left: 30px;
+      }
+      .input_box{
+        width: 250px;
+        :deep(.ant-input){
+          width: 100% !important;
+        }
       }
     }
   }
