@@ -35,8 +35,8 @@
         />
       </div>
       <div class="footer ">
-        <div class="flex_end radio_block">
-          <div class="list flex_end">
+        <div v-if="attendanceDeductionShow || workingHoursDeductionShow" class="flex_end radio_block">
+          <div v-if="workingHoursDeductionShow" class="list flex_end">
             <div class="label">工时是否扣款：</div>
             <div class="value flex_end">
               <a-radio-group v-model="workingHoursDeduction" :disabled="status == '1' ? false : true">
@@ -47,7 +47,7 @@
               </div>
             </div>
           </div>
-          <div class="list flex_end">
+          <div v-if="attendanceDeductionShow" class="list flex_end">
             <div class="label">考勤是否扣款：</div>
             <div class="value flex_end">
               <a-radio-group v-model="attendanceDeduction" :disabled="status == '1' ? false : true">
@@ -374,6 +374,7 @@ export default {
       showAttendanceDetailPop: false,
       statisticType: '',
       // 工时是否扣款
+      workingHoursDeductionShow: false,
       workingHoursDeduction: "",
       workingHoursNoDeductionReason: '',
       deductList: [
@@ -381,6 +382,7 @@ export default {
         {label: '否', value: "0"}
       ],
       // 考勤是否扣款
+      attendanceDeductionShow: false,
       attendanceDeduction: "",
       attendanceNoDeductionReason: '',
     }
@@ -622,7 +624,8 @@ export default {
             } else {
               this.tableListData = this.tableList;
             }
-            
+            this.getWorkHoursAndAttendance("kpiHours")
+            this.getWorkHoursAndAttendance("attendance")
           } else {
             IDM.message.error(res.data.message)
           }
@@ -632,6 +635,34 @@ export default {
         })
       } 
       
+    },
+    // 获取工时详情和考勤详情
+    getWorkHoursAndAttendance(type){
+      IDM.http.get('/ctrl/erpAssessmentUser/getStatisticInfo',{
+        statisticType: type,
+        userId: this.currentUserId,
+        yearMonth: this.resultData?.assessmentCycle ? this.resultData?.assessmentCycle.replace('年', '-').replace('月', '') : ''
+      }).then((res) => {
+        if ( res.data.code == 200 ) {
+          if(type == "kpiHours") {
+            if(res.data.data.itemList[1].value && parseInt(res.data.data.itemList[1].value) > 0) {
+              this.workingHoursDeductionShow = true;
+            } else {
+              this.workingHoursDeductionShow = false;
+            }
+          } else {
+            if(res.data.data.itemList[3].value && parseInt(res.data.data.itemList[3].value) > 0) {
+              this.attendanceDeductionShow = true;
+            } else {
+              this.attendanceDeductionShow = false;
+            }
+          }
+        } else {
+          IDM.message.error(res.data.message)
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     getImageSrc(url,name) {
       if ( url ) {
