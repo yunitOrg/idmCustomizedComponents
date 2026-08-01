@@ -600,7 +600,9 @@ export default {
     },
     getUserData(){
       if(this.currentUserId && this.deptAssessmentId){
-        this.loading = true
+        this.loading = true;
+        this.workingHoursDeductionShow = false;
+        this.attendanceDeductionShow = false;
         IDM.http.get('/ctrl/indicator/loadByUserId',{
           deptAssessmentId: this.deptAssessmentId,
           userId: this.currentUserId,
