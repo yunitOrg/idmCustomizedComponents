@@ -489,24 +489,29 @@ export default {
         IDM.message.error('请填写评分！')
         return
       }
-      if(!this.workingHoursDeduction) {
-        IDM.message.error('请选择工时是否扣款！')
-        return
-      } else {
-        if(this.workingHoursDeduction == '0' && !this.workingHoursNoDeductionReason) {
-          IDM.message.error('请填写工时不扣款理由！')
+      if(this.workingHoursDeductionShow) {
+        if(!this.workingHoursDeduction) {
+          IDM.message.error('请选择工时是否扣款！')
           return
+        } else {
+          if(this.workingHoursDeduction == '0' && !this.workingHoursNoDeductionReason) {
+            IDM.message.error('请填写工时不扣款理由！')
+            return
+          }
         }
       }
-      if(!this.attendanceDeduction) {
-        IDM.message.error('请选择考勤是否扣款！')
-        return
-      } else {
-        if(this.attendanceDeduction == '0' && !this.attendanceNoDeductionReason) {
-          IDM.message.error('请填写考勤不扣款理由！')
+      if(this.attendanceDeductionShow) {
+        if(!this.attendanceDeduction) {
+          IDM.message.error('请选择考勤是否扣款！')
           return
+        } else {
+          if(this.attendanceDeduction == '0' && !this.attendanceNoDeductionReason) {
+            IDM.message.error('请填写考勤不扣款理由！')
+            return
+          }
         }
       }
+      
       let params = {
         totalScore: this.totalScore,
         userId: this.currentUserId,
