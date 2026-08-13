@@ -37,6 +37,9 @@
       <div class="footer ">
         <div v-if="attendanceDeductionShow || workingHoursDeductionShow" class="flex_end radio_block">
           <div v-if="workingHoursDeductionShow" class="list flex_end">
+            <div style="margin-right: 15px;">
+              漏填天数：{{ workingHoursDeductionNumber }}
+            </div>
             <div class="label">工时是否扣款：</div>
             <div class="value flex_end">
               <a-radio-group v-model="workingHoursDeduction" :disabled="status == '1' ? false : true">
@@ -48,6 +51,9 @@
             </div>
           </div>
           <div v-if="attendanceDeductionShow" class="list flex_end">
+            <div style="margin-right: 15px;">
+              缺勤天数：{{ attendanceDeductionNumber }}
+            </div>
             <div class="label">考勤是否扣款：</div>
             <div class="value flex_end">
               <a-radio-group v-model="attendanceDeduction" :disabled="status == '1' ? false : true">
@@ -296,20 +302,24 @@ export default {
               obj.children = null
             } else {
               obj.attrs.colSpan = 1;
-              if(this.status == '1') {
-                obj.children = <div class="input_box"> 
-                  <input
-                    value={row.score}
-                    min={0}
-                    max={row.maxScore}
-                    type="number" 
-                    step={0.1}
-                    onInput={(e) => this.handleInput(row, index, e, 'score')}
-                    placeholder="输入分数"
-                    class="input_number"
-                    onWheel={(e) => e.preventDefault()}
-                  />
-                </div>
+              if(this.status == '1' ) {
+                if(row.maxScore && parseInt(row.maxScore) == -10) {
+                  obj.children = <div>{value}</div>
+                } else {
+                  obj.children = <div class="input_box"> 
+                    <input
+                      value={row.score}
+                      min={0}
+                      max={row.maxScore}
+                      type="number" 
+                      step={0.1}
+                      onInput={(e) => this.handleInput(row, index, e, 'score')}
+                      placeholder="输入分数"
+                      class="input_number"
+                      onWheel={(e) => e.preventDefault()}
+                    />
+                  </div>
+                }
               } else { 
                 obj.children = <div>{value}</div>
               }
@@ -375,6 +385,7 @@ export default {
       statisticType: '',
       // 工时是否扣款
       workingHoursDeductionShow: false,
+      workingHoursDeductionNumber: "",
       workingHoursDeduction: "",
       workingHoursNoDeductionReason: '',
       deductList: [
@@ -383,6 +394,7 @@ export default {
       ],
       // 考勤是否扣款
       attendanceDeductionShow: false,
+      attendanceDeductionNumber: "",
       attendanceDeduction: "",
       attendanceNoDeductionReason: '',
     }
@@ -654,12 +666,14 @@ export default {
           if(type == "kpiHours") {
             if(res.data.data.itemList[1].value && parseInt(res.data.data.itemList[1].value) > 0) {
               this.workingHoursDeductionShow = true;
+              this.workingHoursDeductionNumber = res.data.data.itemList[1].value;
             } else {
               this.workingHoursDeductionShow = false;
             }
           } else {
             if(res.data.data.itemList[3].value && parseInt(res.data.data.itemList[3].value) > 0) {
               this.attendanceDeductionShow = true;
+              this.attendanceDeductionNumber = res.data.data.itemList[3].value;
             } else {
               this.attendanceDeductionShow = false;
             }
