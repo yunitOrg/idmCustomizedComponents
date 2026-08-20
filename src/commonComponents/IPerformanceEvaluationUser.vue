@@ -41,7 +41,7 @@
               <span>漏填天数：</span>
               <span>{{ workingHoursDeductionNumberActual }}</span>
             </div>
-            <div class="flex_start">
+            <div class="flex_start" style="margin-right: 15px;">
               <span>工时实际扣款天数：</span>
               <template>
                 <div v-if="status == '1' && ifEdit != '-1'" class="input_box">
@@ -49,6 +49,10 @@
                 </div>
                 <div v-else>{{ workingHoursDeductionNumber }}</div>
               </template>
+            </div>
+            <div class="flex_start">
+              <span>工时实际扣款金额：</span>
+              <span style="color: #e63026;font-weight: 600;">{{ workingHoursDeductionAmount }}</span>
             </div>
           </div>
           <div v-if="attendanceDeductionShow" class="list flex_end">
@@ -400,6 +404,21 @@ export default {
       ifEdit: '', // 1允许编辑，-1不允许编辑。需要叠加status进行判断，status=1 && ifEdit=1时，允许编辑，其他情况不允许编辑
     }
   },
+  computed: {
+    // 获取工时实际扣款金额
+    workingHoursDeductionAmount() {
+      if(this.workingHoursDeductionNumber) {
+        let num = parseInt(Number(this.workingHoursDeductionNumber) * 50)
+        if(Number.isNaN(num)) {
+          return 0
+        } else {
+          return num
+        }
+      } else {
+        return 0
+      }
+    },
+  },
   watch: { 
     userId: {
       handler (val) {
@@ -502,7 +521,14 @@ export default {
         IDM.message.error('请填写评分！')
         return
       }
-      
+      if(this.attendanceDeductionNumberActual && this.attendanceDeductionNumber != this.attendanceDeductionNumberActual && !this.remark) {
+        IDM.message.error('工时实际扣款天数和考勤实际扣款天数 和系统统计不一致时需要填写备注原因！！！')
+        return
+      }
+      if(this.workingHoursDeductionNumberActual && this.workingHoursDeductionNumber != this.workingHoursDeductionNumberActual && (!this.remark) && !Number.isNaN(Number(this.workingHoursDeductionNumber))) {
+        IDM.message.error('工时实际扣款天数和考勤实际扣款天数 和系统统计不一致时需要填写备注原因！！！')
+        return
+      }
       let params = {
         totalScore: this.totalScore,
         userId: this.currentUserId,
@@ -638,7 +664,7 @@ export default {
         if ( res.data.code == 200 ) {
           if(type == "kpiHours") {
             this.workingHoursDeductionNumberActual = res.data.data.itemList[1]?.value;
-            if(res.data.data.itemList[4].value && parseInt(res.data.data.itemList[4].value) > 0) {
+            if(res.data.data.itemList[4].value && parseInt(res.data.data.itemList[4].value) > 0 || Number.isNaN(parseInt(res.data.data.itemList[4].value))) {
               this.workingHoursDeductionShow = true;
               this.workingHoursDeductionNumber = res.data.data.itemList[4].value;
             } else {
@@ -646,7 +672,7 @@ export default {
             }
           } else {
             this.attendanceDeductionNumberActual = res.data.data.itemList[3]?.value;
-            if(res.data.data.itemList[5].value && parseInt(res.data.data.itemList[5].value) > 0) {
+            if(res.data.data.itemList[5].value && parseInt(res.data.data.itemList[5].value) > 0 || Number.isNaN(parseInt(res.data.data.itemList[5].value))) {
               this.attendanceDeductionShow = true;
               this.attendanceDeductionNumber = res.data.data.itemList[5].value;
             } else {
@@ -769,10 +795,10 @@ export default {
     .radio_block{
       margin-bottom: 5px;
       &>.list{
-        margin-left: 30px;
+        margin-left: 70px;
       }
       .input_box{
-        width: 250px;
+        width: 100px;
         :deep(.ant-input){
           width: 100% !important;
         }
