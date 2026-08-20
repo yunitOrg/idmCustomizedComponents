@@ -52,7 +52,8 @@
             </div>
             <div class="flex_start">
               <span>工时实际扣款金额：</span>
-              <span style="color: #e63026;font-weight: 600;">{{ workingHoursDeductionAmount }}</span>
+              <span style="color: #e63026;font-weight: 600;margin-right: 5px;">{{ workingHoursDeductionAmount }}</span>
+              <span>元</span>
             </div>
           </div>
           <div v-if="attendanceDeductionShow" class="list flex_end">
