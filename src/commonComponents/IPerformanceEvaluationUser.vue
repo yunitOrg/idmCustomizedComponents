@@ -1,10 +1,10 @@
 <template>
   <div class="IPerformanceEvaluationUser_app">
     <template v-if="currentUserId">
-      <div class="header">
+      <div class="IPerformanceEvaluationUser_app_header">
         <div class="user_info flex_between">
           <div class="left flex_start">
-            <img :src="getImageSrc('', 'defaultHeader')" alt="" />
+            <img :src="getImageSrc('', 'defaultHeader')" style="width: 40px; height: 40px;" alt="" />
             <span class="name">{{ resultData?.userName }}</span>
             <span class="label">{{ resultData?.jobSerialText }}</span>
             <span v-if="!userId" class="date">{{ resultData?.assessmentCycle }}</span>
@@ -34,40 +34,42 @@
           :loading="loading"
         />
       </div>
-      <div class="footer ">
+      <div class="IPerformanceEvaluationUser_app_footer ">
         <div v-if="attendanceDeductionShow || workingHoursDeductionShow" class="flex_end radio_block">
           <div v-if="workingHoursDeductionShow" class="list flex_end">
-            <div style="margin-right: 15px;">
-              漏填天数：{{ workingHoursDeductionNumber }}
+            <div class="flex_start" style="margin-right: 15px;">
+              <span>漏填天数：</span>
+              <span>{{ workingHoursDeductionNumberActual }}</span>
             </div>
-            <div class="label">工时是否扣款：</div>
-            <div class="value flex_end">
-              <a-radio-group v-model="workingHoursDeduction" :disabled="status == '1' ? false : true">
-                <a-radio v-for="item in deductList" :key="item.value" :value="item.value">{{ item.label }}</a-radio>
-              </a-radio-group>
-              <div v-if="workingHoursDeduction == '0'" class="input_box">
-                <a-input v-model="workingHoursNoDeductionReason" :disabled="status == '1' ? false : true" allowClear />
-              </div>
+            <div class="flex_start">
+              <span>工时实际扣款天数：</span>
+              <template>
+                <div v-if="status == '1' && ifEdit != '-1'" class="input_box">
+                  <a-input v-model="workingHoursDeductionNumber" allowClear />
+                </div>
+                <div v-else>{{ workingHoursDeductionNumber }}</div>
+              </template>
             </div>
           </div>
           <div v-if="attendanceDeductionShow" class="list flex_end">
-            <div style="margin-right: 15px;">
-              缺勤天数：{{ attendanceDeductionNumber }}
+            <div class="flex_start" style="margin-right: 15px;">
+              <span>缺勤天数：</span>
+              <span>{{ attendanceDeductionNumberActual }}</span>
             </div>
-            <div class="label">考勤是否扣款：</div>
-            <div class="value flex_end">
-              <a-radio-group v-model="attendanceDeduction" :disabled="status == '1' ? false : true">
-                <a-radio v-for="item in deductList" :key="item.value" :value="item.value">{{ item.label }}</a-radio>
-              </a-radio-group>
-              <div v-if="attendanceDeduction == '0'" class="input_box">
-                <a-input v-model="attendanceNoDeductionReason" :disabled="status == '1' ? false : true" allowClear />
-              </div>
+            <div class="flex_start">
+              <span>考勤实际扣款天数：</span>
+              <template>
+                <div v-if="status == '1' && ifEdit != '-1'" class="input_box">
+                  <a-input v-model="attendanceDeductionNumber" allowClear />
+                </div>
+                <div v-else>{{ attendanceDeductionNumber }}</div>
+              </template>
             </div>
           </div>
         </div>
-        <div class="row remark flex_start">
+        <div v-if="!((!resultData.remark) && !(status == '1' && ifEdit != '-1'))" class="row remark flex_start">
           <div>备注：</div>
-          <div v-if="status == '1'" class="input_box">
+          <div v-if="status == '1' && ifEdit != '-1'" class="input_box">
             <a-textarea v-model="remark" placeholder="请输入备注" allowClear></a-textarea>
           </div>
           <div v-else v-html="resultData.remark"></div>
@@ -82,7 +84,7 @@
               考核等级：<span>{{ levelText ? levelText : '未考核' }}</span>
             </div>
           </div>
-          <div v-if="status == '1'" class="right">
+          <div v-if="status == '1' && ifEdit != '-1'" class="right">
             <a-button @click="makeScoreByLastMonth" type="primary" style="margin-right: 10px;">按上月得分进行赋分</a-button>
             <a-button @click="handleSave" type="primary" :loading="saveLoading">保存</a-button>
           </div>
@@ -302,7 +304,7 @@ export default {
               obj.children = null
             } else {
               obj.attrs.colSpan = 1;
-              if(this.status == '1' ) {
+              if(this.status == '1' && this.ifEdit != '-1') {
                 if(row.maxScore && parseInt(row.maxScore) == -10) {
                   obj.children = <div>{value}</div>
                 } else {
@@ -343,7 +345,7 @@ export default {
               obj.children = null
             } else {
               obj.attrs.colSpan = 1;
-              if(this.status == '1') {
+              if(this.status == '1' && this.ifEdit != '-1') {
                 obj.children = <div class="input_box"> 
                   <input
                     value={row.remark}
@@ -386,8 +388,7 @@ export default {
       // 工时是否扣款
       workingHoursDeductionShow: false,
       workingHoursDeductionNumber: "",
-      workingHoursDeduction: "",
-      workingHoursNoDeductionReason: '',
+      workingHoursDeductionNumberActual: "",
       deductList: [
         {label: '是', value: "1"},
         {label: '否', value: "0"}
@@ -395,8 +396,8 @@ export default {
       // 考勤是否扣款
       attendanceDeductionShow: false,
       attendanceDeductionNumber: "",
-      attendanceDeduction: "",
-      attendanceNoDeductionReason: '',
+      attendanceDeductionNumberActual: "",
+      ifEdit: '', // 1允许编辑，-1不允许编辑。需要叠加status进行判断，status=1 && ifEdit=1时，允许编辑，其他情况不允许编辑
     }
   },
   watch: { 
@@ -501,28 +502,6 @@ export default {
         IDM.message.error('请填写评分！')
         return
       }
-      if(this.workingHoursDeductionShow) {
-        if(!this.workingHoursDeduction) {
-          IDM.message.error('请选择工时是否扣款！')
-          return
-        } else {
-          if(this.workingHoursDeduction == '0' && !this.workingHoursNoDeductionReason) {
-            IDM.message.error('请填写工时不扣款理由！')
-            return
-          }
-        }
-      }
-      if(this.attendanceDeductionShow) {
-        if(!this.attendanceDeduction) {
-          IDM.message.error('请选择考勤是否扣款！')
-          return
-        } else {
-          if(this.attendanceDeduction == '0' && !this.attendanceNoDeductionReason) {
-            IDM.message.error('请填写考勤不扣款理由！')
-            return
-          }
-        }
-      }
       
       let params = {
         totalScore: this.totalScore,
@@ -532,12 +511,8 @@ export default {
         deptAssessmentId: this.deptAssessmentId,
         indicatorList: this.tableList,
         remark: this.remark,
-        attendanceDeduction: this.attendanceDeduction,
-        attendanceNoDeductionReason: this.attendanceNoDeductionReason,
-        attendanceDeductionText: this.attendanceDeduction == '1' ? '是' : '否',
-        workingHoursDeduction: this.workingHoursDeduction,
-        workingHoursNoDeductionReason: this.workingHoursNoDeductionReason,
-        workingHoursDeductionText: this.workingHoursDeduction == '1' ? '是' : '否',
+        actDedWorkDay: this.workingHoursDeductionNumber,
+        actDedDays: this.attendanceDeductionNumber
       }
       console.log(params)
       this.saveLoading = true;
@@ -613,8 +588,6 @@ export default {
     getUserData(){
       if(this.currentUserId && this.deptAssessmentId){
         this.loading = true;
-        this.workingHoursDeductionShow = false;
-        this.attendanceDeductionShow = false;
         IDM.http.get('/ctrl/indicator/loadByUserId',{
           deptAssessmentId: this.deptAssessmentId,
           userId: this.currentUserId,
@@ -629,10 +602,7 @@ export default {
             this.assessmentLevelList = res.data.data.assessmentLevelList ?? [];
             this.resultData = res.data.data;
             this.remark = res.data.data.remark;
-            this.attendanceDeduction = res.data.data.attendanceDeduction || "";
-            this.attendanceNoDeductionReason = res.data.data.attendanceNoDeductionReason;
-            this.workingHoursDeduction = res.data.data.workingHoursDeduction || "";
-            this.workingHoursNoDeductionReason = res.data.data.workingHoursNoDeductionReason;
+            this.ifEdit = res.data.data.ifEdit;
 
             if(this.isPersonal == 'true' && this.propData.showNotice) {
               let tableList = JSON.parse(JSON.stringify(this.tableList));
@@ -657,23 +627,28 @@ export default {
     },
     // 获取工时详情和考勤详情
     getWorkHoursAndAttendance(type){
+      this.attendanceDeductionShow = false;
+      this.workingHoursDeductionShow = false;
       IDM.http.get('/ctrl/erpAssessmentUser/getStatisticInfo',{
+        deptAssessmentId: this.deptAssessmentId,
         statisticType: type,
         userId: this.currentUserId,
         yearMonth: this.resultData?.assessmentCycle ? this.resultData?.assessmentCycle.replace('年', '-').replace('月', '') : ''
       }).then((res) => {
         if ( res.data.code == 200 ) {
           if(type == "kpiHours") {
-            if(res.data.data.itemList[1].value && parseInt(res.data.data.itemList[1].value) > 0) {
+            this.workingHoursDeductionNumberActual = res.data.data.itemList[1]?.value;
+            if(res.data.data.itemList[4].value && parseInt(res.data.data.itemList[4].value) > 0) {
               this.workingHoursDeductionShow = true;
-              this.workingHoursDeductionNumber = res.data.data.itemList[1].value;
+              this.workingHoursDeductionNumber = res.data.data.itemList[4].value;
             } else {
               this.workingHoursDeductionShow = false;
             }
           } else {
-            if(res.data.data.itemList[3].value && parseInt(res.data.data.itemList[3].value) > 0) {
+            this.attendanceDeductionNumberActual = res.data.data.itemList[3]?.value;
+            if(res.data.data.itemList[5].value && parseInt(res.data.data.itemList[5].value) > 0) {
               this.attendanceDeductionShow = true;
-              this.attendanceDeductionNumber = res.data.data.itemList[3].value;
+              this.attendanceDeductionNumber = res.data.data.itemList[5].value;
             } else {
               this.attendanceDeductionShow = false;
             }
@@ -700,7 +675,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  &>.header{
+  .IPerformanceEvaluationUser_app_header{
     margin-bottom: 14px;
     .user_info{
       &>.left{
@@ -765,7 +740,7 @@ export default {
     height: 0;
     flex-grow: 1;
   }
-  &>.footer{
+  .IPerformanceEvaluationUser_app_footer{
     margin-top: 15px;
     &>.row{
       &>.left{
