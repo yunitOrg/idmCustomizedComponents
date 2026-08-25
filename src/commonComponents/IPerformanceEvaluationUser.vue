@@ -518,7 +518,14 @@ export default {
       })
     },
     handleSave(){
-      if(!this.totalScore || Number(this.totalScore) == 0){
+      console.log('handleSave', this.tableList)
+      let isScoreEmpty = false;
+      this.tableList.forEach(item => {
+        if(item.maxScore && parseInt(item.maxScore) != -10 && (!item.score || Number(item.score) == 0)){
+          isScoreEmpty = true;
+        }
+      })
+      if(isScoreEmpty){
         IDM.message.error('请填写评分！')
         return
       }
