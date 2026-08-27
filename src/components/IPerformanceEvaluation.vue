@@ -209,6 +209,12 @@ export default {
           }
           this.getUserList(isUpdate)
           this.getFilterListData(res.data?.data?.userList ?? [])
+          if(res.data?.data?.alertMessage) {
+            top.IDM.layer.alert(res.data?.data?.alertMessage,{
+              area: ['500px','auto'],
+              closeBtn: 0,
+            });
+          }
         } else {
           IDM.message.error(res.data.message)
         }
