@@ -63,6 +63,24 @@
         </div>
       </div>
     </div>
+    <!-- 人员违规消息提示框 -->
+    <a-modal 
+      v-model="showUserViolationMessagePop" 
+      title="提示" 
+      :destroyOnClose="true" 
+      :maskClosable="false"
+      width="1000px" 
+      wrapClassName="userViolationMessagePop"
+      cancelText="关闭"
+      @cancel="handleClickCancelUserViolationMessagePop"
+      @ok="handleClickOkUserViolationMessagePop"
+    >
+      <UserViolationList :moduleObject="moduleObject" 
+        :propData="propData" 
+        :tableListData="userViolationListData"
+        :message="userViolationMessage"
+      />
+    </a-modal>
   </div>
 </template>
 
@@ -70,12 +88,14 @@
 import SvgIcon from '../icons/SvgIcon.vue';
 import vuescroll from '../mixins/vueScroll'
 import IPerformanceEvaluationUser from "../commonComponents/IPerformanceEvaluationUser.vue"
+import UserViolationList from "../commonComponents/UserViolationList.vue"
 
 export default {
   name: 'IPerformanceEvaluation',
   components: {
     SvgIcon,
-    IPerformanceEvaluationUser
+    IPerformanceEvaluationUser,
+    UserViolationList
   },
   mixins: [ vuescroll ],
   data(){
@@ -143,6 +163,10 @@ export default {
       status: '', // 1可评分 2只允许查看
       isheaderCollapse: false, // 头部是否折叠
       isLeftCollapse: false, // 左侧是否折叠
+      // 人员违规消息提示框
+      showUserViolationMessagePop: false,
+      userViolationMessage: '',
+      userViolationListData: [], // 人员违规列表数据
     }
   },
   watch: {
@@ -166,6 +190,35 @@ export default {
   },
   destroyed() {},
   methods:{
+    getContainer() {
+      try {
+        // 尝试获取父窗口的 document.body
+        if (window.parent && window.parent !== window.self) {
+          return window.parent.document.body;
+        }
+      } catch (e) {
+        // 如果跨域，会抛出错误，则降级使用当前 iframe 的 body
+        console.warn('无法访问父窗口，使用当前窗口body', e);
+      }
+      // 降级方案
+      return document.body;
+    },
+    handleClickOkUserViolationMessagePop() {
+      IDM.http.get('/ctrl/deptAssessment/confirm',{
+        deptAssessmentId: this.deptAssessmentId
+      }).then((res) => {
+        if ( res.data.code == 200 ) {
+          this.showUserViolationMessagePop = false;
+        } else {
+          IDM.message.error(res.data.message)
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    handleClickCancelUserViolationMessagePop() {
+      this.showUserViolationMessagePop = false;
+    },
     handleExpandCollapse(key) {
       this.$data[key] = !this.$data[key];
     },
@@ -209,11 +262,12 @@ export default {
           }
           this.getUserList(isUpdate)
           this.getFilterListData(res.data?.data?.userList ?? [])
-          if(res.data?.data?.alertMessage) {
-            top.IDM.layer.alert(res.data?.data?.alertMessage,{
-              area: ['500px','auto'],
-              closeBtn: 0,
-            });
+          if(res.data?.data?.alertMessage?.allUsers?.length) {
+            this.userViolationListData = res.data?.data?.alertMessage?.allUsers ?? [];
+            this.userViolationMessage = res.data?.data?.alertMessage?.alertMessage ?? '';
+            this.showUserViolationMessagePop = true;
+          } else {
+            this.showUserViolationMessagePop = false;
           }
         } else {
           IDM.message.error(res.data.message)
