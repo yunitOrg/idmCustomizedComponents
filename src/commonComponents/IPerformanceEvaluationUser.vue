@@ -73,8 +73,8 @@
           </div>
         </div>
         <div v-if="!((!resultData.remark) && !(status == '1' && ifEdit != '-1'))" class="row remark flex_start">
-          <div>备注：</div>
-          <div v-if="status == '1' && ifEdit != '-1'" class="input_box">
+          <div style="white-space: nowrap;">备注：</div>
+          <div v-if="status == '1' && ifEdit != '-1'" class="input_box" style="width: 100%;">
             <a-textarea v-model="remark" placeholder="请输入备注" allowClear></a-textarea>
           </div>
           <div v-else v-html="resultData.remark"></div>
@@ -118,6 +118,7 @@
       wrapClassName="AttendanceWorkHourDetailPop"
     >
       <AttendanceWorkHourDetail 
+        :deptAssessmentId="deptAssessmentId"
         :currentUserId="currentUserId"
         :yearMonth="resultData?.assessmentCycle"
         :statisticType="statisticType"
@@ -521,7 +522,7 @@ export default {
       console.log('handleSave', this.tableList)
       let isScoreEmpty = false;
       this.tableList.forEach(item => {
-        if(item.maxScore && parseInt(item.maxScore) != -10 && (!item.score || Number(item.score) == 0)){
+        if((item.itemId == "260813143152lLpq1IdJNjfymEHVA1U" || item.itemId == '260813143152DOiXcx5qcL1qzIGj1ZO') && (!item.score || Number(item.score) == 0)){
           isScoreEmpty = true;
         }
       })
@@ -529,12 +530,12 @@ export default {
         IDM.message.error('请填写评分！')
         return
       }
-      if(this.attendanceDeductionNumberActual && this.attendanceDeductionNumber != this.attendanceDeductionNumberActual && !this.remark) {
-        IDM.message.error('工时实际扣款天数和考勤实际扣款天数 和系统统计不一致时需要填写备注原因！！！')
+      if(parseInt(this.attendanceDeductionNumberActual) && this.attendanceDeductionNumber != this.attendanceDeductionNumberActual && !this.remark) {
+        IDM.message.error('考勤实际扣款天数和系统统计不一致时需要填写备注原因！！！')
         return
       }
-      if(this.workingHoursDeductionNumberActual && this.workingHoursDeductionNumber != this.workingHoursDeductionNumberActual && (!this.remark) && !Number.isNaN(Number(this.workingHoursDeductionNumber))) {
-        IDM.message.error('工时实际扣款天数和考勤实际扣款天数 和系统统计不一致时需要填写备注原因！！！')
+      if(parseInt(this.workingHoursDeductionNumberActual) && this.workingHoursDeductionNumber != this.workingHoursDeductionNumberActual && (!this.remark) && !Number.isNaN(Number(this.workingHoursDeductionNumber))) {
+        IDM.message.error('工时实际扣款天数和系统统计不一致时需要填写备注原因！！！')
         return
       }
       let params = {
@@ -647,8 +648,12 @@ export default {
             } else {
               this.tableListData = this.tableList;
             }
+            this.getTotalScore()
             this.getWorkHoursAndAttendance("kpiHours")
             this.getWorkHoursAndAttendance("attendance")
+            this.$nextTick(() => {
+              this.getTotalScore()
+            })
           } else {
             IDM.message.error(res.data.message)
           }
@@ -677,6 +682,7 @@ export default {
               this.workingHoursDeductionNumber = res.data.data.itemList[4].value;
             } else {
               this.workingHoursDeductionShow = false;
+              this.workingHoursDeductionNumber = 0;
             }
           } else {
             this.attendanceDeductionNumberActual = res.data.data.itemList[3]?.value;
@@ -685,6 +691,7 @@ export default {
               this.attendanceDeductionNumber = res.data.data.itemList[5].value;
             } else {
               this.attendanceDeductionShow = false;
+              this.attendanceDeductionNumber = 0;
             }
           }
         } else {

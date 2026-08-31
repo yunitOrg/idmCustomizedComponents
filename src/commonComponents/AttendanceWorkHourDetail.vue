@@ -36,6 +36,10 @@
   export default {
     name: 'AttendanceWorkHourDetail',
     props: {
+      deptAssessmentId: {
+        type: String,
+        default: ''
+      },
       yearMonth: {
         type: String,
         default: ''
@@ -75,6 +79,7 @@
         IDM.http.get('/ctrl/erpAssessmentUser/getStatisticInfo',{
           statisticType: this.statisticType,
           userId: this.currentUserId,
+          deptAssessmentId: this.deptAssessmentId,
           yearMonth: this.yearMonth ? this.yearMonth.replace('年', '-').replace('月', '') : ''
         }).then((res) => {
           this.confirmLoading = false;
