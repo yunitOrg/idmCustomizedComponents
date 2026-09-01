@@ -562,6 +562,7 @@ export default {
   }
   .IPerformanceEvaluation_app_main{
     flex-grow: 2;
+    min-height: 0;
     &>.left{
       width: 280px;
       height: 100%;
@@ -681,9 +682,11 @@ export default {
     &>.right{
       width: 0;
       height: 100%;
+      min-height: 0;
       position: relative;
       flex-grow: 2;
       padding: 15px 18px;
+      overflow: hidden;
       background: white;
       .expand_collapse_block_header{
         width: 55px;

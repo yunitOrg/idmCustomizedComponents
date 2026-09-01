@@ -772,6 +772,8 @@ export default {
   .table_block{
     height: 0;
     flex-grow: 1;
+    min-height: 0;
+    overflow: hidden;
   }
   .IPerformanceEvaluationUser_app_footer{
     margin-top: 15px;
@@ -821,16 +823,36 @@ export default {
 .IPerformanceEvaluationUser_app{
   .ant-table-wrapper{
     height: 100%;
+    min-height: 0;
     .ant-spin-nested-loading{
       height: 100%;
+      min-height: 0;
       .ant-spin-container{
         height: 100%;
+        min-height: 0;
         .ant-table{
           height: 100%;
+          min-height: 0;
           .ant-table-content{
             height: 100%;
+            min-height: 0;
             .ant-table-scroll{
               height: 100%;
+              min-height: 0;
+              display: flex;
+              flex-direction: column;
+              overflow: hidden;
+              .ant-table-header{
+                flex: 0 0 auto;
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+                overflow: hidden !important;
+              }
+              .ant-table-body{
+                min-height: 0;
+                flex: 1 1 auto;
+                max-height: none !important;
+              }
             }
           }
         }
