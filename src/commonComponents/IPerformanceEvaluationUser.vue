@@ -35,8 +35,8 @@
         />
       </div>
       <div class="IPerformanceEvaluationUser_app_footer ">
-        <div v-if="attendanceDeductionShow || workingHoursDeductionShow" class="flex_end radio_block">
-          <div v-if="workingHoursDeductionShow" class="list flex_end">
+        <div class="flex_end radio_block">
+          <div class="list flex_end">
             <div class="flex_start" style="margin-right: 15px;">
               <span>漏填天数：</span>
               <span>{{ workingHoursDeductionNumberActual }}</span>
@@ -56,7 +56,7 @@
               <span>元</span>
             </div>
           </div>
-          <div v-if="attendanceDeductionShow" class="list flex_end">
+          <div class="list flex_end">
             <div class="flex_start" style="margin-right: 15px;">
               <span>缺勤天数：</span>
               <span>{{ attendanceDeductionNumberActual }}</span>
@@ -392,7 +392,6 @@ export default {
       showAttendanceDetailPop: false,
       statisticType: '',
       // 工时是否扣款
-      workingHoursDeductionShow: false,
       workingHoursDeductionNumber: "",
       workingHoursDeductionNumberActual: "",
       deductList: [
@@ -400,7 +399,6 @@ export default {
         {label: '否', value: "0"}
       ],
       // 考勤是否扣款
-      attendanceDeductionShow: false,
       attendanceDeductionNumber: "",
       attendanceDeductionNumberActual: "",
       ifEdit: '', // 1允许编辑，-1不允许编辑。需要叠加status进行判断，status=1 && ifEdit=1时，允许编辑，其他情况不允许编辑
@@ -666,8 +664,6 @@ export default {
     },
     // 获取工时详情和考勤详情
     getWorkHoursAndAttendance(type){
-      this.attendanceDeductionShow = false;
-      this.workingHoursDeductionShow = false;
       IDM.http.get('/ctrl/erpAssessmentUser/getStatisticInfo',{
         deptAssessmentId: this.deptAssessmentId,
         statisticType: type,
@@ -678,19 +674,15 @@ export default {
           if(type == "kpiHours") {
             this.workingHoursDeductionNumberActual = res.data.data.itemList[1]?.value;
             if(res.data.data.itemList[4].value && parseInt(res.data.data.itemList[4].value) > 0 || Number.isNaN(parseInt(res.data.data.itemList[4].value))) {
-              this.workingHoursDeductionShow = true;
               this.workingHoursDeductionNumber = res.data.data.itemList[4].value;
             } else {
-              this.workingHoursDeductionShow = false;
               this.workingHoursDeductionNumber = 0;
             }
           } else {
             this.attendanceDeductionNumberActual = res.data.data.itemList[3]?.value;
             if(res.data.data.itemList[5].value && parseInt(res.data.data.itemList[5].value) > 0 || Number.isNaN(parseInt(res.data.data.itemList[5].value))) {
-              this.attendanceDeductionShow = true;
               this.attendanceDeductionNumber = res.data.data.itemList[5].value;
             } else {
-              this.attendanceDeductionShow = false;
               this.attendanceDeductionNumber = 0;
             }
           }
