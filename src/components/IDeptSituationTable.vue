@@ -63,13 +63,14 @@
           <table class="table">
             <thead>
               <tr>
-                <th width="17%">二级构成</th>
-                <th width="10%">项次</th>
-                <th width="18%">三级明细</th>
+                <th width="15%">二级构成</th>
+                <th width="8%">项次</th>
+                <th width="15%">三级明细</th>
+                <th width="15%">年初预算金额（元）</th>
                 <th width="15%">调整后预算金额（元）</th>
-                <th width="15%">实际执行（元）</th>
-                <th width="12%">执行率</th>
-                <th width="13%">责任人员</th>
+                <th width="13%">实际执行（元）</th>
+                <th width="10%">执行率</th>
+                <th width="9%">责任人员</th>
               </tr>
             </thead>
           </table>
@@ -78,13 +79,14 @@
           <table class="table">
             <thead>
               <tr>
-                <th width="17%"></th>
-                <th width="10%"></th>
-                <th width="18%"></th>
+                <th width="15%"></th>
+                <th width="8%"></th>
                 <th width="15%"></th>
                 <th width="15%"></th>
-                <th width="12%"></th>
+                <th width="15%"></th>
                 <th width="13%"></th>
+                <th width="10%"></th>
+                <th width="9%"></th>
               </tr>
             </thead>
             <tbody>
@@ -101,12 +103,16 @@
                   <td style="display: none"></td>
                   <td style="display: none"></td>
                   <td style="display: none"></td>
+                  <td style="display: none"></td>
                 </tr>
                 <tr
                   v-for="sitem in item.threeLevelDetails"
                   :key="sitem.threeLevelDetailName"
                 >
                   <td>{{ sitem.threeLevelDetailName }}</td>
+                  <td>
+                    <span class="num">{{ sitem.initialBudgetAmount }}</span>
+                  </td>
                   <td>
                     <span class="num">{{ sitem.adjustedBudgetAmount }}</span>
                   </td>
@@ -121,6 +127,7 @@
               </template>
               <tr>
                 <td class="text-left" colspan="3">小计</td>
+                <td>{{ total.initialBudgetAmount }}</td>
                 <td>{{ total.adjustedBudgetAmount }}</td>
                 <td>{{ total.actualUsageAmount }}</td>
                 <td>{{ total.executionRate }}</td>
@@ -157,6 +164,7 @@ export default {
       dateFormat: "YYYY-MM-DD",
       tableData: [],
       total: {
+        initialBudgetAmount: 0,
         actualUsageAmount: 0,
         adjustedBudgetAmount: 0,
         executionRate: 0,
@@ -275,16 +283,19 @@ export default {
       }
     },
     getTotal(data) {
+      let initialBudgetAmount = 0;
       let actualUsageAmount = 0;
       let adjustedBudgetAmount = 0;
       let executionRate = 0;
       data.forEach((item) => {
         item.threeLevelDetails.forEach((sitem) => {
+          initialBudgetAmount += Number(sitem.initialBudgetAmount || 0);
           actualUsageAmount += Number(sitem.actualUsageAmount || 0);
           adjustedBudgetAmount += Number(sitem.adjustedBudgetAmount || 0);
           executionRate += Number(sitem.executionRate.replace("%", "") || 0);
         });
       });
+      this.total.initialBudgetAmount = initialBudgetAmount.toFixed(2);
       this.total.actualUsageAmount = actualUsageAmount.toFixed(2);
       this.total.adjustedBudgetAmount = adjustedBudgetAmount.toFixed(2);
       this.total.executionRate = executionRate.toFixed(2) + "%";
