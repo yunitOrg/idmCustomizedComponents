@@ -462,7 +462,11 @@ export default {
       if(this.tableListData?.length > 0) { 
         this.tableListData.forEach(item => { 
           if(item.lastMonthScore) { 
-            item.score = item.lastMonthScore;
+            if(item.maxScore && parseInt(item.maxScore) == -10) {
+              // 负分项不赋值
+            } else {
+              item.score = item.lastMonthScore;
+            }
           }
         })
       }
