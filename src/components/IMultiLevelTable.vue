@@ -1,6 +1,11 @@
 <template>
   <div idm-ctrl="idm_module" :id="moduleObject.id" :idm-ctrl-id="moduleObject.id" class="IMultiLevelTable_app">
-    <div v-if="propData?.showTitle" class="title" v-html="getTitleHtml()"></div>
+    <div class="header">
+      <div v-if="propData?.showTitle" class="title" v-html="getTitleHtml()"></div>
+      <div class="export" v-if="showExport">
+        <a-button @click="exportData" type="primary">导出</a-button>
+      </div>
+    </div>
     <div v-if="propData?.showSubtitle || propData?.operateList?.length" class="describe">
       <span v-if="propData.showSubtitle" class="text" v-html="getSubtitleHtml()"></span>
       <div v-if="propData.operateList?.length" class="operate_block flex_end">
@@ -85,6 +90,7 @@ export default {
       conditionObject: {},
       colWidths: [],
       colIndex: 0,
+      showExport: false
     }
   },
   watch: {
@@ -95,6 +101,8 @@ export default {
     _propData: Object
   },
   created() {
+    this.showExport = IDM.url.queryString('showExport') == 1 ? true : false;//是否显示导出按钮
+
     this.moduleObject = this._moduleObject||this.$root.moduleObject;
     if(this.propData.pageSize) {
       this.paginationOptions.pageSize = this.propData.pageSize;
@@ -114,6 +122,33 @@ export default {
     window.removeEventListener('resize', this.makeTableScrollHeight)
   },
   methods:{
+    exportData(){
+      let exportUrl = this.propData.exportUrl;
+      let queryObject = IDM.url.queryObject();
+      let params = {
+        ...queryObject
+      }
+      if(exportUrl){
+        IDM.http.get(exportUrl,params,{
+          responseType: "blob",
+        }).then((res) => {
+          const blob = new Blob([res.data]);
+          let url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.style.display = "none";
+          a.setAttribute("target", "_blank");
+          a.href = url;
+          a.download = this.getTitleHtml() + '.xlsx';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }).catch((err) => {
+          this.$refs[this.moduleObject.id][`exportData_loading`] = false;
+          console.log(err)
+        })
+      }
+    },
+
     handleChangeFile(e, item) {
       console.log('e', e)
       if(item.handleChangeFileCustomerFunction?.length) {
@@ -635,11 +670,23 @@ export default {
 <style lang="scss" scoped>
 .IMultiLevelTable_app{
   height: 100vh;
-  &>.title{
-    font-weight: 700;
-    font-size: 20px;
-    color: #333333;
-    text-align: center;
+  .header {
+    position: relative;
+    height: 40px;
+    margin-bottom: 15px;
+    .export {
+      position: absolute;
+      bottom: 4px;
+      right: 20px;
+    }
+    .title{
+      font-weight: 700;
+      font-size: 20px;
+      color: #333333;
+      text-align: center;
+      line-height: 40px;
+      margin-bottom: 0 !important;
+    }
   }
   &>.describe{
     height: 38px;

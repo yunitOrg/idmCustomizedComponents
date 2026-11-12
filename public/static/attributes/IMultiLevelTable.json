@@ -568,6 +568,19 @@
     },
     {
       "type": "group",
+      "text": "导出",
+      "children": [
+        {
+          "type": "input",
+          "layoutType": "inline",
+          "text": "导出地址",
+          "bindKey": "exportUrl",
+          "default": ""
+        }
+      ]
+    },
+    {
+      "type": "group",
       "text": "高级",
       "children": [
         {
